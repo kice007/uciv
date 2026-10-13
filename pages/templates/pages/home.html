@@ -1,0 +1,322 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+{# ---------------------------------------------------------------- Hero #}
+<section class="hero">
+  <div class="hero__cadre">
+    <span class="forme forme--anneau hero__anneau-vert" aria-hidden="true"></span>
+
+    <div class="hero__texte">
+      <p class="surtitre surtitre--blanc hero__entree" style="--i: 0">La Volonté, notre seule monnaie</p>
+      <h1 class="hero__titre hero__entree" style="--i: 1">
+        Une Côte<br>d'Ivoire <em>Volontaire.</em>
+      </h1>
+      <p class="hero__chapo hero__entree" style="--i: 2">
+        Mobiliser la jeunesse, développer les compétences et créer des opportunités
+        par le volontariat et l'engagement citoyen.
+      </p>
+      <div class="hero__cta hero__entree" style="--i: 3">
+        <a class="btn btn--blanc" href="#">
+          <span>Je veux m'engager</span>
+          <span class="btn__rond">{% include "partials/_icon.html" with name="arrow-right" %}</span>
+        </a>
+        <a class="btn btn--contour-blanc" href="#pourquoi">Découvrir UCIV</a>
+      </div>
+    </div>
+
+    <ul class="hero__parcours hero__entree" style="--i: 4" aria-label="Le parcours UCIV">
+      {% for etape in parcours %}
+        <li>{{ etape }}{% if not forloop.last %}{% include "partials/_icon.html" with name="arrow-right" %}{% endif %}</li>
+      {% endfor %}
+    </ul>
+
+    <div class="hero__visuel">
+      <span class="forme hero__disque" aria-hidden="true"></span>
+      <span class="forme forme--anneau hero__anneau-jaune" aria-hidden="true"></span>
+      <p class="manuscrit hero__signature" aria-hidden="true">Agir pour le pays !</p>
+      <div class="hero__photo">
+        <img src="{% static 'images/groupe-couleur.png' %}" width="1486" height="1059"
+             alt="Quatre jeunes volontaires souriants et enthousiastes." fetchpriority="high">
+      </div>
+    </div>
+  </div>
+</section>
+
+{# ----------------------------------------------------------- Manifeste #}
+<section class="section manifeste" id="pourquoi">
+  <div class="conteneur manifeste__grille">
+    <div class="manifeste__repere" data-reveal>
+      <p class="surtitre">Pourquoi UCIV ?</p>
+      <p class="manuscrit manifeste__note">un premier terrain, concret.</p>
+    </div>
+    <div>
+      <h2 class="manifeste__titre" data-reveal>
+        Beaucoup de jeunes ont des idées et de l'énergie, mais manquent d'un premier
+        terrain concret pour les faire reconnaître.
+        <em>UCIV leur donne ce terrain.</em>
+      </h2>
+      <div class="manifeste__colonnes" data-reveal>
+        <p>Une Côte d'Ivoire Volontaire (UCIV) est une initiative citoyenne qui mobilise les jeunes autour du volontariat, du bénévolat et de l'engagement, pour en faire un véritable levier de compétences, de leadership et d'employabilité.</p>
+        <p>De nombreux jeunes disposent de connaissances et de compétences, mais rencontrent des difficultés à accéder à leurs premières opportunités : peu d'expérience concrète, peu de réseau, peu d'espaces pour se tester en conditions réelles.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+{# ------------------------------------------- Engagement en expérience #}
+<section class="section section--blanc conviction">
+  <div class="conteneur conviction__grille">
+    <div class="conviction__visuel" data-reveal="image">
+      <img src="{% static 'images/volontaires-terrain.jpg' %}" width="928" height="1136" loading="lazy"
+           alt="De jeunes volontaires en tee-shirt orange lors d'une action de terrain.">
+      <span class="pastille">Apprendre en agissant</span>
+    </div>
+    <div class="conviction__texte">
+      <div data-reveal>
+        <p class="surtitre">Notre conviction</p>
+        <h2 class="titre">Transformer l'engagement <em>en expérience.</em></h2>
+        <p class="texte">Le volontariat n'est pas seulement un acte généreux. C'est un espace d'apprentissage à part entière : chaque engagement apporte à un jeune la preuve concrète qu'il est capable de faire.</p>
+      </div>
+      <ol class="preuves">
+        {% for preuve in preuves %}
+          <li data-reveal style="--i: {{ forloop.counter0 }}">
+            <span class="preuves__num">0{{ forloop.counter }}</span>
+            <div>
+              <h3>{{ preuve.titre }}</h3>
+              <p>{{ preuve.texte }}</p>
+            </div>
+          </li>
+        {% endfor %}
+      </ol>
+    </div>
+  </div>
+</section>
+
+{# ---------------------------------------------------- Domaines d'action #}
+<section class="section domaines">
+  <div class="conteneur">
+    <div class="entete-section" data-reveal>
+      <div>
+        <p class="surtitre">Ce que nous faisons</p>
+        <h2 class="titre">Nos domaines <em>d'action.</em></h2>
+      </div>
+      <p class="texte">À travers ses missions, projets, formations et initiatives, UCIV encourage les jeunes à agir, apprendre et construire un profil solide pour leur avenir.</p>
+    </div>
+    <ul class="domaines__grille">
+      {% for domaine in domaines %}
+        <li class="domaine" data-reveal style="--i: {{ forloop.counter0 }}">
+          <div class="domaine__haut">
+            <span class="picto picto--{{ domaine.couleur }}">{% include "partials/_icon.html" with name=domaine.icone %}</span>
+            <span class="domaine__num" aria-hidden="true">0{{ forloop.counter }}</span>
+          </div>
+          <h3>{{ domaine.titre }}</h3>
+          <p>{{ domaine.texte }}</p>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+
+{# ----------------------------------------------------------- Programmes #}
+<section class="section section--sombre programmes">
+  <div class="conteneur">
+    <div class="entete-section" data-reveal>
+      <div>
+        <p class="surtitre surtitre--jaune">Nos programmes</p>
+        <h2 class="titre titre--clair">Des programmes pour apprendre, <em>s'engager et agir.</em></h2>
+      </div>
+      <a class="btn btn--contour-blanc" href="#">Découvrir nos programmes</a>
+    </div>
+
+    <ul class="defilement programmes__cartes" data-defilement="programmes">
+      {% for programme in programmes %}
+        <li class="carte-programme carte-programme--{{ programme.theme }}" data-reveal style="--i: {{ forloop.counter0 }}">
+          <a href="{{ programme.url }}" class="carte-programme__lien">
+            <div class="carte-programme__image{% if programme.detouree %} carte-programme__image--detouree{% endif %}">
+              <img src="{% static programme.image %}" alt="{{ programme.image_alt }}" loading="lazy">
+            </div>
+            <div class="carte-programme__contenu">
+              <span class="etiquette">{{ programme.etiquette }}</span>
+              <h3>{{ programme.titre }}</h3>
+              <p>{{ programme.texte }}</p>
+              <span class="lien-fleche">{{ programme.lien_label }}{% include "partials/_icon.html" with name="arrow-right" %}</span>
+            </div>
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+    <div class="defilement-indicateur defilement-indicateur--clair" data-defilement-points="programmes" aria-hidden="true">
+      <div class="defilement-indicateur__points">
+        {% for programme in programmes %}<span{% if forloop.first %} class="est-actif"{% endif %}></span>{% endfor %}
+      </div>
+      <span class="defilement-indicateur__aide">Faire défiler {% include "partials/_icon.html" with name="arrow-right" %}</span>
+    </div>
+  </div>
+</section>
+
+{# ---------------------------------------------------- Vision & chiffres #}
+<section class="section vision">
+  <span class="forme forme--anneau vision__anneau" aria-hidden="true"></span>
+  <div class="conteneur vision__grille">
+    <div data-reveal>
+      <p class="surtitre surtitre--blanc">Notre vision</p>
+      <h2 class="titre titre--clair">Une jeunesse engagée, responsable <em>et actrice du changement.</em></h2>
+      <p class="texte texte--clair">Nous voulons contribuer à l'émergence d'une génération de jeunes capables de prendre des initiatives, de développer leurs compétences et de participer activement au développement de leur communauté et de leur pays.</p>
+      <a class="btn btn--blanc" href="#">
+        <span>Découvrir UCIV</span>
+        <span class="btn__rond">{% include "partials/_icon.html" with name="arrow-right" %}</span>
+      </a>
+    </div>
+    <div>
+      <dl class="indicateurs">
+        {% for indicateur in indicateurs %}
+          <div data-reveal style="--i: {{ forloop.counter0 }}">
+            <dd{% if not indicateur.valeur %} class="est-en-attente"{% endif %}>{{ indicateur.valeur|default:"à venir" }}</dd>
+            <dt>{{ indicateur.label }}</dt>
+          </div>
+        {% endfor %}
+      </dl>
+      <p class="indicateurs__note">Chiffres en cours de consolidation — publiés dès qu'ils seront vérifiés.</p>
+    </div>
+  </div>
+</section>
+
+{# -------------------------------------------------------- Rejoindre UCIV #}
+<section class="section rejoindre">
+  <div class="conteneur rejoindre__grille">
+    <div data-reveal>
+      <p class="surtitre">Rejoindre UCIV</p>
+      <h2 class="titre titre--xl">Tu veux agir <em>pour le pays ?</em></h2>
+      <p class="texte">Que tu souhaites devenir volontaire, rejoindre un programme, proposer tes compétences ou contribuer à un projet, il existe une place pour ton engagement au sein d'UCIV.</p>
+      <a class="btn btn--vert" href="#">
+        <span>Je veux m'engager</span>
+        <span class="btn__rond">{% include "partials/_icon.html" with name="arrow-right" %}</span>
+      </a>
+    </div>
+    <ul class="facons">
+      {% for facon in facons %}
+        <li data-reveal style="--i: {{ forloop.counter0 }}">
+          <a href="{{ facon.url }}" class="facon">
+            <span class="facon__puce facon__puce--{{ facon.couleur }}" aria-hidden="true"></span>
+            <span class="facon__texte">
+              <strong>{{ facon.titre }}</strong>
+              <span>{{ facon.texte }}</span>
+            </span>
+            <span class="facon__fleche">{% include "partials/_icon.html" with name="arrow-up-right" %}</span>
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+
+{# ------------------------------------------------------------- Fondateur #}
+<section class="fondateur">
+  <div class="conteneur fondateur__grille">
+    <div class="fondateur__portrait" data-reveal="image">
+      <span class="fondateur__arche" aria-hidden="true"></span>
+      <img src="{% static 'images/marshall-kouame.jpg' %}" width="1638" height="2048" loading="lazy"
+           alt="Portrait de Marshall Kouamé, président et fondateur d'UCIV.">
+    </div>
+    <div class="fondateur__texte" data-reveal>
+      <p class="surtitre">L'équipe</p>
+      <h2 class="titre">Une jeunesse qui ne se contente pas d'attendre. <em>Une jeunesse qui agit.</em></h2>
+      <p class="fondateur__nom">
+        <strong>Marshall Kouamé</strong>
+        Président et fondateur d'Une Côte d'Ivoire Volontaire
+      </p>
+      <a class="btn btn--contour" href="#">Découvrir UCIV</a>
+    </div>
+  </div>
+</section>
+
+{# ------------------------------------------------------------ Actualités #}
+<section class="section section--blanc actualites">
+  <div class="conteneur">
+    <div class="entete-section" data-reveal>
+      <div>
+        <p class="surtitre">À la une</p>
+        <h2 class="titre">L'actualité <em>d'UCIV.</em></h2>
+      </div>
+      <a class="lien-fleche" href="#">Toutes les actualités{% include "partials/_icon.html" with name="arrow-right" %}</a>
+    </div>
+
+    <div class="defilement actualites__grille" data-defilement="actualites">
+      <article class="article article--une" data-reveal>
+        <a href="{{ article_une.url }}">
+          <div class="article__image">
+            <img src="{% static article_une.image %}" alt="{{ article_une.image_alt }}" loading="lazy"
+                 style="object-position: {{ article_une.position }}">
+          </div>
+          <div class="article__corps">
+            <p class="article__meta">
+              <span class="etiquette etiquette--{{ article_une.theme }}">{{ article_une.categorie }}</span>
+              <span class="article__info">{{ article_une.meta }}</span>
+            </p>
+            <h3>{{ article_une.titre }}</h3>
+            <p class="article__chapo">{{ article_une.chapo }}</p>
+            <span class="lien-fleche lien-fleche--orange">Lire l'article{% include "partials/_icon.html" with name="arrow-right" %}</span>
+          </div>
+        </a>
+      </article>
+
+      {% for article in articles %}
+        <article class="article" data-reveal style="--i: {{ forloop.counter }}">
+          <a href="{{ article.url }}">
+            <div class="article__image{% if article.detouree %} article__image--detouree{% endif %}">
+              <img src="{% static article.image %}" alt="{{ article.image_alt }}" loading="lazy"
+                   style="object-position: {{ article.position }}">
+            </div>
+            <div class="article__corps">
+              <p class="article__meta">
+                <span class="etiquette etiquette--{{ article.theme }}">{{ article.categorie }}</span>
+                <span class="article__info">{{ article.meta }}</span>
+              </p>
+              <h3>{{ article.titre }}</h3>
+              <span class="lien-fleche lien-fleche--orange">Lire l'article{% include "partials/_icon.html" with name="arrow-right" %}</span>
+            </div>
+          </a>
+        </article>
+      {% endfor %}
+    </div>
+    <div class="defilement-indicateur" data-defilement-points="actualites" aria-hidden="true">
+      <div class="defilement-indicateur__points">
+        <span class="est-actif"></span>{% for article in articles %}<span></span>{% endfor %}
+      </div>
+      <span class="defilement-indicateur__aide">Faire défiler {% include "partials/_icon.html" with name="arrow-right" %}</span>
+    </div>
+  </div>
+</section>
+
+{# ----------------------------------------------------------- Partenaires #}
+<section class="section partenaires">
+  <div class="conteneur partenaires__grille">
+    <div data-reveal>
+      <p class="surtitre">Partenaires</p>
+      <h2 class="titre">Construisons ensemble <em>des opportunités pour la jeunesse.</em></h2>
+      <p class="texte">Nos programmes s'appuient déjà sur des partenaires comme BonixUp, PAIPRO-JEUNES et l'ONG Light for All CI, avec qui nous construisons formations, accompagnement à l'insertion et logistique de terrain.</p>
+      <a class="btn btn--orange" href="#">
+        <span>Devenir partenaire</span>
+        <span class="btn__rond">{% include "partials/_icon.html" with name="arrow-right" %}</span>
+      </a>
+    </div>
+    <ul class="partenaires__cartes">
+      {% for partenaire in partenaires %}
+        <li class="carte-partenaire" data-reveal style="--i: {{ forloop.counter0 }}">
+          <span class="carte-partenaire__apport">{{ partenaire.apport }}</span>
+          <strong>{{ partenaire.nom }}</strong>
+        </li>
+      {% endfor %}
+      <li data-reveal style="--i: 3">
+        <a class="carte-partenaire carte-partenaire--appel" href="#">
+          <span class="carte-partenaire__apport">Institutionnel · technique · financier</span>
+          <strong>Votre organisation&nbsp;? {% include "partials/_icon.html" with name="plus" %}</strong>
+        </a>
+      </li>
+    </ul>
+  </div>
+</section>
+
+{% endblock %}

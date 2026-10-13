@@ -1,0 +1,85 @@
+{% load static %}
+<div class="annonce">
+  <div class="annonce__inner">
+    <strong class="annonce__date">{{ annonce.date }}</strong>
+    <span class="annonce__texte annonce__texte--long">{{ annonce.texte }}</span>
+    <span class="annonce__texte annonce__texte--court">{{ annonce.texte_court }}</span>
+    <a class="annonce__lien" href="{{ annonce.url }}">
+      <span>{{ annonce.lien_label }}</span>
+      {% include "partials/_icon.html" with name="arrow-right" %}
+    </a>
+  </div>
+</div>
+
+<header class="entete" data-entete>
+  <div class="entete__inner">
+    <a class="logo" href="{% url 'pages:home' %}" aria-label="Une Côte d'Ivoire Volontaire — accueil">
+      <span class="logo__marque"><img src="{% static 'images/logo-uciv.png' %}" alt="" width="52" height="55"></span>
+      <span class="logo__nom">Une Côte d'Ivoire <span>Volontaire</span></span>
+    </a>
+
+    <nav class="nav" aria-label="Navigation principale">
+      <ul class="nav__liste">
+        {% for item in navigation %}
+          <li class="nav__item{% if item.enfants %} nav__item--menu{% endif %}">
+            <a class="nav__lien" href="{{ item.url }}"{% if item.enfants %} aria-haspopup="true"{% endif %}>
+              {{ item.label }}
+              {% if item.enfants %}{% include "partials/_icon.html" with name="chevron-down" %}{% endif %}
+            </a>
+            {% if item.enfants %}
+              <ul class="sousmenu">
+                {% for enfant in item.enfants %}
+                  <li><a href="{{ enfant.url }}">{{ enfant.label }}</a></li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    </nav>
+
+    <div class="entete__actions">
+      <a class="rond-bouton entete__recherche" href="#" aria-label="Rechercher">
+        {% include "partials/_icon.html" with name="search" %}
+      </a>
+      <a class="btn btn--vert btn--compact entete__cta" href="#">Je veux m'engager</a>
+      <button class="rond-bouton rond-bouton--vert entete__burger" type="button"
+              aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="menu-mobile" data-menu-ouvrir>
+        {% include "partials/_icon.html" with name="menu" %}
+      </button>
+    </div>
+  </div>
+</header>
+
+{# Menu mobile : panneau qui glisse depuis la droite #}
+<div class="menu-mobile" id="menu-mobile" data-menu hidden>
+  <div class="menu-mobile__voile" data-menu-fermer></div>
+  <div class="menu-mobile__panneau" role="dialog" aria-modal="true" aria-label="Menu">
+    <div class="menu-mobile__haut">
+      <span class="logo__nom">Une Côte d'Ivoire <span>Volontaire</span></span>
+      <button class="rond-bouton" type="button" aria-label="Fermer le menu" data-menu-fermer>
+        {% include "partials/_icon.html" with name="x" %}
+      </button>
+    </div>
+    <nav aria-label="Navigation mobile">
+      <ul class="menu-mobile__liste">
+        {% for item in navigation %}
+          <li style="--i: {{ forloop.counter0 }}">
+            <a class="menu-mobile__lien" href="{{ item.url }}">{{ item.label }}</a>
+            {% if item.enfants %}
+              <ul class="menu-mobile__sous">
+                {% for enfant in item.enfants %}
+                  <li><a href="{{ enfant.url }}">{{ enfant.label }}</a></li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    </nav>
+    <a class="btn btn--vert menu-mobile__cta" href="#">
+      <span>Je veux m'engager</span>
+      <span class="btn__rond">{% include "partials/_icon.html" with name="arrow-right" %}</span>
+    </a>
+  </div>
+</div>

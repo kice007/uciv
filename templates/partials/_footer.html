@@ -1,0 +1,77 @@
+{% load static %}
+<footer class="pied">
+  <div class="conteneur">
+    <div class="pied__accroche" data-reveal>
+      <p class="pied__titre">
+        Une Côte d'Ivoire Volontaire
+        <em>Agir pour le pays.</em>
+      </p>
+      <a class="btn btn--blanc" href="#">
+        <span>Je veux m'engager</span>
+        <span class="btn__rond">{% include "partials/_icon.html" with name="arrow-right" %}</span>
+      </a>
+    </div>
+
+    <div class="pied__colonnes">
+      <div class="pied__uciv">
+        <div class="pied__logo">
+          <span class="logo__marque"><img src="{% static 'images/logo-uciv.png' %}" alt="" width="58" height="61" loading="lazy"></span>
+          <span>UCIV</span>
+        </div>
+        <p>Mobiliser la jeunesse, développer les compétences et créer de l'impact par le volontariat et l'engagement citoyen.</p>
+        <ul class="pied__contact">
+          <li>
+            {% include "partials/_icon.html" with name="phone" %}
+            <span>
+              {% for tel in coordonnees.telephones %}<a href="{{ tel.href }}">{{ tel.label }}</a>{% if not forloop.last %} / {% endif %}{% endfor %}
+            </span>
+          </li>
+          <li>
+            {% include "partials/_icon.html" with name="mail" %}
+            <a href="mailto:{{ coordonnees.email }}">{{ coordonnees.email }}</a>
+          </li>
+          <li>
+            {% include "partials/_icon.html" with name="map-pin" %}
+            <span>{{ coordonnees.adresse }}</span>
+          </li>
+        </ul>
+      </div>
+
+      {% for colonne in pied_colonnes %}
+        <nav class="pied__liens" aria-label="{{ colonne.titre }}">
+          <h2>{{ colonne.titre }}</h2>
+          <ul>
+            {% for lien in colonne.liens %}
+              <li><a href="{{ lien.url }}">{{ lien.label }}</a></li>
+            {% endfor %}
+          </ul>
+        </nav>
+      {% endfor %}
+
+      <div class="lettre">
+        <h2>Recevez les actualités d'UCIV</h2>
+        {# Formulaire pas encore branché : l'inscription sera traitée par une vue Django plus tard. #}
+        <form class="lettre__form" action="#" method="post" data-form-provisoire>
+          <label class="visuellement-masque" for="lettre-email">Votre adresse e-mail</label>
+          <input id="lettre-email" type="email" name="email" placeholder="Votre adresse e-mail" autocomplete="email" required>
+          <button type="submit">S'inscrire</button>
+        </form>
+        <p>Désinscription possible à tout moment.</p>
+      </div>
+    </div>
+
+    <div class="pied__bas">
+      <p>© {% now "Y" %} Une Côte d'Ivoire Volontaire (UCIV)</p>
+      <ul class="pied__reseaux">
+        {% for reseau in reseaux %}
+          <li><a href="{{ reseau.url }}" target="_blank" rel="noopener">{{ reseau.label }}</a></li>
+        {% endfor %}
+      </ul>
+      <ul class="pied__mentions">
+        {% for mention in mentions %}
+          <li><a href="{{ mention.url }}">{{ mention.label }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</footer>
