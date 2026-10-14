@@ -12,6 +12,7 @@ Les liens marqués '#' pointent vers des pages qui n'existent pas encore.
 from django.urls import reverse_lazy
 
 URL_LEADERSHIP = reverse_lazy('app:uciv_leadership')
+URL_QUI = reverse_lazy('app:qui_sommes_nous')
 
 # --- Éléments communs à toutes les pages ----------------------------------
 
@@ -24,7 +25,7 @@ ANNONCE = {
 }
 
 NAVIGATION = [
-    {'label': 'Qui sommes-nous ?', 'url': '#', 'enfants': []},
+    {'label': 'Qui sommes-nous ?', 'url': URL_QUI, 'enfants': []},
     {
         'label': 'Nos programmes',
         'url': '#',
@@ -69,7 +70,7 @@ PIED_COLONNES = [
     {
         'titre': 'Nous connaître',
         'liens': [
-            {'label': 'Qui sommes-nous ?', 'url': '#'},
+            {'label': 'Qui sommes-nous ?', 'url': URL_QUI},
             {'label': 'Notre impact', 'url': '#'},
             {'label': 'Nos partenaires', 'url': '#'},
             {'label': 'Actualités', 'url': '#'},
@@ -341,4 +342,60 @@ LEADERSHIP = {
     'theme': "« S'engager aujourd'hui",
     'theme_suite': 'pour transformer demain. »',
     'lancement_infos': ['Octobre 2026', 'American Corner', 'Date et heure à confirmer'],
+}
+
+# --- Page Qui sommes-nous ? -------------------------------------------------
+
+QUI_SOMMES_NOUS = {
+    'hero_titre': "Une jeunesse qui ne se contente pas d'attendre.",
+    'hero_suite': 'Une jeunesse qui agit.',
+    'hero_chapo': "UCIV est une initiative citoyenne qui mobilise la jeunesse autour "
+                  "du volontariat, du bénévolat et de l'engagement citoyen.",
+    'ambition': "Faire du volontariat un véritable espace de développement personnel, "
+                "professionnel et citoyen :",
+    'ambition_suite': "un lieu où l'on apprend en agissant, pas seulement en écoutant.",
+    'ambition_texte': "À travers ses programmes, ses projets et ses activités, UCIV "
+                      "crée des espaces permettant aux jeunes de s'engager, "
+                      "d'apprendre, de développer leurs compétences, de prendre des "
+                      "responsabilités et de contribuer à des actions concrètes.",
+    'ambition_mots': ['Volontariat', 'Bénévolat', 'Engagement citoyen'],
+    'vision': 'Former une génération de jeunes engagés, responsables',
+    'vision_suite': 'et acteurs du changement.',
+    'vision_texte': "Nous croyons qu'une jeunesse qui développe ses compétences, prend "
+                    "des initiatives et s'engage dans sa communauté est mieux préparée "
+                    "à contribuer au développement de la Côte d'Ivoire.",
+    'mission': "Mobiliser les jeunes autour du volontariat et de l'engagement pour "
+               "développer leurs compétences et contribuer à leur employabilité.",
+    'mission_liste': [
+        'le volontariat et le bénévolat',
+        'les formations',
+        'les programmes de développement des compétences',
+        'le leadership',
+        'les projets citoyens',
+        'la mobilisation communautaire',
+        "les initiatives en faveur de l'employabilité",
+    ],
+    'valeurs_intro': "Six repères qui guident nos programmes, nos projets et la "
+                     "manière dont nous travaillons ensemble.",
+    'valeurs': [
+        {'titre': 'Engagement',
+         'texte': "Nous encourageons chacun à passer de l'intention à l'action."},
+        {'titre': 'Responsabilité',
+         'texte': "S'engager, c'est accepter de prendre sa part dans les actions "
+                  "auxquelles on participe, jusqu'au bout."},
+        {'titre': 'Solidarité',
+         'texte': "Nous croyons à la force du collectif et à la capacité des "
+                  "individus à agir ensemble."},
+        {'titre': 'Apprentissage',
+         'texte': "Chaque expérience, réussie ou ratée, est une occasion de "
+                  "développer une nouvelle compétence."},
+        {'titre': 'Innovation',
+         'texte': "Nous encourageons les idées nouvelles et les initiatives "
+                  "capables de répondre aux défis réels de notre société."},
+        {'titre': 'Impact',
+         'texte': "Notre engagement doit se traduire par des actions utiles et des "
+                  "changements concrets."},
+    ],
+    'citation': 'Chaque engagement peut devenir une expérience.',
+    'citation_suite': 'Chaque expérience peut devenir une compétence.',
 }

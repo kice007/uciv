@@ -1,0 +1,126 @@
+{% extends "app/base/base.html" %}
+{% load static %}
+
+{% block title %}Qui sommes-nous ? — Une Côte d'Ivoire Volontaire{% endblock %}
+{% block description %}UCIV est une initiative citoyenne qui mobilise la jeunesse autour du volontariat, du bénévolat et de l'engagement citoyen : notre ambition, notre vision, notre mission et nos valeurs.{% endblock %}
+
+{% block content %}
+
+{# ---------------------------------------------------------------- Hero #}
+<section class="qs-hero">
+  <div class="conteneur qs-hero__grille">
+    <div class="qs-hero__texte">
+      <nav class="fil fil--clair" aria-label="Fil d'Ariane">
+        <ol>
+          <li><a href="{% url 'app:home' %}">Accueil</a></li>
+          <li aria-current="page"><strong>Qui sommes-nous ?</strong></li>
+        </ol>
+      </nav>
+      <p class="surtitre surtitre--blanc hero__entree" style="--i: 0">Une Côte d'Ivoire Volontaire</p>
+      <h1 class="qs-hero__titre hero__entree" style="--i: 1">
+        {{ qui.hero_titre }} <em>{{ qui.hero_suite }}</em>
+      </h1>
+      <p class="qs-hero__chapo hero__entree" style="--i: 2">{{ qui.hero_chapo }}</p>
+    </div>
+    <div class="qs-hero__visuel">
+      <span class="forme forme--anneau qs-hero__anneau" aria-hidden="true"></span>
+      <img class="qs-hero__photo" src="{% static 'app/assets/img/groupe-nb.png' %}" width="1374" height="1145"
+           alt="Quatre jeunes leaders souriants, en tenue professionnelle." fetchpriority="high">
+    </div>
+  </div>
+</section>
+
+{# -------------------------------------------------------------- Ambition #}
+<section class="section qs-ambition">
+  <div class="conteneur qs-ambition__grille">
+    <div data-reveal>
+      <p class="surtitre">Notre ambition</p>
+      <h2 class="qs-ambition__titre">{{ qui.ambition }} <em>{{ qui.ambition_suite }}</em></h2>
+    </div>
+    <div data-reveal>
+      <p class="texte">{{ qui.ambition_texte }}</p>
+      <ul class="qs-chips">
+        {% for mot in qui.ambition_mots %}<li>{{ mot }}</li>{% endfor %}
+      </ul>
+    </div>
+  </div>
+</section>
+
+{# ------------------------------------------------------ Vision & mission #}
+<section class="section section--blanc qs-vm">
+  <div class="conteneur qs-vm__grille">
+    <article class="qs-vision" data-reveal>
+      <p class="surtitre surtitre--jaune">Notre vision</p>
+      <h2>{{ qui.vision }} <em>{{ qui.vision_suite }}</em></h2>
+      <p>{{ qui.vision_texte }}</p>
+    </article>
+    <article class="qs-mission" data-reveal style="--i: 1">
+      <p class="surtitre">Notre mission</p>
+      <h2>{{ qui.mission }}</h2>
+      <p class="qs-mission__intro">UCIV agit notamment à travers</p>
+      <ul class="qs-mission__liste">
+        {% for ligne in qui.mission_liste %}
+          <li>
+            <span class="qs-mission__coche">{% include "app/includes/_icon.html" with name="check" %}</span>
+            <span>{{ ligne }}</span>
+          </li>
+        {% endfor %}
+      </ul>
+    </article>
+  </div>
+</section>
+
+{# --------------------------------------------------------------- Valeurs #}
+<section class="section qs-valeurs">
+  <div class="conteneur">
+    <div class="entete-section" data-reveal>
+      <div>
+        <p class="surtitre">Ce qui nous rassemble</p>
+        <h2 class="titre titre--56">Nos valeurs, <em>en six mots.</em></h2>
+      </div>
+      <p class="texte">{{ qui.valeurs_intro }}</p>
+    </div>
+    <ol class="qs-valeurs__liste">
+      {% for valeur in qui.valeurs %}
+        <li class="qs-valeur{% if forloop.counter|divisibleby:2 %} qs-valeur--vert{% endif %}" data-reveal style="--i: {{ forloop.counter0 }}">
+          <span class="qs-valeur__num">0{{ forloop.counter }}</span>
+          <h3>{{ valeur.titre }}</h3>
+          <p>{{ valeur.texte }}</p>
+        </li>
+      {% endfor %}
+    </ol>
+  </div>
+</section>
+
+{# -------------------------------------------------------------- Citation #}
+<section class="qs-citation">
+  <div class="conteneur qs-citation__cadre" data-reveal>
+    <p class="qs-citation__texte">{{ qui.citation }} <em>{{ qui.citation_suite }}</em></p>
+    <a class="btn btn--blanc" href="#">
+      <span>Je veux m'engager</span>
+      <span class="btn__rond">{% include "app/includes/_icon.html" with name="arrow-right" %}</span>
+    </a>
+  </div>
+</section>
+
+{# ------------------------------------------------------------- Fondateur #}
+<section class="fondateur">
+  <div class="conteneur fondateur__grille">
+    <div class="fondateur__portrait" data-reveal="image">
+      <span class="fondateur__arche" aria-hidden="true"></span>
+      <img src="{% static 'app/assets/img/marshall-kouame.jpg' %}" width="1638" height="2048" loading="lazy"
+           alt="Portrait de Marshall Kouamé, président et fondateur d'UCIV.">
+    </div>
+    <div class="fondateur__texte" data-reveal>
+      <p class="surtitre">L'équipe</p>
+      <h2 class="titre titre--48">Une jeunesse qui ne se contente pas d'attendre. <em>Une jeunesse qui agit.</em></h2>
+      <p class="fondateur__nom">
+        <strong>Marshall Kouamé</strong>
+        Président et fondateur d'Une Côte d'Ivoire Volontaire
+      </p>
+      <a class="btn btn--contour" href="#">Découvrir UCIV</a>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

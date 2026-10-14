@@ -28,3 +28,8 @@ def home(request):
 def uciv_leadership(request):
     """Page du programme UCIV Leadership."""
     return render(request, 'app/layout/uciv_leadership.html', {'leadership': content.LEADERSHIP})
+
+
+def qui_sommes_nous(request):
+    """Page « Qui sommes-nous ? »."""
+    return render(request, 'app/layout/qui_sommes_nous.html', {'qui': content.QUI_SOMMES_NOUS})

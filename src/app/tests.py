@@ -33,3 +33,21 @@ class UcivLeadershipPageTests(TestCase):
     def test_home_links_to_leadership(self):
         response = self.client.get(reverse('app:home'))
         self.assertContains(response, reverse('app:uciv_leadership'))
+
+class QuiSommesNousPageTests(TestCase):
+    def test_page_renders(self):
+        response = self.client.get(reverse('app:qui_sommes_nous'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'app/layout/qui_sommes_nous.html')
+
+    def test_page_shows_key_content(self):
+        response = self.client.get(reverse('app:qui_sommes_nous'))
+        self.assertContains(response, 'Notre ambition')
+        self.assertContains(response, 'Former une génération de jeunes engagés')
+        self.assertContains(response, 'en six mots')
+        self.assertContains(response, 'Solidarité')
+        self.assertContains(response, 'Marshall Kouamé')
+
+    def test_home_links_to_page(self):
+        response = self.client.get(reverse('app:home'))
+        self.assertContains(response, reverse('app:qui_sommes_nous'))
