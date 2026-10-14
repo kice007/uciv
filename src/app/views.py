@@ -1,5 +1,5 @@
 """
-Vues de l'application `pages`.
+Vues de l'application `app`.
 
 Une vue reçoit la requête du navigateur, prépare les données (le « contexte »)
 et les envoie à un gabarit HTML qui produit la page.
@@ -22,4 +22,4 @@ def home(request):
         'articles': content.AUTRES_ARTICLES,
         'partenaires': content.PARTENAIRES,
     }
-    return render(request, 'pages/home.html', context)
+    return render(request, 'app/layout/index.html', context)

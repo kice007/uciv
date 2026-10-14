@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "app/base/base.html" %}
 {% load static %}
 
 {% block content %}
@@ -20,7 +20,7 @@
       <div class="hero__cta hero__entree" style="--i: 3">
         <a class="btn btn--blanc" href="#">
           <span>Je veux m'engager</span>
-          <span class="btn__rond">{% include "partials/_icon.html" with name="arrow-right" %}</span>
+          <span class="btn__rond">{% include "app/includes/_icon.html" with name="arrow-right" %}</span>
         </a>
         <a class="btn btn--contour-blanc" href="#pourquoi">Découvrir UCIV</a>
       </div>
@@ -28,7 +28,7 @@
 
     <ul class="hero__parcours hero__entree" style="--i: 4" aria-label="Le parcours UCIV">
       {% for etape in parcours %}
-        <li>{{ etape }}{% if not forloop.last %}{% include "partials/_icon.html" with name="arrow-right" %}{% endif %}</li>
+        <li>{{ etape }}{% if not forloop.last %}{% include "app/includes/_icon.html" with name="arrow-right" %}{% endif %}</li>
       {% endfor %}
     </ul>
 
@@ -37,7 +37,7 @@
       <span class="forme forme--anneau hero__anneau-jaune" aria-hidden="true"></span>
       <p class="manuscrit hero__signature" aria-hidden="true">Agir pour le pays !</p>
       <div class="hero__photo">
-        <img src="{% static 'images/groupe-couleur.png' %}" width="1486" height="1059"
+        <img src="{% static 'app/assets/img/groupe-couleur.png' %}" width="1486" height="1059"
              alt="Quatre jeunes volontaires souriants et enthousiastes." fetchpriority="high">
       </div>
     </div>
@@ -69,7 +69,7 @@
 <section class="section section--blanc conviction">
   <div class="conteneur conviction__grille">
     <div class="conviction__visuel" data-reveal="image">
-      <img src="{% static 'images/volontaires-terrain.jpg' %}" width="928" height="1136" loading="lazy"
+      <img src="{% static 'app/assets/img/volontaires-terrain.jpg' %}" width="928" height="1136" loading="lazy"
            alt="De jeunes volontaires en tee-shirt orange lors d'une action de terrain.">
       <span class="pastille">Apprendre en agissant</span>
     </div>
@@ -108,7 +108,7 @@
       {% for domaine in domaines %}
         <li class="domaine" data-reveal style="--i: {{ forloop.counter0 }}">
           <div class="domaine__haut">
-            <span class="picto picto--{{ domaine.couleur }}">{% include "partials/_icon.html" with name=domaine.icone %}</span>
+            <span class="picto picto--{{ domaine.couleur }}">{% include "app/includes/_icon.html" with name=domaine.icone %}</span>
             <span class="domaine__num" aria-hidden="true">0{{ forloop.counter }}</span>
           </div>
           <h3>{{ domaine.titre }}</h3>
@@ -141,7 +141,7 @@
               <span class="etiquette">{{ programme.etiquette }}</span>
               <h3>{{ programme.titre }}</h3>
               <p>{{ programme.texte }}</p>
-              <span class="lien-fleche">{{ programme.lien_label }}{% include "partials/_icon.html" with name="arrow-right" %}</span>
+              <span class="lien-fleche">{{ programme.lien_label }}{% include "app/includes/_icon.html" with name="arrow-right" %}</span>
             </div>
           </a>
         </li>
@@ -151,7 +151,7 @@
       <div class="defilement-indicateur__points">
         {% for programme in programmes %}<span{% if forloop.first %} class="est-actif"{% endif %}></span>{% endfor %}
       </div>
-      <span class="defilement-indicateur__aide">Faire défiler {% include "partials/_icon.html" with name="arrow-right" %}</span>
+      <span class="defilement-indicateur__aide">Faire défiler {% include "app/includes/_icon.html" with name="arrow-right" %}</span>
     </div>
   </div>
 </section>
@@ -166,7 +166,7 @@
       <p class="texte texte--clair">Nous voulons contribuer à l'émergence d'une génération de jeunes capables de prendre des initiatives, de développer leurs compétences et de participer activement au développement de leur communauté et de leur pays.</p>
       <a class="btn btn--blanc" href="#">
         <span>Découvrir UCIV</span>
-        <span class="btn__rond">{% include "partials/_icon.html" with name="arrow-right" %}</span>
+        <span class="btn__rond">{% include "app/includes/_icon.html" with name="arrow-right" %}</span>
       </a>
     </div>
     <div>
@@ -192,7 +192,7 @@
       <p class="texte">Que tu souhaites devenir volontaire, rejoindre un programme, proposer tes compétences ou contribuer à un projet, il existe une place pour ton engagement au sein d'UCIV.</p>
       <a class="btn btn--vert" href="#">
         <span>Je veux m'engager</span>
-        <span class="btn__rond">{% include "partials/_icon.html" with name="arrow-right" %}</span>
+        <span class="btn__rond">{% include "app/includes/_icon.html" with name="arrow-right" %}</span>
       </a>
     </div>
     <ul class="facons">
@@ -204,7 +204,7 @@
               <strong>{{ facon.titre }}</strong>
               <span>{{ facon.texte }}</span>
             </span>
-            <span class="facon__fleche">{% include "partials/_icon.html" with name="arrow-up-right" %}</span>
+            <span class="facon__fleche">{% include "app/includes/_icon.html" with name="arrow-up-right" %}</span>
           </a>
         </li>
       {% endfor %}
@@ -217,7 +217,7 @@
   <div class="conteneur fondateur__grille">
     <div class="fondateur__portrait" data-reveal="image">
       <span class="fondateur__arche" aria-hidden="true"></span>
-      <img src="{% static 'images/marshall-kouame.jpg' %}" width="1638" height="2048" loading="lazy"
+      <img src="{% static 'app/assets/img/marshall-kouame.jpg' %}" width="1638" height="2048" loading="lazy"
            alt="Portrait de Marshall Kouamé, président et fondateur d'UCIV.">
     </div>
     <div class="fondateur__texte" data-reveal>
@@ -240,7 +240,7 @@
         <p class="surtitre">À la une</p>
         <h2 class="titre">L'actualité <em>d'UCIV.</em></h2>
       </div>
-      <a class="lien-fleche" href="#">Toutes les actualités{% include "partials/_icon.html" with name="arrow-right" %}</a>
+      <a class="lien-fleche" href="#">Toutes les actualités{% include "app/includes/_icon.html" with name="arrow-right" %}</a>
     </div>
 
     <div class="defilement actualites__grille" data-defilement="actualites">
@@ -257,7 +257,7 @@
             </p>
             <h3>{{ article_une.titre }}</h3>
             <p class="article__chapo">{{ article_une.chapo }}</p>
-            <span class="lien-fleche lien-fleche--orange">Lire l'article{% include "partials/_icon.html" with name="arrow-right" %}</span>
+            <span class="lien-fleche lien-fleche--orange">Lire l'article{% include "app/includes/_icon.html" with name="arrow-right" %}</span>
           </div>
         </a>
       </article>
@@ -275,7 +275,7 @@
                 <span class="article__info">{{ article.meta }}</span>
               </p>
               <h3>{{ article.titre }}</h3>
-              <span class="lien-fleche lien-fleche--orange">Lire l'article{% include "partials/_icon.html" with name="arrow-right" %}</span>
+              <span class="lien-fleche lien-fleche--orange">Lire l'article{% include "app/includes/_icon.html" with name="arrow-right" %}</span>
             </div>
           </a>
         </article>
@@ -285,7 +285,7 @@
       <div class="defilement-indicateur__points">
         <span class="est-actif"></span>{% for article in articles %}<span></span>{% endfor %}
       </div>
-      <span class="defilement-indicateur__aide">Faire défiler {% include "partials/_icon.html" with name="arrow-right" %}</span>
+      <span class="defilement-indicateur__aide">Faire défiler {% include "app/includes/_icon.html" with name="arrow-right" %}</span>
     </div>
   </div>
 </section>
@@ -299,7 +299,7 @@
       <p class="texte">Nos programmes s'appuient déjà sur des partenaires comme BonixUp, PAIPRO-JEUNES et l'ONG Light for All CI, avec qui nous construisons formations, accompagnement à l'insertion et logistique de terrain.</p>
       <a class="btn btn--orange" href="#">
         <span>Devenir partenaire</span>
-        <span class="btn__rond">{% include "partials/_icon.html" with name="arrow-right" %}</span>
+        <span class="btn__rond">{% include "app/includes/_icon.html" with name="arrow-right" %}</span>
       </a>
     </div>
     <ul class="partenaires__cartes">
@@ -312,7 +312,7 @@
       <li data-reveal style="--i: 3">
         <a class="carte-partenaire carte-partenaire--appel" href="#">
           <span class="carte-partenaire__apport">Institutionnel · technique · financier</span>
-          <strong>Votre organisation&nbsp;? {% include "partials/_icon.html" with name="plus" %}</strong>
+          <strong>Votre organisation&nbsp;? {% include "app/includes/_icon.html" with name="plus" %}</strong>
         </a>
       </li>
     </ul>

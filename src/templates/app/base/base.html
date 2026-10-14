@@ -6,13 +6,13 @@
   <title>{% block title %}Une Côte d'Ivoire Volontaire — Agir pour le pays{% endblock %}</title>
   <meta name="description" content="{% block description %}Mobiliser la jeunesse, développer les compétences et créer des opportunités par le volontariat et l'engagement citoyen.{% endblock %}">
   <meta name="theme-color" content="#E17F1C">
-  <link rel="icon" href="{% static 'images/logo-uciv.png' %}">
+  <link rel="icon" href="{% static 'app/assets/img/logo-uciv.png' %}">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Caveat:wght@700&family=Instrument+Serif:ital@1&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="{% static 'css/main.css' %}">
+  <link rel="stylesheet" href="{% static 'app/assets/css/main.css' %}">
   {# Signale au CSS que JavaScript est actif : les animations d'apparition ne masquent le contenu que dans ce cas. #}
   <script>document.documentElement.classList.add('js');</script>
   {% block head %}{% endblock %}
@@ -20,16 +20,16 @@
 <body>
   <a class="skip-link" href="#contenu">Aller au contenu</a>
 
-  {% include "partials/_icons.html" %}
-  {% include "partials/_header.html" %}
+  {% include "app/includes/_icons.html" %}
+  {% include "app/includes/_header.html" %}
 
   <main id="contenu">
     {% block content %}{% endblock %}
   </main>
 
-  {% include "partials/_footer.html" %}
+  {% include "app/includes/_footer.html" %}
 
-  <script src="{% static 'js/main.js' %}" defer></script>
+  <script src="{% static 'app/assets/js/main.js' %}" defer></script>
   {% block scripts %}{% endblock %}
 </body>
 </html>

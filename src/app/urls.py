@@ -1,9 +1,9 @@
-"""URL de l'application `pages` (les pages publiques du site)."""
+"""URL de l'application `app` (les pages publiques du site)."""
 from django.urls import path
 
 from . import views
 
-app_name = 'pages'
+app_name = 'app'
 
 urlpatterns = [
     path('', views.home, name='home'),

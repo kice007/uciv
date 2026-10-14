@@ -4,12 +4,12 @@ from django.urls import reverse
 
 class HomePageTests(TestCase):
     def test_home_renders(self):
-        response = self.client.get(reverse('pages:home'))
+        response = self.client.get(reverse('app:home'))
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'pages/home.html')
+        self.assertTemplateUsed(response, 'app/layout/index.html')
 
     def test_home_shows_key_content(self):
-        response = self.client.get(reverse('pages:home'))
+        response = self.client.get(reverse('app:home'))
         self.assertContains(response, "Une Côte d'Ivoire")
         self.assertContains(response, 'Les Go du Digital')
         self.assertContains(response, 'UCIV Leadership')

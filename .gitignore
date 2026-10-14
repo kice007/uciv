@@ -1,34 +1,20 @@
-# Environnement virtuel Python
-.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.env
+.env
 venv/
 env/
-
-# Fichiers compilés par Python
-__pycache__/
-*.py[cod]
-
-# Base de données locale
+.venv/
 db.sqlite3
-db.sqlite3-journal
-
-# Fichiers générés par Django
-staticfiles/
-media/
-*.log
-
-# Secrets et réglages locaux
-.env
-.env.*
-!.env.example
-
-# Tests et couverture
-.coverage
-htmlcov/
-.pytest_cache/
-
-# Éditeurs et système
-.vscode/
-.idea/
+*.sqlite3
+*.db
+static_cdn/
+media_cdn/
+dist/
+build/
+*.egg-info/
 .DS_Store
-Thumbs.db
-desktop.ini
+.idea/
+.vscode/
