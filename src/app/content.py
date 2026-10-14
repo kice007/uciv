@@ -9,6 +9,10 @@ modèles Django et l'interface d'administration.
 Les liens marqués '#' pointent vers des pages qui n'existent pas encore.
 """
 
+from django.urls import reverse_lazy
+
+URL_LEADERSHIP = reverse_lazy('app:uciv_leadership')
+
 # --- Éléments communs à toutes les pages ----------------------------------
 
 ANNONCE = {
@@ -16,7 +20,7 @@ ANNONCE = {
     'texte': "Lancement d'UCIV Leadership : conférence au format TEDx à l'American Corner.",
     'texte_court': "Lancement d'UCIV Leadership",
     'lien_label': 'Rejoindre UCIV Leadership',
-    'url': '#',
+    'url': URL_LEADERSHIP,
 }
 
 NAVIGATION = [
@@ -26,7 +30,7 @@ NAVIGATION = [
         'url': '#',
         'enfants': [
             {'label': 'Les Go du Digital', 'url': '#'},
-            {'label': 'UCIV Leadership', 'url': '#'},
+            {'label': 'UCIV Leadership', 'url': URL_LEADERSHIP},
             {'label': 'Experience Lab', 'url': '#'},
         ],
     },
@@ -35,7 +39,7 @@ NAVIGATION = [
         'url': '#',
         'enfants': [
             {'label': 'Devenir volontaire', 'url': '#'},
-            {'label': 'Rejoindre UCIV Leadership', 'url': '#'},
+            {'label': 'Rejoindre UCIV Leadership', 'url': URL_LEADERSHIP},
             {'label': 'Proposer mes compétences', 'url': '#'},
         ],
     },
@@ -58,7 +62,7 @@ PIED_COLONNES = [
         'titre': 'Nos programmes',
         'liens': [
             {'label': 'Les Go du Digital', 'url': '#'},
-            {'label': 'UCIV Leadership', 'url': '#'},
+            {'label': 'UCIV Leadership', 'url': URL_LEADERSHIP},
             {'label': 'Experience Lab', 'url': '#'},
         ],
     },
@@ -166,7 +170,7 @@ PROGRAMMES = [
         'texte': "Formations par des spécialistes, mentorat, conférences et un réseau "
                  "d'opportunités partagées entre membres.",
         'lien_label': 'Rejoindre UCIV Leadership',
-        'url': '#',
+        'url': URL_LEADERSHIP,
         'image': 'app/assets/img/groupe-nb.png',
         'image_alt': 'Quatre jeunes leaders souriants, en tenue professionnelle.',
         'detouree': True,
@@ -273,3 +277,68 @@ PARTENAIRES = [
     {'nom': 'PAIPRO-JEUNES', 'apport': 'Insertion professionnelle'},
     {'nom': 'ONG Light for All CI', 'apport': 'Logistique de terrain'},
 ]
+
+
+# --- Page UCIV Leadership ---------------------------------------------------
+
+LEADERSHIP = {
+    'chapo': "UCIV Leadership est le réseau des leaders et futurs leaders d'Une Côte "
+             "d'Ivoire Volontaire : un cadre où des jeunes triés sur le volet se "
+             "forment, se connectent et passent à l'action ensemble.",
+    'reperes': [
+        {'label': 'Cohorte pionnière', 'valeur': '30 à 50 membres'},
+        {'label': 'Sélection', 'valeur': 'Pitch vidéo, puis entretien collectif'},
+        {'label': 'Lancement', 'valeur': 'Octobre 2026 · American Corner'},
+    ],
+    'vision': "Faire émerger une génération de jeunes capables de prendre des "
+              "initiatives, d'assumer des responsabilités",
+    'vision_suite': "et de contribuer à la transformation de leur communauté et de "
+                    "leur pays.",
+    'mission_intro': "Créer un environnement où les jeunes développent leur "
+                     "leadership à travers :",
+    'mission': [
+        'la formation par des spécialistes de plusieurs domaines',
+        'le mentorat, notamment en format « shadowing »',
+        "les échanges et le partage d'expériences",
+        'les projets à fort impact portés dans les universités',
+        "l'engagement citoyen",
+        "l'action collective",
+    ],
+    'reseau_intro': "Le réseau est mixte, sélectif et exigeant. Un système de points "
+                    "d'engagement suit la contribution de chaque membre et conditionne "
+                    "son maintien.",
+    'etapes': [
+        {'titre': 'Pitch vidéo',
+         'texte': "Les candidats sont d'abord recrutés sur pitch vidéo."},
+        {'titre': 'Entretien collectif',
+         'texte': 'Deuxième étape de la sélection, en groupe.'},
+        {'titre': 'Membre Aspirant',
+         'texte': "Les nouveaux arrivants passent d'abord par une période d'essai."},
+        {'titre': 'Membre du réseau',
+         'texte': "Les points d'engagement conditionnent le maintien dans le réseau."},
+    ],
+    'pourquoi_titre': "Le leadership ne commence pas nécessairement avec un titre.",
+    'pourquoi_suite': "Il commence avec la capacité à prendre des initiatives, servir, "
+                      "proposer des solutions et agir.",
+    'pourquoi_texte': "Rejoindre UCIV Leadership, c'est intégrer un réseau sélectif où "
+                      "chaque membre apporte sa contribution, et où les bonnes "
+                      "opportunités circulent en priorité entre membres.",
+    'avantages': ['Emploi', 'Financement', 'Formations'],
+    'principes': [
+        {'titre': 'Leadership',
+         'texte': 'Développer sa capacité à influencer positivement et à prendre des '
+                  'responsabilités.'},
+        {'titre': 'Responsabilité',
+         'texte': 'Assumer son rôle et respecter ses engagements envers le groupe.'},
+        {'titre': 'Volontariat',
+         'texte': "Mettre ses compétences et son énergie au service d'une cause."},
+        {'titre': 'Innovation',
+         'texte': 'Oser proposer de nouvelles solutions, y compris à travers des '
+                  'hackathons sociaux inter-universités.'},
+        {'titre': 'Impact social',
+         'texte': 'Transformer les idées en actions utiles et mesurables.'},
+    ],
+    'theme': "« S'engager aujourd'hui",
+    'theme_suite': 'pour transformer demain. »',
+    'lancement_infos': ['Octobre 2026', 'American Corner', 'Date et heure à confirmer'],
+}

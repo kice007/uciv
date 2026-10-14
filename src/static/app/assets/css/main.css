@@ -128,6 +128,10 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .titre--clair { color: var(--blanc); }
 .titre--clair em { color: var(--jaune); }
 .titre--xl { font-size: clamp(40px, 5.6vw, 76px); }
+/* Titres de section plus petits que le .titre standard (56 px), selon la maquette */
+.titre--52 { font-size: clamp(32px, 3.9vw, 52px); }
+.titre--48 { font-size: clamp(30px, 3.6vw, 48px); }
+.titre--46 { font-size: clamp(28px, 3.45vw, 46px); }
 
 .texte { color: var(--texte); font-size: 17px; line-height: 1.65; max-width: 62ch; }
 .texte--clair { color: rgba(255, 255, 255, .92); }
@@ -415,7 +419,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
 /* 5. Sections de la page d'accueil ----------------------------------------- */
 
 /* Hero
-   Valeurs reprises de la maquette. Sur ordinateur, le hero mesure 780 px de haut et ses
+   Valeurs reprises de la maquette. Sur ordinateur, le hero mesure 680 px de haut (maquette : 780 px, réduit de 13 %) et ses
    éléments sont placés aux coordonnées du cadre de 1440 px de la maquette. */
 .hero { position: relative; overflow: hidden; background: var(--orange); color: var(--blanc); }
 .hero__cadre {
@@ -427,7 +431,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .hero .surtitre { margin: 0; }
 .hero__titre {
   font-family: var(--f-titre); font-weight: 800;
-  font-size: 52px; line-height: .96; letter-spacing: -1.3px;
+  font-size: 46px; line-height: .96; letter-spacing: -1.3px;
 }
 .hero__titre em { color: var(--jaune); font-size: 1em; line-height: .98; letter-spacing: -1.3px; }
 .hero__chapo { font-size: 17px; line-height: 1.55; color: rgba(255, 255, 255, .94); }
@@ -447,23 +451,23 @@ button { font: inherit; color: inherit; cursor: pointer; }
 
 @media (min-width: 720px) {
   .hero__cadre { padding-inline: var(--marge); }
-  .hero__titre, .hero__titre em { font-size: 72px; letter-spacing: -2px; }
-  .hero__chapo { font-size: 19px; max-width: 520px; }
+  .hero__titre, .hero__titre em { font-size: 62px; letter-spacing: -2px; }
+  .hero__chapo { font-size: 18px; max-width: 500px; }
   .hero__cta { flex-direction: row; align-items: center; }
   .hero__signature { font-size: 30px; line-height: 36px; }
   .hero__photo { aspect-ratio: 1486 / 1059; max-width: 680px; margin-inline: 0; }
 }
 
 @media (min-width: 1100px) {
-  .hero__cadre { display: block; height: 780px; padding: 0; }
+  .hero__cadre { display: block; height: 680px; padding: 0; }
 
-  .hero__texte { position: absolute; left: 72px; top: 104px; width: 620px; }
-  .hero__titre { font-size: 96px; letter-spacing: -3px; }
-  .hero__titre em { font-size: 108px; letter-spacing: -1px; }
-  .hero__chapo { width: 520px; max-width: none; }
+  .hero__texte { position: absolute; left: 72px; top: 76px; width: 620px; }
+  .hero__titre { font-size: 80px; letter-spacing: -2.5px; }
+  .hero__titre em { font-size: 90px; letter-spacing: -1px; }
+  .hero__chapo { width: 480px; max-width: none; font-size: 18px; }
 
   .hero__parcours {
-    position: absolute; left: 72px; top: 712px;
+    position: absolute; left: 72px; top: 630px;
     display: flex; align-items: center; gap: 14px;
     font-size: 13px; font-weight: 700; line-height: 16px; letter-spacing: 1.6px; text-transform: uppercase;
   }
@@ -473,10 +477,10 @@ button { font: inherit; color: inherit; cursor: pointer; }
   /* Bloc visuel : repère de 790 x 780 px collé en bas à droite (x = 650 à 1440 sur la maquette).
      --k le réduit sur les écrans plus étroits que la maquette. */
   .hero__visuel {
-    --k: 1;
+    --k: 1; --b: .87;
     position: absolute; right: 0; bottom: 0; display: block;
     width: 790px; height: 780px;
-    transform: scale(var(--k)); transform-origin: 100% 100%;
+    transform: scale(calc(var(--k) * var(--b))); transform-origin: 100% 100%;
   }
   .hero__disque { display: block; width: 760px; height: 760px; left: 150px; top: 170px; background: var(--creme); }
   .hero__anneau-jaune {
@@ -822,7 +826,8 @@ button { font: inherit; color: inherit; cursor: pointer; }
 /* Mouvement réduit : on garde les fondus, on retire les déplacements. */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .hero__entree, .hero__photo, .hero__disque, .hero__signature { animation: none; }
+  .hero__entree, .hero__photo, .hero__disque, .hero__signature,
+  .lead-hero__photo, .lead-hero__anneau, .lead-hero__logo { animation: none; }
   .js [data-reveal] { transform: none; transition: opacity 300ms ease; }
   .js [data-reveal="image"] { opacity: 0; }
   .js [data-reveal="image"] > * { clip-path: none; transition: none; }
@@ -831,4 +836,152 @@ button { font: inherit; color: inherit; cursor: pointer; }
   .menu-mobile:not(.est-ouvert) .menu-mobile__panneau { opacity: 0; }
   .btn:active, .rond-bouton:active { transform: none; }
   .carte-programme__image img, .article__image img { transition: none; }
+}
+/* 12. Page UCIV Leadership --------------------------------------------------- */
+.btn--encre { background: var(--encre); color: var(--blanc); }
+.surtitre--encre { color: var(--encre); }
+.titre--44 { font-size: clamp(28px, 3.05vw, 44px); }
+
+.fil { margin-bottom: 28px; font-size: 13px; }
+.fil ol { display: flex; flex-wrap: wrap; gap: 6px 10px; }
+.fil li + li::before { content: "/"; margin-right: 10px; opacity: .6; }
+.fil a:hover { text-decoration: underline; }
+
+/* Hero */
+.lead-hero { background: var(--jaune); overflow: hidden; }
+.lead-hero__grille { display: grid; gap: 32px; padding-top: 28px; }
+.lead-hero__titre {
+  font-family: var(--f-titre); font-weight: 800;
+  font-size: clamp(40px, 5.8vw, 68px); line-height: .98; letter-spacing: -.03em;
+}
+.lead-hero__titre em {
+  display: block; margin-top: 4px;
+  font-family: var(--f-accent); font-style: italic; font-weight: 400;
+  font-size: 1.1em; letter-spacing: -.01em; line-height: 1.04; color: var(--vert);
+}
+.lead-hero__chapo { margin-top: 24px; max-width: 560px; font-size: 17px; line-height: 1.6; }
+.lead-hero__cta { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; margin-top: 32px; }
+.lead-hero__visuel { position: relative; align-self: end; max-width: 620px; width: 100%; margin-inline: auto; }
+.lead-hero__photo { position: relative; width: 100%; }
+.lead-hero__anneau {
+  right: -8%; bottom: 6%; width: 62%; aspect-ratio: 1;
+  border-width: 28px; border-color: var(--blanc); opacity: .55;
+}
+.lead-hero__logo {
+  position: absolute; z-index: 2; top: -44px; right: 0;
+  width: min(46%, 300px); padding: 14px 18px; border-radius: 20px; background: var(--blanc);
+}
+@media (min-width: 900px) {
+  .lead-hero__grille { grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); align-items: center; gap: 40px; padding-top: 0; min-height: 600px; }
+  .lead-hero__texte { padding-block: 56px; }
+  .lead-hero__chapo { font-size: 19px; }
+  .lead-hero__cta { flex-direction: row; align-items: center; }
+  .lead-hero__visuel { align-self: end; margin-inline: 0; }
+  .lead-hero__logo { top: -72px; }
+}
+
+/* Repères */
+.lead-reperes { background: var(--blanc); padding-block: 36px; }
+.lead-reperes__liste { display: grid; gap: 24px; }
+.lead-reperes__liste li { display: grid; gap: 6px; padding-left: 20px; border-left: 2px solid var(--filet); }
+.lead-reperes__liste span { color: var(--texte); font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
+.lead-reperes__liste strong { font-family: var(--f-titre); font-weight: 800; font-size: clamp(20px, 2vw, 26px); letter-spacing: -.02em; line-height: 1.2; }
+@media (min-width: 720px) {
+  .lead-reperes { padding-block: 44px; }
+  .lead-reperes__liste { grid-template-columns: repeat(3, 1fr); gap: 40px; }
+}
+
+/* Vision & mission */
+.lead-vision__grille { display: grid; gap: 40px; }
+.lead-vision__titre {
+  font-family: var(--f-titre); font-weight: 700;
+  font-size: clamp(26px, 3vw, 40px); line-height: 1.16; letter-spacing: -.025em;
+}
+.lead-vision__titre em {
+  display: block; margin-top: 14px;
+  font-family: var(--f-accent); font-style: italic; font-weight: 400;
+  font-size: 1.15em; letter-spacing: -.01em; line-height: 1.12; color: var(--orange);
+}
+.lead-mission {
+  padding: 28px; border-radius: var(--rayon-lg); background: var(--blanc);
+  box-shadow: 0 1px 2px rgba(23, 18, 12, .05), 0 12px 40px rgba(23, 18, 12, .06);
+}
+.lead-mission__label { margin-bottom: 14px; color: var(--vert); font-size: 13px; font-weight: 700; letter-spacing: 2.4px; text-transform: uppercase; }
+.lead-mission__intro { font-family: var(--f-titre); font-weight: 700; font-size: 22px; line-height: 1.25; letter-spacing: -.02em; }
+.lead-mission__liste { margin-top: 20px; }
+.lead-mission__liste li { display: flex; align-items: center; gap: 16px; padding-block: 12px; border-top: 1px solid var(--filet); font-weight: 600; }
+.lead-mission__coche { display: grid; place-items: center; flex: none; width: 24px; height: 24px; border-radius: 50%; background: var(--vert); color: var(--blanc); }
+.lead-mission__coche .icon { width: 14px; height: 14px; stroke-width: 3; }
+@media (min-width: 900px) {
+  .lead-vision__grille { grid-template-columns: minmax(0, 1fr) minmax(0, 520px); gap: clamp(40px, 6vw, 80px); align-items: center; }
+  .lead-mission { padding: 40px; }
+}
+
+/* Intégrer le réseau */
+.lead-etapes { display: grid; gap: 16px; }
+.lead-etape { display: flex; flex-direction: column; gap: 10px; min-height: 220px; padding: 28px; border-radius: var(--rayon); background: var(--creme); }
+.lead-etape__haut { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: auto; }
+.lead-etape__num { font-family: var(--f-accent); font-style: italic; font-size: 56px; line-height: 1; color: var(--orange); }
+.lead-etape h3 { font-family: var(--f-titre); font-weight: 800; font-size: 25px; letter-spacing: -.02em; line-height: 1.1; }
+.lead-etape p { color: var(--texte); font-size: 15px; line-height: 1.55; }
+.lead-etape--final { background: var(--jaune); }
+.lead-etape--final .lead-etape__num { color: var(--encre); }
+.lead-etape--final p { color: rgba(23, 18, 12, .8); }
+@media (min-width: 720px) { .lead-etapes { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1100px) { .lead-etapes { grid-template-columns: repeat(4, 1fr); gap: 20px; } .lead-etape { min-height: 260px; } }
+
+/* Pourquoi rejoindre */
+.lead-pourquoi { overflow: hidden; }
+.lead-pourquoi__grille { position: relative; display: grid; gap: 32px; }
+.lead-pourquoi__anneau { right: -120px; bottom: -160px; width: 360px; aspect-ratio: 1; border-width: 40px; border-color: var(--jaune); opacity: .35; }
+.lead-puces { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
+.lead-puces li { padding: 10px 18px; border-radius: 999px; background: var(--jaune); color: var(--encre); font-size: 14px; font-weight: 600; }
+@media (min-width: 900px) {
+  .lead-pourquoi__grille { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: clamp(40px, 6vw, 80px); align-items: center; }
+}
+
+/* Principes */
+.lead-principes__liste { display: grid; gap: 28px 24px; margin-top: 48px; }
+.lead-principe { display: grid; gap: 10px; align-content: start; padding-top: 24px; border-top: 2px solid var(--encre); }
+.lead-principe__num { font-family: var(--f-accent); font-style: italic; font-size: 40px; line-height: 1; color: var(--orange); }
+.lead-principe--vert .lead-principe__num { color: var(--vert); }
+.lead-principe h3 { font-family: var(--f-titre); font-weight: 800; font-size: 24px; letter-spacing: -.02em; line-height: 1.1; }
+.lead-principe p { color: var(--texte); font-size: 15.5px; line-height: 1.55; }
+@media (min-width: 720px) { .lead-principes__liste { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1100px) { .lead-principes__liste { grid-template-columns: repeat(5, 1fr); } }
+
+/* Thème */
+.lead-theme { padding-block: clamp(64px, 8vw, 104px); background: var(--jaune); text-align: center; }
+.lead-theme__label { margin-bottom: 18px; font-size: 13px; font-weight: 700; letter-spacing: 2.4px; text-transform: uppercase; }
+.lead-theme__titre {
+  font-family: var(--f-titre); font-weight: 800;
+  font-size: clamp(30px, 4.45vw, 64px); line-height: 1.04; letter-spacing: -.03em; text-wrap: balance;
+}
+.lead-theme__titre em {
+  display: block; margin-top: 6px;
+  font-family: var(--f-accent); font-style: italic; font-weight: 400;
+  font-size: 1.12em; letter-spacing: -.01em; color: var(--vert);
+}
+
+/* Lancement */
+.lead-lancement__grille { display: grid; gap: 48px; align-items: center; }
+.lead-infos { display: flex; flex-wrap: wrap; gap: 10px; margin: 28px 0 32px; }
+.lead-infos li { padding: 10px 18px; border-radius: 999px; box-shadow: inset 0 0 0 1.5px var(--filet); font-size: 14px; font-weight: 600; }
+.lead-infos .lead-infos__principale { background: var(--encre); color: var(--blanc); box-shadow: none; }
+.lead-lancement__visuel { position: relative; max-width: 440px; width: 100%; margin-inline: auto; }
+.lead-lancement__visuel img { width: 100%; border-radius: var(--rayon); }
+.lead-lancement__disque { z-index: -1; right: -28px; bottom: -28px; width: 70%; aspect-ratio: 1; background: var(--jaune); opacity: .5; }
+@media (min-width: 900px) {
+  .lead-lancement__grille { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(40px, 6vw, 96px); }
+  .lead-lancement__visuel { margin-inline: auto 0; }
+}
+
+/* Animations de la page UCIV Leadership : mêmes entrées que le hero de l'accueil. */
+.lead-hero__anneau { animation: entree-disque 900ms var(--ease-out) both; }
+.lead-hero__photo { animation: entree-photo 900ms var(--ease-out) 120ms both; }
+.lead-hero__logo { animation: entree 700ms var(--ease-out) 520ms both; }
+.lead-etape__haut .icon { transition: transform 200ms var(--ease-out); }
+@media (hover: hover) and (pointer: fine) {
+  .btn--encre:hover { background: #2e261c; }
+  .lead-etape:hover .lead-etape__haut .icon { transform: translateX(3px); }
 }

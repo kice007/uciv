@@ -7,4 +7,5 @@ app_name = 'app'
 
 urlpatterns = [
     path('', views.home, name='home'),
+    path('programmes/uciv-leadership/', views.uciv_leadership, name='uciv_leadership'),
 ]

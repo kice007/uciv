@@ -23,3 +23,8 @@ def home(request):
         'partenaires': content.PARTENAIRES,
     }
     return render(request, 'app/layout/index.html', context)
+
+
+def uciv_leadership(request):
+    """Page du programme UCIV Leadership."""
+    return render(request, 'app/layout/uciv_leadership.html', {'leadership': content.LEADERSHIP})

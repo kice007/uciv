@@ -8,7 +8,9 @@ sans dépendance tierce : `requirements.txt` ne contient que Django.
 ├── .gitignore
 ├── .env.example          # variables d'environnement (lues via os.environ)
 ├── requirements.txt      # Django uniquement
-├── ARCHITECTURE.md
+├── README.md · CLAUDE.md · CONTRIBUTING.md
+├── docs/             # ARCHITECTURE.md, PLAN.md, AVANCEMENT.md
+├── maquette/         # design_uciv.pen (maquette Pencil)
 └── src/
     ├── manage.py
     ├── core/             # configuration du projet

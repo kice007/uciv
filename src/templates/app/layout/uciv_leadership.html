@@ -1,0 +1,177 @@
+{% extends "app/base/base.html" %}
+{% load static %}
+
+{% block title %}UCIV Leadership — Le réseau des futurs jeunes leaders{% endblock %}
+{% block description %}UCIV Leadership est le réseau sélectif des leaders et futurs leaders d'Une Côte d'Ivoire Volontaire : formations, mentorat et projets à fort impact.{% endblock %}
+
+{% block content %}
+
+{# ---------------------------------------------------------------- Hero #}
+<section class="lead-hero">
+  <div class="conteneur lead-hero__grille">
+    <div class="lead-hero__texte">
+      <nav class="fil" aria-label="Fil d'Ariane">
+        <ol>
+          <li><a href="{% url 'app:home' %}">Accueil</a></li>
+          <li><a href="#">Nos programmes</a></li>
+          <li aria-current="page"><strong>UCIV Leadership</strong></li>
+        </ol>
+      </nav>
+      <p class="surtitre surtitre--encre hero__entree" style="--i: 0">Le réseau des futurs jeunes leaders</p>
+      <h1 class="lead-hero__titre hero__entree" style="--i: 1">
+        Un réseau. Un engagement. <em>Un impact.</em>
+      </h1>
+      <p class="lead-hero__chapo hero__entree" style="--i: 2">{{ leadership.chapo }}</p>
+      <div class="lead-hero__cta hero__entree" style="--i: 3">
+        <a class="btn btn--encre" href="#lancement">
+          <span>Rejoindre UCIV Leadership</span>
+          <span class="btn__rond">{% include "app/includes/_icon.html" with name="arrow-right" %}</span>
+        </a>
+        <a class="btn btn--contour" href="#">Découvrir nos programmes</a>
+      </div>
+    </div>
+
+    <div class="lead-hero__visuel">
+      <span class="forme forme--anneau lead-hero__anneau" aria-hidden="true"></span>
+      <span class="lead-hero__logo">
+        <img src="{% static 'app/assets/img/logo-uciv-leadership.png' %}" width="3801" height="1453"
+             alt="UCIV Leadership — le réseau des leaders">
+      </span>
+      <img class="lead-hero__photo" src="{% static 'app/assets/img/groupe-nb.png' %}" width="1374" height="1145"
+           alt="Quatre jeunes leaders souriants, en tenue professionnelle." fetchpriority="high">
+    </div>
+  </div>
+</section>
+
+{# -------------------------------------------------------------- Repères #}
+<section class="lead-reperes" aria-label="Repères">
+  <ul class="conteneur lead-reperes__liste">
+    {% for repere in leadership.reperes %}
+      <li data-reveal style="--i: {{ forloop.counter0 }}">
+        <span>{{ repere.label }}</span>
+        <strong>{{ repere.valeur }}</strong>
+      </li>
+    {% endfor %}
+  </ul>
+</section>
+
+{# ----------------------------------------------------- Vision & mission #}
+<section class="section lead-vision">
+  <div class="conteneur lead-vision__grille">
+    <div data-reveal>
+      <p class="surtitre">Notre vision</p>
+      <h2 class="lead-vision__titre">{{ leadership.vision }} <em>{{ leadership.vision_suite }}</em></h2>
+    </div>
+    <div class="lead-mission" data-reveal>
+      <p class="lead-mission__label">Notre mission</p>
+      <p class="lead-mission__intro">{{ leadership.mission_intro }}</p>
+      <ul class="lead-mission__liste">
+        {% for ligne in leadership.mission %}
+          <li>
+            <span class="lead-mission__coche">{% include "app/includes/_icon.html" with name="check" %}</span>
+            <span>{{ ligne }}</span>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</section>
+
+{# ---------------------------------------------------- Intégrer le réseau #}
+<section class="section section--blanc lead-reseau">
+  <div class="conteneur">
+    <div class="entete-section" data-reveal>
+      <div>
+        <p class="surtitre">Intégrer le réseau</p>
+        <h2 class="titre titre--52">Un réseau sélectif, <em>où chaque membre contribue.</em></h2>
+      </div>
+      <p class="texte">{{ leadership.reseau_intro }}</p>
+    </div>
+    <ol class="lead-etapes">
+      {% for etape in leadership.etapes %}
+        <li class="lead-etape{% if forloop.last %} lead-etape--final{% endif %}" data-reveal style="--i: {{ forloop.counter0 }}">
+          <div class="lead-etape__haut">
+            <span class="lead-etape__num">0{{ forloop.counter }}</span>
+            {% if forloop.last %}
+              {% include "app/includes/_icon.html" with name="flag" %}
+            {% else %}
+              {% include "app/includes/_icon.html" with name="arrow-right" %}
+            {% endif %}
+          </div>
+          <h3>{{ etape.titre }}</h3>
+          <p>{{ etape.texte }}</p>
+        </li>
+      {% endfor %}
+    </ol>
+  </div>
+</section>
+
+{# ------------------------------------------------------ Pourquoi rejoindre #}
+<section class="section section--sombre lead-pourquoi">
+  <span class="forme forme--anneau lead-pourquoi__anneau" aria-hidden="true"></span>
+  <div class="conteneur lead-pourquoi__grille">
+    <div data-reveal>
+      <p class="surtitre surtitre--jaune">Pourquoi rejoindre UCIV Leadership ?</p>
+      <h2 class="titre titre--clair titre--44">{{ leadership.pourquoi_titre }} <em>{{ leadership.pourquoi_suite }}</em></h2>
+    </div>
+    <div data-reveal>
+      <p class="texte texte--clair">{{ leadership.pourquoi_texte }}</p>
+      <ul class="lead-puces">
+        {% for avantage in leadership.avantages %}<li>{{ avantage }}</li>{% endfor %}
+      </ul>
+    </div>
+  </div>
+</section>
+
+{# -------------------------------------------------------------- Principes #}
+<section class="section lead-principes">
+  <div class="conteneur">
+    <div data-reveal>
+      <p class="surtitre">Ce qui nous guide</p>
+      <h2 class="titre titre--52">Nos principes, <em>cinq engagements.</em></h2>
+    </div>
+    <ol class="lead-principes__liste">
+      {% for principe in leadership.principes %}
+        <li class="lead-principe{% if forloop.counter|divisibleby:2 %} lead-principe--vert{% endif %}" data-reveal style="--i: {{ forloop.counter0 }}">
+          <span class="lead-principe__num">0{{ forloop.counter }}</span>
+          <h3>{{ principe.titre }}</h3>
+          <p>{{ principe.texte }}</p>
+        </li>
+      {% endfor %}
+    </ol>
+  </div>
+</section>
+
+{# ----------------------------------------------------------------- Thème #}
+<section class="lead-theme">
+  <div class="conteneur" data-reveal>
+    <p class="lead-theme__label">Thème</p>
+    <p class="lead-theme__titre">{{ leadership.theme }} <em>{{ leadership.theme_suite }}</em></p>
+  </div>
+</section>
+
+{# -------------------------------------------------------------- Lancement #}
+<section class="section section--blanc lead-lancement" id="lancement">
+  <div class="conteneur lead-lancement__grille">
+    <div data-reveal>
+      <p class="surtitre">Lancement</p>
+      <h2 class="titre titre--52">Conférence de lancement <em>au format TEDx.</em></h2>
+      <ul class="lead-infos">
+        {% for info in leadership.lancement_infos %}
+          <li{% if forloop.first %} class="lead-infos__principale"{% endif %}>{{ info }}</li>
+        {% endfor %}
+      </ul>
+      <a class="btn btn--encre" href="#">
+        <span>Rejoindre UCIV Leadership</span>
+        <span class="btn__rond">{% include "app/includes/_icon.html" with name="arrow-right" %}</span>
+      </a>
+    </div>
+    <div class="lead-lancement__visuel" data-reveal="image">
+      <span class="forme lead-lancement__disque" aria-hidden="true"></span>
+      <img src="{% static 'app/assets/img/affiche-leadership-jaune.jpg' %}" width="1837" height="2048" loading="lazy"
+           alt="Affiche d'UCIV Leadership : une jeune femme lève les poings, « Un mois à retenir : octobre 2026 ».">
+    </div>
+  </div>
+</section>
+
+{% endblock %}
