@@ -106,3 +106,22 @@ class ExperienceLabPageTests(TestCase):
     def test_programmes_page_links_to_it(self):
         response = self.client.get(reverse('app:nos_programmes'))
         self.assertContains(response, reverse('app:experience_lab'))
+
+class EquipePageTests(TestCase):
+    def test_page_renders(self):
+        response = self.client.get(reverse('app:equipe'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'app/layout/equipe.html')
+
+    def test_page_shows_key_content(self):
+        response = self.client.get(reverse('app:equipe'))
+        self.assertContains(response, 'Les femmes et les hommes')
+        self.assertContains(response, 'Marshall')
+        self.assertContains(response, 'Aïssata Ouattara')
+        self.assertContains(response, 'Martine Boa')
+        self.assertContains(response, 'Emmanuel Fieni Kouassi')
+        self.assertContains(response, 'Envie de rejoindre')
+
+    def test_qui_sommes_nous_links_to_it(self):
+        response = self.client.get(reverse('app:qui_sommes_nous'))
+        self.assertContains(response, reverse('app:equipe'))

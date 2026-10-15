@@ -48,3 +48,8 @@ def go_du_digital(request):
 def experience_lab(request):
     """Page du programme Experience Lab."""
     return render(request, 'app/layout/experience_lab.html', {'el': content.EXPERIENCE_LAB})
+
+
+def equipe(request):
+    """Page « Équipe »."""
+    return render(request, 'app/layout/equipe.html', {'eq': content.EQUIPE})

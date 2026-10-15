@@ -1,0 +1,109 @@
+{% extends "app/base/base.html" %}
+{% load static %}
+
+{% block title %}Équipe — Une Côte d'Ivoire Volontaire{% endblock %}
+{% block description %}Les femmes et les hommes derrière UCIV : le président fondateur, le bureau exécutif et la direction des médias et de la communication.{% endblock %}
+
+{% block content %}
+
+{# ---------------------------------------------------------------- Hero #}
+<section class="eq-hero">
+  <span class="forme eq-hero__anneau-jaune" aria-hidden="true"></span>
+  <span class="forme eq-hero__disque" aria-hidden="true"></span>
+  <span class="forme eq-hero__anneau-vert" aria-hidden="true"></span>
+  <div class="conteneur eq-hero__grille">
+    <div class="eq-hero__texte">
+      <nav class="fil fil--clair" aria-label="Fil d'Ariane">
+        <ol>
+          <li><a href="{% url 'app:home' %}">Accueil</a></li>
+          <li><a href="{% url 'app:qui_sommes_nous' %}">Qui sommes-nous ?</a></li>
+          <li aria-current="page"><strong>Équipe</strong></li>
+        </ol>
+      </nav>
+      <p class="surtitre surtitre--blanc hero__entree" style="--i: 0">Équipe</p>
+      <h1 class="eq-hero__titre hero__entree" style="--i: 1">{{ eq.hero_titre }} <em>{{ eq.hero_suite }}</em></h1>
+      <p class="eq-hero__chapo hero__entree" style="--i: 2">{{ eq.hero_chapo }}</p>
+    </div>
+  </div>
+</section>
+
+{# -------------------------------------------------------------- Président #}
+<section class="eq-president">
+  <div class="conteneur eq-president__grille">
+    <div class="eq-president__visuel" data-reveal="image">
+      <span class="eq-president__arche" aria-hidden="true"></span>
+      <div class="eq-president__photo">
+        <img src="{% static 'app/assets/img/marshall-kouame.jpg' %}" width="1638" height="2048" loading="lazy"
+             alt="Portrait de Marshall Kouamé, président et fondateur d'UCIV.">
+      </div>
+    </div>
+    <div class="eq-president__texte" data-reveal>
+      <p class="surtitre">Président · Fondateur</p>
+      <h2 class="eq-president__nom">Marshall <em>Kouamé.</em></h2>
+      <p class="eq-president__role">{{ eq.president_role }}</p>
+      <p class="texte">{{ eq.president_bio }}</p>
+    </div>
+  </div>
+</section>
+
+{# ------------------------------------------------------- Bureau exécutif #}
+<section class="section section--blanc eq-bureau">
+  <div class="conteneur">
+    <div data-reveal>
+      <p class="surtitre">Bureau exécutif</p>
+      <h2 class="eq-titre">L'équipe <em>qui fait avancer UCIV.</em></h2>
+    </div>
+    <ul class="eq-membres">
+      {% for membre in eq.bureau %}
+        <li class="eq-membre eq-membre--{{ membre.couleur }}" data-reveal style="--i: {{ forloop.counter0 }}">
+          <div class="eq-membre__visuel">
+            <span class="eq-membre__fond" aria-hidden="true"></span>
+            {% if membre.photo %}
+              <img class="eq-membre__photo" src="{% static membre.photo %}" alt="Portrait de {{ membre.nom }}" loading="lazy">
+            {% else %}
+              <span class="eq-membre__initiales" aria-hidden="true">{{ membre.initiales }}</span>
+            {% endif %}
+          </div>
+          <h3>{{ membre.nom }}</h3>
+          <p>{{ membre.role }}</p>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+
+{# ------------------------------------------------- Médias & communication #}
+<section class="section eq-medias">
+  <div class="conteneur">
+    <div class="entete-section" data-reveal>
+      <div>
+        <p class="surtitre">Direction des médias &amp; de la communication</p>
+        <h2 class="eq-titre">Celles et ceux <em>qui racontent UCIV.</em></h2>
+      </div>
+      <p class="texte">{{ eq.medias_intro }}</p>
+    </div>
+    <ul class="eq-medias__liste">
+      {% for membre in eq.medias %}
+        <li class="eq-media eq-media--{{ membre.couleur }}" data-reveal style="--i: {{ forloop.counter0 }}">
+          <span class="eq-media__initiales">{{ membre.initiales }}</span>
+          <h3>{{ membre.nom }}</h3>
+          <p>{{ membre.role }}</p>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+
+{# ----------------------------------------------------------------- Appel #}
+<section class="np-appel np-appel--orange">
+  <span class="forme np-appel__anneau" aria-hidden="true"></span>
+  <div class="conteneur np-appel__cadre" data-reveal>
+    <h2 class="np-appel__titre">Envie de rejoindre <em>l'équipe ?</em></h2>
+    <a class="btn btn--blanc" href="#">
+      <span>Proposer mes compétences</span>
+      <span class="btn__rond">{% include "app/includes/_icon.html" with name="arrow-right" %}</span>
+    </a>
+  </div>
+</section>
+
+{% endblock %}

@@ -569,3 +569,40 @@ EXPERIENCE_LAB = {
         {'label': 'Modalités', 'valeur': 'À confirmer'},
     ],
 }
+
+# --- Page Équipe ------------------------------------------------------------
+
+EQUIPE = {
+    'hero_titre': 'Les femmes et les hommes',
+    'hero_suite': 'derrière UCIV.',
+    'hero_chapo': "UCIV est porté par une équipe de personnes engagées qui mettent "
+                  "leurs compétences, leur temps et leur énergie au service de la "
+                  "mission de l'organisation.",
+    'president_role': "Président et fondateur d'Une Côte d'Ivoire Volontaire.",
+    'president_bio': "[Courte biographie à transmettre : parcours, engagement et "
+                     "vision pour la jeunesse ivoirienne.]",
+    # `photo` : chemin statique du portrait (bureau-executif.jpg dans la maquette,
+    # pas encore fourni). Sans photo, la carte affiche les initiales.
+    'bureau': [
+        {'nom': 'Aïssata Ouattara', 'initiales': 'AO', 'couleur': 'orange',
+         'role': 'Secrétaire Générale', 'photo': None},
+        {'nom': 'Dr Angèle Zang', 'initiales': 'AZ', 'couleur': 'vert',
+         'role': 'Trésorière Générale', 'photo': None},
+        {'nom': 'Roxane Atchia', 'initiales': 'RA', 'couleur': 'jaune',
+         'role': 'Commissaire aux comptes', 'photo': None},
+        {'nom': 'Martine Boa', 'initiales': 'MB', 'couleur': 'profond',
+         'role': 'Responsable Générale des projets', 'photo': None},
+    ],
+    'medias_intro': "Les biographies, photos et domaines d'expertise de chaque "
+                    "responsable seront ajoutés dès leur transmission.",
+    'medias': [
+        {'nom': 'Emmanuel Fieni Kouassi', 'initiales': 'EF', 'couleur': 'orange',
+         'role': 'Responsable Communication & mobilisation'},
+        {'nom': 'Djamira Kamagaté', 'initiales': 'DK', 'couleur': 'vert',
+         'role': 'Commissaire aux comptes adjointe et créatrice de contenu'},
+        {'nom': 'Mieimmo Kouassi', 'initiales': 'MK', 'couleur': 'jaune',
+         'role': 'Chargée de Marketing'},
+        {'nom': 'Ago Maria Konan', 'initiales': 'AM', 'couleur': 'profond',
+         'role': 'Secrétaire Générale adjointe et créatrice de contenu'},
+    ],
+}
