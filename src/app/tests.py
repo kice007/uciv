@@ -71,3 +71,21 @@ class NosProgrammesPageTests(TestCase):
         self.assertContains(response, reverse('app:nos_programmes'))
         response = self.client.get(reverse('app:uciv_leadership'))
         self.assertContains(response, reverse('app:nos_programmes'))
+
+class GoDuDigitalPageTests(TestCase):
+    def test_page_renders(self):
+        response = self.client.get(reverse('app:go_du_digital'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'app/layout/go_du_digital.html')
+
+    def test_page_shows_key_content(self):
+        response = self.client.get(reverse('app:go_du_digital'))
+        self.assertContains(response, 'Les Go')
+        self.assertContains(response, 'Quatre volets')
+        self.assertContains(response, 'Sécurité Numérique')
+        self.assertContains(response, 'La Reine')
+        self.assertContains(response, 'BonixUp')
+
+    def test_programmes_page_links_to_it(self):
+        response = self.client.get(reverse('app:nos_programmes'))
+        self.assertContains(response, reverse('app:go_du_digital'))

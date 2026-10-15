@@ -1,0 +1,165 @@
+{% extends "app/base/base.html" %}
+{% load static %}
+
+{% block title %}Les Go du Digital — Le digital comme outil d'autonomie{% endblock %}
+{% block description %}Les Go du Digital : un programme pratique à 90 %, sur 6 samedis, pour que les jeunes femmes fassent du digital un outil d'autonomie, d'expression et d'opportunité.{% endblock %}
+
+{% block content %}
+
+{# ---------------------------------------------------------------- Hero #}
+<section class="gd-hero">
+  <span class="forme gd-hero__jaune" aria-hidden="true"></span>
+  <div class="conteneur gd-hero__grille">
+    <div class="gd-hero__texte">
+      <nav class="fil fil--clair" aria-label="Fil d'Ariane">
+        <ol>
+          <li><a href="{% url 'app:home' %}">Accueil</a></li>
+          <li><a href="{% url 'app:nos_programmes' %}">Nos programmes</a></li>
+          <li aria-current="page"><strong>Les Go du Digital</strong></li>
+        </ol>
+      </nav>
+      <p class="surtitre surtitre--blanc hero__entree" style="--i: 0">{{ gd.hero_surtitre }}</p>
+      <h1 class="gd-hero__titre hero__entree" style="--i: 1">Les Go <em>du Digital.</em></h1>
+      <p class="gd-hero__chapo hero__entree" style="--i: 2">{{ gd.hero_chapo }}</p>
+      <div class="gd-hero__cta hero__entree" style="--i: 3">
+        <a class="btn btn--blanc" href="#inscriptions">
+          <span>S'inscrire</span>
+          <span class="btn__rond">{% include "app/includes/_icon.html" with name="arrow-right" %}</span>
+        </a>
+        <a class="btn btn--contour-blanc" href="{% url 'app:nos_programmes' %}">Découvrir nos programmes</a>
+      </div>
+    </div>
+    <div class="gd-hero__visuel">
+      <span class="gd-hero__disque" aria-hidden="true"></span>
+      <div class="gd-hero__photo">
+        <img src="{% static 'app/assets/img/go-du-digital.jpg' %}" width="1200" height="1000"
+             alt="Une jeune femme se filme avec son téléphone pendant un atelier." fetchpriority="high">
+      </div>
+      <p class="gd-hero__pastille"><strong>90 %</strong> <span>de pratique</span></p>
+      <p class="manuscrit gd-hero__note" aria-hidden="true">{{ gd.hero_note }}</p>
+    </div>
+  </div>
+</section>
+
+{# -------------------------------------------------------------- Repères #}
+<section class="lead-reperes gd-reperes" aria-label="Repères">
+  <ul class="conteneur lead-reperes__liste">
+    {% for repere in gd.reperes %}
+      <li data-reveal style="--i: {{ forloop.counter0 }}">
+        <span>{{ repere.label }}</span>
+        <strong{% if forloop.last %} class="gd-reperes__accent"{% endif %}>{{ repere.valeur }}</strong>
+      </li>
+    {% endfor %}
+  </ul>
+</section>
+
+{# ---------------------------------------------------------------- Volets #}
+<section class="section gd-volets">
+  <div class="conteneur gd-volets__grille">
+    <div data-reveal>
+      <p class="surtitre">Objectif du programme</p>
+      <h2 class="titre titre--52">Quatre volets, <em>une approche très pratique.</em></h2>
+      <p class="texte">{{ gd.volets_intro }}</p>
+    </div>
+    <ol class="gd-volets__liste">
+      {% for volet in gd.volets %}
+        <li class="gd-volet gd-volet--{{ volet.couleur }}" data-reveal style="--i: {{ forloop.counter0 }}">
+          <div class="gd-volet__haut">
+            <span>Volet {{ forloop.counter }}</span>
+            {% include "app/includes/_icon.html" with name=volet.icone %}
+          </div>
+          <h3>{{ volet.titre }}</h3>
+        </li>
+      {% endfor %}
+    </ol>
+  </div>
+</section>
+
+{# ---------------------------------------------------------- Apprentissages #}
+<section class="section section--blanc gd-apprentissages">
+  <div class="conteneur">
+    <div data-reveal>
+      <p class="surtitre">Au programme</p>
+      <h2 class="titre titre--52">Les participantes <em>apprennent à…</em></h2>
+    </div>
+    <ol class="gd-apprentissages__liste">
+      {% for item in gd.apprentissages %}
+        <li class="gd-appr{% if forloop.counter|divisibleby:2 %} gd-appr--vert{% endif %}" data-reveal style="--i: {{ forloop.counter0 }}">
+          <span class="gd-appr__num">0{{ forloop.counter }}</span>
+          <h3>{{ item.titre }}</h3>
+          <p>{{ item.texte }}</p>
+        </li>
+      {% endfor %}
+    </ol>
+  </div>
+</section>
+
+{# -------------------------------------------------------------- Pédagogie #}
+<section class="section section--sombre gd-pedagogie">
+  <div class="conteneur gd-pedagogie__grille">
+    <div data-reveal>
+      <p class="surtitre surtitre--jaune">Approche pédagogique</p>
+      <p class="gd-pedagogie__chiffre">90&nbsp;%</p>
+      <p class="gd-pedagogie__suite">de pratique.</p>
+      <p class="texte texte--clair">{{ gd.pedagogie_texte }}</p>
+    </div>
+    <article class="gd-reine" data-reveal style="--i: 1">
+      <span class="gd-reine__couronne">{% include "app/includes/_icon.html" with name="crown" %}</span>
+      <p class="gd-reine__label">La compétition finale</p>
+      <h3>La Reine <em>du Digital.</em></h3>
+      <p>{{ gd.reine_texte }}</p>
+    </article>
+  </div>
+</section>
+
+{# ---------------------------------------------------------- Public & suivi #}
+<section class="section gd-public">
+  <div class="conteneur gd-public__grille">
+    <div data-reveal>
+      <p class="surtitre">Pour qui ?</p>
+      <h2 class="titre titre--52">Un programme <em>pensé pour elles.</em></h2>
+      <ul class="qs-chips gd-public__chips">
+        {% for cible in gd.public %}<li>{{ cible }}</li>{% endfor %}
+      </ul>
+    </div>
+    <aside class="gd-suivi" data-reveal style="--i: 1">
+      <p class="surtitre surtitre--vert">Après la formation</p>
+      <h3>{{ gd.suivi_titre }}</h3>
+      <p>{{ gd.suivi_texte }}</p>
+    </aside>
+  </div>
+</section>
+
+{# -------------------------------------------------- Partenaires du programme #}
+<section class="section section--blanc gd-partenaires">
+  <div class="conteneur">
+    <p class="surtitre" data-reveal>Partenaires du programme</p>
+    <ul class="gd-partenaires__liste">
+      {% for partenaire in gd.partenaires %}
+        <li data-reveal style="--i: {{ forloop.counter0 }}">{{ partenaire }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+
+{# ----------------------------------------------------------- Inscriptions #}
+<section class="gd-inscriptions" id="inscriptions">
+  <span class="forme gd-inscriptions__disque" aria-hidden="true"></span>
+  <div class="conteneur gd-inscriptions__grille">
+    <div data-reveal>
+      <p class="surtitre surtitre--blanc">Inscriptions</p>
+      <h2 class="gd-inscriptions__titre">Rejoins la prochaine édition <em>des Go du Digital.</em></h2>
+      <a class="btn btn--blanc" href="#">
+        <span>S'inscrire</span>
+        <span class="btn__rond">{% include "app/includes/_icon.html" with name="arrow-right" %}</span>
+      </a>
+    </div>
+    <dl class="gd-inscriptions__infos" data-reveal style="--i: 1">
+      {% for info in gd.inscriptions %}
+        <div><dt>{{ info.label }}</dt><dd>{{ info.valeur }}</dd></div>
+      {% endfor %}
+    </dl>
+  </div>
+</section>
+
+{% endblock %}

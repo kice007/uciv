@@ -38,3 +38,8 @@ def qui_sommes_nous(request):
 def nos_programmes(request):
     """Page « Nos programmes »."""
     return render(request, 'app/layout/nos_programmes.html', {'np': content.NOS_PROGRAMMES})
+
+
+def go_du_digital(request):
+    """Page du programme Les Go du Digital."""
+    return render(request, 'app/layout/go_du_digital.html', {'gd': content.GO_DU_DIGITAL})

@@ -1203,3 +1203,144 @@ button { font: inherit; color: inherit; cursor: pointer; }
 @media (prefers-reduced-motion: reduce) {
   .np-hero__disque, .np-hero__rond, .np-hero__note { animation: none; }
 }
+/* 15. Page Les Go du Digital --------------------------------------------------- */
+.surtitre--vert { color: var(--vert); }
+
+/* Hero (maquette : 640 px, cercle jaune 440 en haut à droite, disque crème 540 et photo ronde 480) */
+.gd-hero { position: relative; background: var(--orange); color: var(--blanc); overflow: hidden; }
+.gd-hero__jaune {
+  top: -9vw; right: -8vw; width: clamp(170px, 30.5vw, 440px); aspect-ratio: 1;
+  background: var(--jaune);
+}
+.gd-hero__grille { position: relative; display: grid; gap: 40px; padding-top: 28px; padding-bottom: 56px; }
+.gd-hero__titre {
+  font-family: var(--f-titre); font-weight: 800;
+  font-size: clamp(52px, 7.2vw, 104px); line-height: .94; letter-spacing: -.04em;
+}
+.gd-hero__titre em {
+  display: block;
+  font-family: var(--f-accent); font-style: italic; font-weight: 400;
+  font-size: 1.1em; letter-spacing: -.01em; line-height: 1; color: var(--jaune);
+}
+.gd-hero__chapo { margin-top: 24px; max-width: 480px; font-size: 18px; line-height: 1.55; color: rgba(255, 255, 255, .95); }
+.gd-hero__cta { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; margin-top: 32px; }
+.gd-hero__visuel { position: relative; width: min(100%, 540px); aspect-ratio: 1; margin-inline: auto; }
+.gd-hero__disque { position: absolute; inset: 0; border-radius: 50%; background: var(--creme); }
+.gd-hero__photo { position: absolute; inset: 5.6%; overflow: hidden; border-radius: 50%; background: var(--sable); }
+.gd-hero__photo img { width: 100%; height: 100%; object-fit: cover; }
+.gd-hero__pastille {
+  position: absolute; z-index: 2; right: -4%; bottom: 8%;
+  display: flex; align-items: baseline; gap: 10px; padding: 18px 26px; border-radius: 999px;
+  background: var(--jaune); color: var(--encre); rotate: -4deg;
+}
+.gd-hero__pastille strong { font-family: var(--f-titre); font-weight: 800; font-size: 30px; line-height: 1; letter-spacing: -.02em; }
+.gd-hero__pastille span { font-size: 16px; font-weight: 700; }
+.gd-hero__note {
+  position: absolute; z-index: 2; right: 2%; top: -4%; rotate: -8deg;
+  font-size: clamp(24px, 2.8vw, 40px); white-space: nowrap; color: var(--blanc);
+}
+@media (min-width: 900px) {
+  .gd-hero__grille { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; gap: 40px; padding-block: 40px; min-height: clamp(560px, 44.5vw, 700px); }
+  .gd-hero__cta { flex-direction: row; align-items: center; }
+  .gd-hero__chapo { font-size: 19px; }
+  .gd-hero__visuel { width: min(100%, 540px); margin-inline: auto 40px; }
+}
+
+/* Repères : 4 colonnes, dernière valeur en orange foncé */
+.gd-reperes__accent { color: var(--orange-fonce); }
+@media (min-width: 900px) { .gd-reperes .lead-reperes__liste { grid-template-columns: repeat(4, 1fr); gap: 32px; } }
+
+/* Volets */
+.gd-volets__grille { display: grid; gap: 40px; }
+.gd-volets__liste { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+.gd-volet {
+  display: flex; flex-direction: column; justify-content: space-between; gap: 40px;
+  min-height: 170px; padding: 20px; border-radius: var(--rayon);
+}
+.gd-volet__haut { display: flex; align-items: flex-start; justify-content: space-between; }
+.gd-volet__haut span { font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
+.gd-volet__haut .icon { width: 20px; height: 20px; }
+.gd-volet h3 { font-family: var(--f-titre); font-weight: 800; font-size: clamp(20px, 1.8vw, 26px); letter-spacing: -.02em; line-height: 1.1; }
+.gd-volet--orange { background: var(--orange); color: var(--blanc); }
+.gd-volet--vert { background: var(--vert); color: var(--blanc); }
+.gd-volet--jaune { background: var(--jaune); color: var(--encre); }
+.gd-volet--profond { background: var(--vert-profond); color: var(--blanc); }
+@media (min-width: 900px) {
+  .gd-volets__grille { grid-template-columns: minmax(0, 1fr) minmax(0, 600px); gap: clamp(40px, 6vw, 80px); align-items: center; }
+  .gd-volet { min-height: 200px; padding: 24px; }
+}
+
+/* Apprentissages : numéro | titre | description */
+.gd-apprentissages__liste { margin-top: 40px; }
+.gd-appr { display: grid; gap: 8px; padding-block: 24px; border-top: 1px solid var(--filet); }
+.gd-appr:last-child { border-bottom: 1px solid var(--filet); }
+.gd-appr__num { font-family: var(--f-accent); font-style: italic; font-size: 44px; line-height: 1; color: var(--orange); }
+.gd-appr--vert .gd-appr__num { color: var(--vert); }
+.gd-appr h3 { font-family: var(--f-titre); font-weight: 800; font-size: clamp(21px, 1.9vw, 27px); letter-spacing: -.02em; line-height: 1.15; }
+.gd-appr p { color: var(--texte); line-height: 1.6; }
+@media (min-width: 900px) {
+  .gd-appr { grid-template-columns: 72px minmax(0, 1fr) minmax(0, 1.2fr); align-items: center; gap: 28px; }
+}
+
+/* Pédagogie */
+.gd-pedagogie__grille { display: grid; gap: 40px; align-items: center; }
+.gd-pedagogie__chiffre {
+  font-family: var(--f-titre); font-weight: 800; color: var(--jaune);
+  font-size: clamp(96px, 13.9vw, 200px); line-height: .9; letter-spacing: -.05em;
+}
+.gd-pedagogie__suite { margin-bottom: 20px; font-family: var(--f-accent); font-style: italic; font-size: clamp(36px, 4.4vw, 64px); line-height: 1.05; }
+.gd-reine { padding: 40px 36px; border-radius: var(--rayon-lg); background: var(--jaune); color: var(--encre); }
+.gd-reine__couronne { display: grid; place-items: center; width: 64px; height: 64px; border-radius: 50%; background: var(--encre); color: var(--jaune); }
+.gd-reine__couronne .icon { width: 28px; height: 28px; }
+.gd-reine__label { margin-top: 28px; font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
+.gd-reine h3 { margin-top: 10px; font-family: var(--f-titre); font-weight: 800; font-size: clamp(36px, 3.4vw, 48px); line-height: 1; letter-spacing: -.03em; }
+.gd-reine h3 em { display: block; font-family: var(--f-accent); font-style: italic; font-weight: 400; font-size: 1.1em; letter-spacing: -.01em; color: var(--orange-fonce); }
+.gd-reine p:last-child { margin-top: 18px; font-size: 17px; line-height: 1.6; color: rgba(23, 18, 12, .85); }
+@media (min-width: 900px) { .gd-pedagogie__grille { grid-template-columns: minmax(0, 1fr) minmax(0, 540px); gap: clamp(40px, 6vw, 96px); } .gd-reine { padding: 44px; } }
+
+/* Public & suivi */
+.gd-public__grille { display: grid; gap: 40px; align-items: center; }
+.gd-public__chips { margin-top: 36px; }
+.gd-suivi {
+  padding: 36px 32px; border-radius: var(--rayon-lg); background: var(--blanc);
+  box-shadow: 0 1px 2px rgba(23, 18, 12, .05), 0 12px 40px rgba(23, 18, 12, .06);
+}
+.gd-suivi .surtitre { margin-bottom: 14px; }
+.gd-suivi h3 { font-family: var(--f-titre); font-weight: 800; font-size: clamp(26px, 2.2vw, 32px); line-height: 1.1; letter-spacing: -.025em; }
+.gd-suivi p:last-child { margin-top: 16px; color: var(--texte); font-size: 17px; line-height: 1.65; }
+@media (min-width: 900px) { .gd-public__grille { grid-template-columns: minmax(0, 1fr) minmax(0, 540px); gap: clamp(40px, 6vw, 96px); } .gd-suivi { padding: 44px; } }
+
+/* Partenaires du programme */
+.gd-partenaires { padding-block: clamp(56px, 6vw, 88px); }
+.gd-partenaires__liste { display: grid; gap: 16px; margin-top: 8px; }
+.gd-partenaires__liste li {
+  display: grid; place-items: center; min-height: 110px; padding: 24px; border-radius: var(--rayon);
+  background: var(--creme); text-align: center;
+  font-family: var(--f-titre); font-weight: 800; font-size: clamp(20px, 1.8vw, 26px); letter-spacing: -.02em;
+}
+@media (min-width: 720px) { .gd-partenaires__liste { grid-template-columns: repeat(3, 1fr); min-height: 130px; } .gd-partenaires__liste li { min-height: 130px; } }
+
+/* Inscriptions */
+.gd-inscriptions { position: relative; padding-block: clamp(64px, 7.2vw, 104px); background: var(--orange); color: var(--blanc); overflow: hidden; }
+.gd-inscriptions__disque { left: -15vw; top: 14vw; width: clamp(240px, 36vw, 520px); aspect-ratio: 1; background: rgba(255, 255, 255, .12); }
+.gd-inscriptions__grille { position: relative; display: grid; gap: 40px; align-items: center; }
+.gd-inscriptions__titre {
+  max-width: 14em; font-family: var(--f-titre); font-weight: 800;
+  font-size: clamp(32px, 3.6vw, 52px); line-height: 1.04; letter-spacing: -.03em;
+}
+.gd-inscriptions__titre em { display: block; font-family: var(--f-accent); font-style: italic; font-weight: 400; font-size: 1.1em; letter-spacing: -.01em; color: var(--jaune); }
+.gd-inscriptions .btn { margin-top: 32px; }
+.gd-inscriptions__infos { padding: 8px 28px; border-radius: var(--rayon-lg); background: rgba(255, 255, 255, .14); }
+.gd-inscriptions__infos div { display: flex; justify-content: space-between; gap: 24px; padding-block: 20px; border-top: 1px solid rgba(255, 255, 255, .25); }
+.gd-inscriptions__infos div:first-child { border-top: 0; }
+.gd-inscriptions__infos dt { color: rgba(255, 255, 255, .9); font-size: 15px; }
+.gd-inscriptions__infos dd { font-family: var(--f-titre); font-weight: 800; font-size: 20px; }
+@media (min-width: 900px) { .gd-inscriptions__grille { grid-template-columns: minmax(0, 1fr) minmax(0, 480px); gap: clamp(40px, 6vw, 96px); } .gd-inscriptions__infos { padding-inline: 36px; } }
+
+/* Animations : entrée du hero, comme sur l'accueil. */
+.gd-hero__disque { animation: entree-disque 900ms var(--ease-out) both; }
+.gd-hero__photo { animation: entree-photo 900ms var(--ease-out) 120ms both; }
+.gd-hero__pastille, .gd-hero__note { animation: entree 700ms var(--ease-out) 520ms both; }
+@media (prefers-reduced-motion: reduce) {
+  .gd-hero__disque, .gd-hero__photo, .gd-hero__pastille, .gd-hero__note { animation: none; }
+}

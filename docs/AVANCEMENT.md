@@ -14,7 +14,7 @@ Documents liés : [PLAN.md](PLAN.md) (ce qu'il faut construire),
 | Structure du projet (`src/core`, `src/app`) | Fait |
 | Dépendances | Fait : Django 6.1.2 uniquement |
 | Page d'accueil | Faite, alignée sur la maquette |
-| Pages intérieures (14) | 3 faites (UCIV Leadership, Qui sommes-nous ?, Nos programmes), 11 à faire |
+| Pages intérieures (14) | 4 faites (UCIV Leadership, Qui sommes-nous ?, Nos programmes, Les Go du Digital), 10 à faire |
 | Modèles de données et administration | Non commencés |
 | Formulaires | Non commencés |
 | Responsive mobile/tablette | Fait pour l'accueil seulement |
@@ -53,6 +53,13 @@ Documents liés : [PLAN.md](PLAN.md) (ce qu'il faut construire),
 - Les liens « Nos programmes » (navigation, accueil, page Leadership) pointent vers la page ; la carte UCIV Leadership mène à sa page, les deux autres à `#` (pages à venir).
 - 3 tests ajoutés (11 au total). Rendu à valider visuellement dans un navigateur.
 - Le hero des 2 pages accueil et UCIV Leadership occupe 90 vh à partir de 1100 px.
+
+### Page Les Go du Digital (`/programmes/go-du-digital/`)
+- 8 sections : hero orange, repères (4), volets (4 cartes avec icônes), apprentissages (5), pédagogie (90 % et La Reine du Digital), public et suivi, partenaires du programme, inscriptions.
+- Contenu dans `content.GO_DU_DIGITAL` ; vue `go_du_digital` ; gabarit `layout/go_du_digital.html` ; styles `gd-*` dans `main.css` (section 15).
+- Les liens « Les Go du Digital » (navigation, pied de page, accueil, page Nos programmes) pointent vers la page.
+- 3 tests ajoutés (14 au total).
+- Aligné sur la maquette (valeurs lues dans Pencil) : hero avec cercle jaune, disque crème et photo ronde, pastille « 90 % de pratique », volets en grille 2 × 2 avec icônes, apprentissages en 3 colonnes, bloc « 90 % » et carte « La Reine du Digital », inscriptions sur fond orange. Rendu à valider dans un navigateur.
 
 ### Maquette
 - `maquette/design_uciv.pen` : 16 écrans desktop analysés ; le plan de réalisation en est tiré.

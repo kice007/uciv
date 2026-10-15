@@ -14,6 +14,7 @@ from django.urls import reverse_lazy
 URL_LEADERSHIP = reverse_lazy('app:uciv_leadership')
 URL_QUI = reverse_lazy('app:qui_sommes_nous')
 URL_PROGRAMMES = reverse_lazy('app:nos_programmes')
+URL_GO = reverse_lazy('app:go_du_digital')
 
 # --- Éléments communs à toutes les pages ----------------------------------
 
@@ -31,7 +32,7 @@ NAVIGATION = [
         'label': 'Nos programmes',
         'url': URL_PROGRAMMES,
         'enfants': [
-            {'label': 'Les Go du Digital', 'url': '#'},
+            {'label': 'Les Go du Digital', 'url': URL_GO},
             {'label': 'UCIV Leadership', 'url': URL_LEADERSHIP},
             {'label': 'Experience Lab', 'url': '#'},
         ],
@@ -63,7 +64,7 @@ PIED_COLONNES = [
     {
         'titre': 'Nos programmes',
         'liens': [
-            {'label': 'Les Go du Digital', 'url': '#'},
+            {'label': 'Les Go du Digital', 'url': URL_GO},
             {'label': 'UCIV Leadership', 'url': URL_LEADERSHIP},
             {'label': 'Experience Lab', 'url': '#'},
         ],
@@ -160,7 +161,7 @@ PROGRAMMES = [
         'texte': "Six semaines autour du personal branding, de la sécurité numérique, "
                  "de la stratégie de contenu et des techniques de tournage.",
         'lien_label': 'Découvrir le programme',
-        'url': '#',
+        'url': URL_GO,
         'image': 'app/assets/img/go-du-digital.jpg',
         'image_alt': "Une jeune femme se filme avec son téléphone pendant un atelier.",
         'detouree': False,
@@ -430,7 +431,7 @@ NOS_PROGRAMMES = {
                      "Techniques de Tournage. Chaque édition se conclut par la "
                      "compétition « La Reine du Digital ».",
             'lien_label': 'Découvrir le programme',
-            'url': '#',
+            'url': URL_GO,
             'image': 'app/assets/img/go-du-digital.jpg',
             'image_alt': 'Une jeune femme se filme avec son téléphone pendant un atelier.',
             'detouree': False,
@@ -466,5 +467,70 @@ NOS_PROGRAMMES = {
             'image_alt': 'Un jeune homme présente son parcours devant un petit groupe.',
             'detouree': False,
         },
+    ],
+}
+
+# --- Page Les Go du Digital -------------------------------------------------
+
+GO_DU_DIGITAL = {
+    'hero_surtitre': 'Programme · Jeunes femmes · 6 samedis',
+    'hero_chapo': "Le digital comme outil d'autonomie, d'expression et d'opportunité.",
+    'hero_note': 'elles créent, elles osent !',
+    'reperes': [
+        {'label': 'Durée', 'valeur': '6 samedis'},
+        {'label': 'Approche', 'valeur': '90 % pratique'},
+        {'label': 'Lieu', 'valeur': 'Variable selon les éditions'},
+        {'label': 'Prochaine édition', 'valeur': 'Date à confirmer'},
+    ],
+    'volets_intro': "Permettre aux participantes de développer des compétences "
+                    "concrètes dans l'utilisation du numérique et des réseaux "
+                    "sociaux, tout en les sensibilisant à un usage responsable et "
+                    "professionnel de ces outils.",
+    'volets': [
+        {'couleur': 'orange', 'icone': 'user', 'titre': 'Personal Branding'},
+        {'couleur': 'vert', 'icone': 'shield', 'titre': 'Sécurité Numérique'},
+        {'couleur': 'jaune', 'icone': 'pen-line', 'titre': 'Stratégie de Contenu'},
+        {'couleur': 'profond', 'icone': 'video', 'titre': 'Techniques de Tournage'},
+    ],
+    'apprentissages': [
+        {'titre': 'Développer leur personal branding',
+         'texte': "Comprendre leur identité, leurs forces, et construire une "
+                  "présence cohérente sur le digital."},
+        {'titre': 'Créer du contenu',
+         'texte': "Découvrir les principes de création de contenus adaptés à chaque "
+                  "plateforme, du cadrage au montage."},
+        {'titre': 'Vendre en ligne',
+         'texte': "Comprendre comment utiliser les outils numériques et les réseaux "
+                  "sociaux pour présenter et commercialiser une activité ou une "
+                  "offre."},
+        {'titre': "Se protéger dans l'environnement numérique",
+         'texte': "Adopter de bonnes pratiques de sécurité et de protection de ses "
+                  "informations personnelles."},
+        {'titre': 'Utiliser les réseaux sociaux de manière responsable',
+         'texte': "Comprendre les opportunités et les responsabilités qui viennent "
+                  "avec une présence en ligne."},
+    ],
+    'pedagogie_texte': "Le programme privilégie les exercices, les mises en "
+                       "situation, les échanges entre participantes et la "
+                       "production de contenus réels.",
+    'reine_texte': "Chaque édition se conclut par une compétition qui valorise les "
+                   "meilleures productions des participantes devant un jury et le "
+                   "public.",
+    'public': [
+        'Jeunes femmes',
+        'Étudiantes',
+        'Jeunes professionnelles',
+        'Femmes souhaitant développer une activité grâce au digital',
+        'Personnes souhaitant améliorer leurs compétences numériques',
+    ],
+    'suivi_titre': "Un suivi vers l'insertion professionnelle",
+    'suivi_texte': "À la fin du programme, les participantes sans emploi qui "
+                   "souhaitent un accompagnement bénéficient d'un suivi vers "
+                   "l'insertion professionnelle, en partenariat avec PAIPRO-JEUNES.",
+    'partenaires': ['BonixUp', 'PAIPRO-JEUNES', 'ONG Light for All CI'],
+    'inscriptions': [
+        {'label': 'Ouverture des inscriptions', 'valeur': 'À confirmer'},
+        {'label': 'Tarif', 'valeur': 'À confirmer'},
+        {'label': 'Modalités', 'valeur': 'À confirmer'},
     ],
 }
