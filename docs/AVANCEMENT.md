@@ -14,7 +14,7 @@ Documents liés : [PLAN.md](PLAN.md) (ce qu'il faut construire),
 | Structure du projet (`src/core`, `src/app`) | Fait |
 | Dépendances | Fait : Django 6.1.2 uniquement |
 | Page d'accueil | Faite, alignée sur la maquette |
-| Pages intérieures (14) | 4 faites (UCIV Leadership, Qui sommes-nous ?, Nos programmes, Les Go du Digital), 10 à faire |
+| Pages intérieures (14) | 5 faites (UCIV Leadership, Qui sommes-nous ?, Nos programmes, Les Go du Digital, Experience Lab), 9 à faire |
 | Modèles de données et administration | Non commencés |
 | Formulaires | Non commencés |
 | Responsive mobile/tablette | Fait pour l'accueil seulement |
@@ -60,6 +60,16 @@ Documents liés : [PLAN.md](PLAN.md) (ce qu'il faut construire),
 - Les liens « Les Go du Digital » (navigation, pied de page, accueil, page Nos programmes) pointent vers la page.
 - 3 tests ajoutés (14 au total).
 - Aligné sur la maquette (valeurs lues dans Pencil) : hero avec cercle jaune, disque crème et photo ronde, pastille « 90 % de pratique », volets en grille 2 × 2 avec icônes, apprentissages en 3 colonnes, bloc « 90 % » et carte « La Reine du Digital », inscriptions sur fond orange. Rendu à valider dans un navigateur.
+
+### Page Experience Lab (`/programmes/experience-lab/`)
+- 4 sections : hero vert (disque crème, photo ronde, cercles jaune et orange), approche (« Know yourself before showing yourself. » et 4 questions), objectifs (6), inscriptions.
+- Contenu dans `content.EXPERIENCE_LAB` ; vue `experience_lab` ; gabarit `layout/experience_lab.html` ; styles `el-*` dans `main.css` (section 16), hero et inscriptions réutilisent les classes `gd-*`.
+- Les liens « Experience Lab » (navigation, pied de page, accueil, page Nos programmes) pointent vers la page.
+- 3 tests ajoutés (17 au total). Valeurs lues dans la maquette (positions, tailles, interlignes, espacements et rotations relevés à 1440 px, appliqués en `vw` en dessous) ; rendu à valider dans un navigateur.
+
+### Cercles creux de la maquette
+- Les ellipses du bandeau et de plusieurs sections sont des anneaux (propriété `innerRadius` de Pencil : 0,7 à 0,8), pas des disques pleins. Ils sont reproduits par un dégradé radial (section 17 de `main.css`) sur les pages Go du Digital, Experience Lab, UCIV Leadership, Qui sommes-nous ?, Nos programmes ; l'anneau de la section « Vision & chiffres » de l'accueil est ajusté (57 px).
+- Les cercles pleins restent pleins là où la maquette n'a pas de rayon intérieur (disques crème, orange, blanc).
 
 ### Maquette
 - `maquette/design_uciv.pen` : 16 écrans desktop analysés ; le plan de réalisation en est tiré.

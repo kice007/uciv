@@ -15,6 +15,7 @@ URL_LEADERSHIP = reverse_lazy('app:uciv_leadership')
 URL_QUI = reverse_lazy('app:qui_sommes_nous')
 URL_PROGRAMMES = reverse_lazy('app:nos_programmes')
 URL_GO = reverse_lazy('app:go_du_digital')
+URL_EXPERIENCE = reverse_lazy('app:experience_lab')
 
 # --- Éléments communs à toutes les pages ----------------------------------
 
@@ -34,7 +35,7 @@ NAVIGATION = [
         'enfants': [
             {'label': 'Les Go du Digital', 'url': URL_GO},
             {'label': 'UCIV Leadership', 'url': URL_LEADERSHIP},
-            {'label': 'Experience Lab', 'url': '#'},
+            {'label': 'Experience Lab', 'url': URL_EXPERIENCE},
         ],
     },
     {
@@ -66,7 +67,7 @@ PIED_COLONNES = [
         'liens': [
             {'label': 'Les Go du Digital', 'url': URL_GO},
             {'label': 'UCIV Leadership', 'url': URL_LEADERSHIP},
-            {'label': 'Experience Lab', 'url': '#'},
+            {'label': 'Experience Lab', 'url': URL_EXPERIENCE},
         ],
     },
     {
@@ -185,7 +186,7 @@ PROGRAMMES = [
         'texte': "Un espace pour mieux se connaître avant de chercher à se présenter. "
                  "« Know yourself before showing yourself. »",
         'lien_label': 'Découvrir Experience Lab',
-        'url': '#',
+        'url': URL_EXPERIENCE,
         'image': 'app/assets/img/experience-lab.jpg',
         'image_alt': 'Un jeune homme présente son parcours devant un petit groupe.',
         'detouree': False,
@@ -462,7 +463,7 @@ NOS_PROGRAMMES = {
                      "professionnel, pour mieux se connaître avant de chercher à se "
                      "présenter.",
             'lien_label': 'Découvrir Experience Lab',
-            'url': '#',
+            'url': URL_EXPERIENCE,
             'image': 'app/assets/img/experience-lab.jpg',
             'image_alt': 'Un jeune homme présente son parcours devant un petit groupe.',
             'detouree': False,
@@ -531,6 +532,40 @@ GO_DU_DIGITAL = {
     'inscriptions': [
         {'label': 'Ouverture des inscriptions', 'valeur': 'À confirmer'},
         {'label': 'Tarif', 'valeur': 'À confirmer'},
+        {'label': 'Modalités', 'valeur': 'À confirmer'},
+    ],
+}
+
+# --- Page Experience Lab ----------------------------------------------------
+
+EXPERIENCE_LAB = {
+    'hero_surtitre': 'Programme · Personal branding et pitch',
+    'hero_chapo': "Apprendre à mieux se connaître, mieux se présenter et mieux "
+                  "valoriser son expérience.",
+    'hero_note': "connais-toi d'abord !",
+    'approche_titre': '« Know yourself',
+    'approche_suite': 'before showing yourself. »',
+    'approche_intro': "Avant de chercher à être visible, il faut comprendre…",
+    'questions': [
+        {'couleur': 'orange', 'texte': "qui l'on est"},
+        {'couleur': 'vert', 'texte': "ce que l'on sait faire"},
+        {'couleur': 'orange', 'texte': "ce que l'on peut apporter"},
+        {'couleur': 'profond', 'texte': "comment on souhaite être perçu"},
+    ],
+    'objectifs_intro': "Experience Lab est un espace d'apprentissage et de partage "
+                       "destiné à accompagner les jeunes dans leur développement "
+                       "personnel et professionnel.",
+    'objectifs': [
+        'Mieux comprendre leur identité et leurs forces',
+        'Définir leur positionnement',
+        'Apprendre à valoriser leurs compétences',
+        'Construire une présentation personnelle cohérente',
+        'Améliorer leur capacité à présenter leur parcours',
+        'Développer leur confiance dans les situations professionnelles',
+    ],
+    'inscriptions': [
+        {'label': 'Format', 'valeur': 'À confirmer'},
+        {'label': 'Dates', 'valeur': 'À confirmer'},
         {'label': 'Modalités', 'valeur': 'À confirmer'},
     ],
 }

@@ -43,3 +43,8 @@ def nos_programmes(request):
 def go_du_digital(request):
     """Page du programme Les Go du Digital."""
     return render(request, 'app/layout/go_du_digital.html', {'gd': content.GO_DU_DIGITAL})
+
+
+def experience_lab(request):
+    """Page du programme Experience Lab."""
+    return render(request, 'app/layout/experience_lab.html', {'el': content.EXPERIENCE_LAB})

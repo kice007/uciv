@@ -598,7 +598,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
 
 /* Vision et chiffres */
 .vision { background: var(--orange); color: var(--blanc); overflow: hidden; }
-.vision__anneau { width: 520px; height: 520px; left: -220px; top: -240px; border-width: 52px; border-color: rgba(255, 255, 255, .13); }
+.vision__anneau { width: 520px; height: 520px; left: -220px; top: -240px; border-width: 57px; border-color: rgba(255, 255, 255, .12); }
 .vision__grille { position: relative; display: grid; gap: 44px; }
 .indicateurs { display: grid; grid-template-columns: 1fr 1fr; column-gap: 24px; }
 .indicateurs > div { padding-block: 18px 22px; border-top: 1px solid rgba(255, 255, 255, .35); }
@@ -1206,44 +1206,54 @@ button { font: inherit; color: inherit; cursor: pointer; }
 /* 15. Page Les Go du Digital --------------------------------------------------- */
 .surtitre--vert { color: var(--vert); }
 
-/* Hero (maquette : 640 px, cercle jaune 440 en haut à droite, disque crème 540 et photo ronde 480) */
+/* Hero (maquette 1440 px : hauteur 640, colonne de texte à x = 72 / y = 52, cercle jaune 440 en (1120, -180),
+   disque crème 540 en (760, 90), photo ronde 480 à 30 px du bord du disque). Les tailles suivent la largeur
+   de l'écran (vw) pour garder les mêmes proportions en dessous de 1440 px. */
 .gd-hero { position: relative; background: var(--orange); color: var(--blanc); overflow: hidden; }
-.gd-hero__jaune {
-  top: -9vw; right: -8vw; width: clamp(170px, 30.5vw, 440px); aspect-ratio: 1;
+.gd-hero__jaune {   /* anneau placé par rapport au disque crème : (360, -270) et 440 / 540 px (Go du Digital) */
+  left: 66.7%; top: -50%; width: 81.5%; aspect-ratio: 1;
   background: var(--jaune);
 }
+.gd-hero--vert .gd-hero__jaune { left: 68.5%; }   /* Experience Lab : (370, -270) */
 .gd-hero__grille { position: relative; display: grid; gap: 40px; padding-top: 28px; padding-bottom: 56px; }
+.gd-hero__texte { display: flex; flex-direction: column; align-items: flex-start; gap: 22px; }
+.gd-hero .fil { margin: 0; padding-bottom: 26px; }
+.gd-hero .surtitre { margin: 0; }
 .gd-hero__titre {
   font-family: var(--f-titre); font-weight: 800;
-  font-size: clamp(52px, 7.2vw, 104px); line-height: .94; letter-spacing: -.04em;
+  font-size: clamp(52px, 7.2vw, 104px); line-height: 1.02; letter-spacing: -.0278em;
 }
 .gd-hero__titre em {
   display: block;
   font-family: var(--f-accent); font-style: italic; font-weight: 400;
-  font-size: 1.1em; letter-spacing: -.01em; line-height: 1; color: var(--jaune);
+  font-size: 1.096em; letter-spacing: 0; line-height: 1.04; color: var(--jaune);
 }
-.gd-hero__chapo { margin-top: 24px; max-width: 480px; font-size: 18px; line-height: 1.55; color: rgba(255, 255, 255, .95); }
-.gd-hero__cta { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; margin-top: 32px; }
+.gd-hero__chapo { max-width: 520px; font-size: 18px; line-height: 1.55; color: rgba(255, 255, 255, .95); }
+.gd-hero__cta { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; padding-top: 8px; }
 .gd-hero__visuel { position: relative; width: min(100%, 540px); aspect-ratio: 1; margin-inline: auto; }
 .gd-hero__disque { position: absolute; inset: 0; border-radius: 50%; background: var(--creme); }
-.gd-hero__photo { position: absolute; inset: 5.6%; overflow: hidden; border-radius: 50%; background: var(--sable); }
+.gd-hero__photo { position: absolute; inset: 5.56%; overflow: hidden; border-radius: 50%; background: var(--sable); }
 .gd-hero__photo img { width: 100%; height: 100%; object-fit: cover; }
 .gd-hero__pastille {
-  position: absolute; z-index: 2; right: -4%; bottom: 8%;
-  display: flex; align-items: baseline; gap: 10px; padding: 18px 26px; border-radius: 999px;
-  background: var(--jaune); color: var(--encre); rotate: -4deg;
+  position: absolute; z-index: 2; left: 68.5%; top: 70.4%;
+  display: flex; align-items: center; gap: 10px; padding: 16px 26px; border-radius: 999px;
+  background: var(--jaune); color: var(--encre); rotate: 8deg; white-space: nowrap;
 }
-.gd-hero__pastille strong { font-family: var(--f-titre); font-weight: 800; font-size: 30px; line-height: 1; letter-spacing: -.02em; }
-.gd-hero__pastille span { font-size: 16px; font-weight: 700; }
+.gd-hero__pastille strong { font-family: var(--f-titre); font-weight: 800; font-size: 30px; line-height: 1; }
+.gd-hero__pastille span { font-size: 16px; font-weight: 700; line-height: 1; }
 .gd-hero__note {
-  position: absolute; z-index: 2; right: 2%; top: -4%; rotate: -8deg;
-  font-size: clamp(24px, 2.8vw, 40px); white-space: nowrap; color: var(--blanc);
+  position: absolute; z-index: 2; left: 7.4%; top: -10.9%; rotate: -5deg;
+  font-size: clamp(24px, 2.78vw, 40px); white-space: nowrap; color: var(--blanc);
 }
 @media (min-width: 900px) {
-  .gd-hero__grille { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; gap: 40px; padding-block: 40px; min-height: clamp(560px, 44.5vw, 700px); }
+  .gd-hero__grille {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; gap: 40px;
+    padding-block: 0; min-height: clamp(560px, 44.5vw, 700px);
+  }
+  .gd-hero__texte { max-width: 640px; padding-top: clamp(28px, 3.6vw, 52px); }
   .gd-hero__cta { flex-direction: row; align-items: center; }
   .gd-hero__chapo { font-size: 19px; }
-  .gd-hero__visuel { width: min(100%, 540px); margin-inline: auto 40px; }
+  .gd-hero__visuel { width: min(100%, 37.5vw, 540px); margin: min(6.25vw, 90px) min(4.7vw, 68px) 0 auto; }
 }
 
 /* Repères : 4 colonnes, dernière valeur en orange foncé */
@@ -1320,22 +1330,23 @@ button { font: inherit; color: inherit; cursor: pointer; }
 }
 @media (min-width: 720px) { .gd-partenaires__liste { grid-template-columns: repeat(3, 1fr); min-height: 130px; } .gd-partenaires__liste li { min-height: 130px; } }
 
-/* Inscriptions */
+/* Inscriptions (maquette : 450 px, texte 736 px à x = 72, carte d'infos 480 px, gap 80) */
 .gd-inscriptions { position: relative; padding-block: clamp(64px, 7.2vw, 104px); background: var(--orange); color: var(--blanc); overflow: hidden; }
-.gd-inscriptions__disque { left: -15vw; top: 14vw; width: clamp(240px, 36vw, 520px); aspect-ratio: 1; background: rgba(255, 255, 255, .12); }
+.gd-inscriptions__disque { left: -15.3vw; top: 14vw; width: clamp(240px, 36.1vw, 520px); aspect-ratio: 1; background: rgba(255, 255, 255, .12); }
 .gd-inscriptions__grille { position: relative; display: grid; gap: 40px; align-items: center; }
+.gd-inscriptions .surtitre { margin-bottom: 26px; }
 .gd-inscriptions__titre {
   max-width: 14em; font-family: var(--f-titre); font-weight: 800;
-  font-size: clamp(32px, 3.6vw, 52px); line-height: 1.04; letter-spacing: -.03em;
+  font-size: clamp(32px, 3.6vw, 52px); line-height: 1.02; letter-spacing: -.0278em;
 }
-.gd-inscriptions__titre em { display: block; font-family: var(--f-accent); font-style: italic; font-weight: 400; font-size: 1.1em; letter-spacing: -.01em; color: var(--jaune); }
+.gd-inscriptions__titre em { display: block; font-family: var(--f-accent); font-style: italic; font-weight: 400; font-size: 1.096em; line-height: 1.04; letter-spacing: 0; color: var(--jaune); }
 .gd-inscriptions .btn { margin-top: 32px; }
-.gd-inscriptions__infos { padding: 8px 28px; border-radius: var(--rayon-lg); background: rgba(255, 255, 255, .14); }
-.gd-inscriptions__infos div { display: flex; justify-content: space-between; gap: 24px; padding-block: 20px; border-top: 1px solid rgba(255, 255, 255, .25); }
+.gd-inscriptions__infos { padding: 8px 32px; border-radius: var(--rayon-lg); background: rgba(255, 255, 255, .14); }
+.gd-inscriptions__infos div { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding-block: 22px; border-top: 1px solid rgba(255, 255, 255, .3); }
 .gd-inscriptions__infos div:first-child { border-top: 0; }
 .gd-inscriptions__infos dt { color: rgba(255, 255, 255, .9); font-size: 15px; }
 .gd-inscriptions__infos dd { font-family: var(--f-titre); font-weight: 800; font-size: 20px; }
-@media (min-width: 900px) { .gd-inscriptions__grille { grid-template-columns: minmax(0, 1fr) minmax(0, 480px); gap: clamp(40px, 6vw, 96px); } .gd-inscriptions__infos { padding-inline: 36px; } }
+@media (min-width: 900px) { .gd-inscriptions__grille { grid-template-columns: minmax(0, 1fr) minmax(0, 480px); gap: clamp(40px, 5.6vw, 80px); } }
 
 /* Animations : entrée du hero, comme sur l'accueil. */
 .gd-hero__disque { animation: entree-disque 900ms var(--ease-out) both; }
@@ -1343,4 +1354,135 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .gd-hero__pastille, .gd-hero__note { animation: entree 700ms var(--ease-out) 520ms both; }
 @media (prefers-reduced-motion: reduce) {
   .gd-hero__disque, .gd-hero__photo, .gd-hero__pastille, .gd-hero__note { animation: none; }
+}
+/* 16. Page Experience Lab ------------------------------------------------------- */
+
+/* Hero : variante verte de celui des Go du Digital, avec un cercle orange en bas à gauche
+   (maquette : 340 px en (-170, 470)). */
+.gd-hero--vert { background: var(--vert); }
+.gd-hero__orange {
+  left: -11.8vw; bottom: -11.8vw; width: clamp(130px, 23.6vw, 340px); aspect-ratio: 1;
+  background: var(--orange);
+}
+
+/* Approche (maquette : titre 72 / 80, intro à 22 px, cartes 312 x 220, gap 16, marge 56) */
+.el-approche .surtitre { margin-bottom: 22px; }
+.el-approche__titre {
+  font-family: var(--f-titre); font-weight: 800;
+  font-size: clamp(34px, 5vw, 72px); line-height: 1.02; letter-spacing: -.0278em;
+}
+.el-approche__titre em {
+  display: block; font-family: var(--f-accent); font-style: italic; font-weight: 400;
+  font-size: 1.111em; letter-spacing: 0; line-height: 1.04; color: var(--vert);
+}
+.el-approche__intro { margin-top: 22px; color: var(--texte); font-size: 19px; line-height: 1.3; }
+.el-questions { display: grid; gap: 16px; margin-top: 56px; }
+.el-question {
+  display: flex; flex-direction: column; justify-content: space-between; gap: 24px;
+  min-height: 220px; padding: 28px; border-radius: var(--rayon);
+  background: var(--blanc); box-shadow: inset 0 0 0 1px rgba(23, 18, 12, .1);
+}
+.el-question__signe { font-family: var(--f-accent); font-style: italic; font-size: 84px; line-height: .9; }
+.el-question h3 { font-family: var(--f-titre); font-weight: 800; font-size: clamp(21px, 1.8vw, 26px); letter-spacing: -.02em; line-height: 1.1; }
+.el-question--orange .el-question__signe { color: var(--orange); }
+.el-question--vert .el-question__signe { color: var(--vert); }
+.el-question--profond { background: var(--vert-profond); color: var(--blanc); box-shadow: none; }
+.el-question--profond .el-question__signe { color: var(--jaune); }
+@media (min-width: 720px) { .el-questions { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1100px) { .el-questions { grid-template-columns: repeat(4, 1fr); } }
+
+/* Objectifs (maquette : colonne de 460 px, gap 80, lignes de 86 px) */
+.el-objectifs__grille { display: grid; gap: 40px; }
+.el-objectifs .surtitre { margin-bottom: 24px; }
+.el-objectifs__titre {
+  font-family: var(--f-titre); font-weight: 800;
+  font-size: clamp(30px, 3.2vw, 46px); line-height: 1.02; letter-spacing: -.0278em;
+}
+.el-objectifs__titre em { display: block; font-family: var(--f-accent); font-style: italic; font-weight: 400; font-size: 1.108em; line-height: 1.04; letter-spacing: 0; color: var(--orange); }
+.el-objectifs__grille .texte { margin-top: 24px; line-height: 1.65; }
+.el-objectifs__liste li {
+  display: flex; align-items: center; gap: 28px; padding-block: 24px; border-bottom: 1px solid rgba(23, 18, 12, .15);
+  font-family: var(--f-titre); font-weight: 700; font-size: clamp(18px, 1.74vw, 25px); letter-spacing: -.016em; line-height: 1.15;
+}
+.el-objectifs__num { flex: none; width: 56px; font-family: var(--f-accent); font-style: italic; font-weight: 400; font-size: 38px; line-height: 1; letter-spacing: 0; }
+.el-objectif--vert .el-objectifs__num { color: var(--vert); }
+.el-objectif--orange .el-objectifs__num { color: var(--orange); }
+@media (min-width: 900px) { .el-objectifs__grille { grid-template-columns: minmax(0, 460px) minmax(0, 1fr); gap: clamp(40px, 5.6vw, 80px); align-items: start; } }
+/* 17. Cercles creux de la maquette -------------------------------------------------
+   Les ellipses de la maquette ont un « rayon intérieur » (innerRadius) : ce sont des anneaux, pas des
+   disques pleins. Épaisseur = (1 - rayon intérieur) x rayon. Un dégradé radial reproduit l'anneau à
+   n'importe quelle taille. Positions relevées à 1440 px, converties en vw (1 vw = 14,4 px). */
+
+/* Go du Digital / Experience Lab */
+.gd-hero__jaune { background: radial-gradient(circle closest-side, transparent 80%, var(--jaune) 80.6%); }
+.gd-hero__orange { background: radial-gradient(circle closest-side, transparent 74%, var(--orange) 74.6%); }
+.gd-inscriptions__disque { background: radial-gradient(circle closest-side, transparent 78%, rgba(255, 255, 255, .12) 78.6%); }
+
+/* UCIV Leadership : disque blanc 640 derrière la photo + anneau vert 360 en bas à gauche */
+.lead-hero { position: relative; }
+.lead-hero__disque {
+  position: absolute; z-index: 0; left: 9.1%; top: 6.9%; width: 97.3%; aspect-ratio: 1;
+  border-radius: 50%; background: var(--blanc);
+}
+.lead-hero__anneau {
+  border: 0; opacity: 1; right: auto; top: auto; left: -13.2vw; bottom: -13.2vw; width: clamp(110px, 25vw, 360px);
+  background: radial-gradient(circle closest-side, transparent 80%, var(--vert) 80.6%);
+}
+.lead-hero__logo { padding: 6px 12px; width: min(46%, 300px); }
+@media (min-width: 900px) {
+  .lead-hero__grille { align-items: end; }
+  .lead-hero__texte { align-self: center; padding-block: 0; padding-top: clamp(28px, 3.6vw, 52px); }
+  .lead-hero__visuel { width: min(100%, 45.7vw, 658px); max-width: none; margin-right: -2vw; margin-inline-start: auto; }
+  .lead-hero__logo { top: -3.9vw; right: 1.9vw; width: clamp(150px, 20.8vw, 300px); }
+}
+.lead-pourquoi__anneau {
+  border: 0; opacity: 1; bottom: auto; right: -12.5vw; top: 11.1vw; width: clamp(180px, 36.1vw, 520px);
+  background: radial-gradient(circle closest-side, transparent 78%, rgba(247, 197, 72, .15) 78.6%);
+}
+.lead-lancement__disque { display: none; }
+
+/* Qui sommes-nous ? : disque crème 700 + anneau jaune 440 (hero), anneau dans la carte vision, anneau dans la citation */
+.qs-hero { position: relative; }
+.qs-hero__disque {
+  position: absolute; z-index: 0; left: 9.9%; top: 7.1%; width: 115%; aspect-ratio: 1;
+  border-radius: 50%; background: var(--creme);
+}
+.qs-hero__anneau {
+  border: 0; opacity: 1; bottom: auto; width: clamp(170px, 30.6vw, 440px); right: -12.5vw; top: -13.9vw;
+  background: radial-gradient(circle closest-side, transparent 80%, var(--jaune) 80.6%);
+}
+@media (min-width: 900px) {
+  .qs-hero__grille { align-items: end; }
+  .qs-hero__texte { align-self: center; padding-block: 0; padding-top: clamp(28px, 3.6vw, 52px); }
+  .qs-hero__visuel { width: min(100%, 42.2vw, 608px); max-width: none; margin-right: -0.7vw; margin-inline-start: auto; }
+}
+.qs-vision { position: relative; overflow: hidden; }
+.qs-vision > * { position: relative; }
+.qs-vision::before {
+  content: ""; position: absolute; left: 58.9%; top: -150px; width: 67.9%; aspect-ratio: 1; border-radius: 50%;
+  background: radial-gradient(circle closest-side, transparent 76%, rgba(255, 255, 255, .08) 76.6%);
+}
+.qs-citation { position: relative; overflow: hidden; }
+.qs-citation__cadre { position: relative; }
+.qs-citation::before {
+  content: ""; position: absolute; left: -13.9vw; top: -15.3vw; width: clamp(240px, 36.1vw, 520px); aspect-ratio: 1; border-radius: 50%;
+  background: radial-gradient(circle closest-side, transparent 78%, rgba(255, 255, 255, .12) 78.6%);
+}
+
+/* Nos programmes : disque orange 560 + anneau jaune 380 + anneau blanc 300 (hero), anneau de l'appel */
+.np-hero__rond { background: radial-gradient(circle closest-side, transparent 76%, var(--jaune) 76.6%); border: 0; }
+.np-hero__anneau {
+  border: 0; background: radial-gradient(circle closest-side, transparent 70%, rgba(255, 255, 255, .08) 70.6%);
+}
+@media (min-width: 900px) {
+  .np-hero__grille { position: static; min-height: clamp(480px, 38.9vw, 700px); }
+  .np-hero__visuel { display: contents; }
+  .np-hero__disque { inset: auto; left: 69.4vw; top: 4.17vw; width: 38.9vw; height: auto; aspect-ratio: 1; }
+  .np-hero__rond { left: 81.9vw; right: auto; top: 22.9vw; bottom: auto; width: 26.4vw; }
+  .np-hero__anneau { left: 61.1vw; right: auto; top: -11.1vw; width: 20.8vw; }
+  .np-hero__note { left: 70.1vw; top: 17.6vw; translate: none; rotate: -8deg; font-size: clamp(30px, 3.2vw, 46px); }
+}
+.np-appel__anneau {
+  border: 0; opacity: 1; right: -13.9vw; top: -18vw; width: clamp(240px, 36.1vw, 520px);
+  background: radial-gradient(circle closest-side, transparent 78%, rgba(255, 255, 255, .1) 78.6%);
 }

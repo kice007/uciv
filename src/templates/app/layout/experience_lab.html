@@ -1,0 +1,102 @@
+{% extends "app/base/base.html" %}
+{% load static %}
+
+{% block title %}Experience Lab — Know yourself before showing yourself{% endblock %}
+{% block description %}Experience Lab : un espace consacré au personal branding et au pitch professionnel pour apprendre à mieux se connaître, mieux se présenter et mieux valoriser son expérience.{% endblock %}
+
+{% block content %}
+
+{# ---------------------------------------------------------------- Hero #}
+<section class="gd-hero gd-hero--vert">
+  <span class="forme gd-hero__orange" aria-hidden="true"></span>
+  <div class="conteneur gd-hero__grille">
+    <div class="gd-hero__texte">
+      <nav class="fil fil--clair" aria-label="Fil d'Ariane">
+        <ol>
+          <li><a href="{% url 'app:home' %}">Accueil</a></li>
+          <li><a href="{% url 'app:nos_programmes' %}">Nos programmes</a></li>
+          <li aria-current="page"><strong>Experience Lab</strong></li>
+        </ol>
+      </nav>
+      <p class="surtitre surtitre--blanc hero__entree" style="--i: 0">{{ el.hero_surtitre }}</p>
+      <h1 class="gd-hero__titre hero__entree" style="--i: 1">Experience <em>Lab.</em></h1>
+      <p class="gd-hero__chapo hero__entree" style="--i: 2">{{ el.hero_chapo }}</p>
+      <div class="gd-hero__cta hero__entree" style="--i: 3">
+        <a class="btn btn--blanc" href="#inscriptions">
+          <span>S'inscrire</span>
+          <span class="btn__rond">{% include "app/includes/_icon.html" with name="arrow-right" %}</span>
+        </a>
+        <a class="btn btn--contour-blanc" href="{% url 'app:nos_programmes' %}">Découvrir nos programmes</a>
+      </div>
+    </div>
+    <div class="gd-hero__visuel">
+      <span class="forme gd-hero__jaune" aria-hidden="true"></span>
+      <span class="gd-hero__disque" aria-hidden="true"></span>
+      <div class="gd-hero__photo">
+        <img src="{% static 'app/assets/img/experience-lab.jpg' %}" width="1200" height="1000"
+             alt="Un jeune homme présente son parcours devant un petit groupe." fetchpriority="high">
+      </div>
+      <p class="manuscrit gd-hero__note" aria-hidden="true">{{ el.hero_note }}</p>
+    </div>
+  </div>
+</section>
+
+{# -------------------------------------------------------------- Approche #}
+<section class="section el-approche">
+  <div class="conteneur">
+    <div data-reveal>
+      <p class="surtitre">Notre approche</p>
+      <h2 class="el-approche__titre">{{ el.approche_titre }} <em>{{ el.approche_suite }}</em></h2>
+      <p class="el-approche__intro">{{ el.approche_intro }}</p>
+    </div>
+    <ul class="el-questions">
+      {% for question in el.questions %}
+        <li class="el-question el-question--{{ question.couleur }}" data-reveal style="--i: {{ forloop.counter0 }}">
+          <span class="el-question__signe" aria-hidden="true">?</span>
+          <h3>{{ question.texte }}</h3>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+
+{# -------------------------------------------------------------- Objectifs #}
+<section class="section section--blanc el-objectifs">
+  <div class="conteneur el-objectifs__grille">
+    <div data-reveal>
+      <p class="surtitre">Objectifs</p>
+      <h2 class="el-objectifs__titre">Ce que le programme <em>permet aux participants.</em></h2>
+      <p class="texte">{{ el.objectifs_intro }}</p>
+    </div>
+    <ol class="el-objectifs__liste">
+      {% for objectif in el.objectifs %}
+        <li class="{% if forloop.counter|divisibleby:2 %}el-objectif--orange{% else %}el-objectif--vert{% endif %}" data-reveal style="--i: {{ forloop.counter0 }}">
+          <span class="el-objectifs__num">0{{ forloop.counter }}</span>
+          <span>{{ objectif }}</span>
+        </li>
+      {% endfor %}
+    </ol>
+  </div>
+</section>
+
+{# ----------------------------------------------------------- Inscriptions #}
+<section class="gd-inscriptions" id="inscriptions">
+  <span class="forme gd-inscriptions__disque" aria-hidden="true"></span>
+  <div class="conteneur gd-inscriptions__grille">
+    <div data-reveal>
+      <p class="surtitre surtitre--blanc">Inscriptions</p>
+      <h2 class="gd-inscriptions__titre">Mieux te connaître <em>pour mieux te présenter.</em></h2>
+      <a class="btn btn--blanc" href="#">
+        <span>S'inscrire</span>
+        <span class="btn__rond">{% include "app/includes/_icon.html" with name="arrow-right" %}</span>
+      </a>
+    </div>
+    <dl class="gd-inscriptions__infos" data-reveal style="--i: 1">
+      {% for info in el.inscriptions %}
+        <div><dt>{{ info.label }}</dt><dd>{{ info.valeur }}</dd></div>
+      {% endfor %}
+    </dl>
+  </div>
+</section>
+
+{% endblock %}

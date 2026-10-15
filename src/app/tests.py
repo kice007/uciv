@@ -89,3 +89,20 @@ class GoDuDigitalPageTests(TestCase):
     def test_programmes_page_links_to_it(self):
         response = self.client.get(reverse('app:nos_programmes'))
         self.assertContains(response, reverse('app:go_du_digital'))
+
+class ExperienceLabPageTests(TestCase):
+    def test_page_renders(self):
+        response = self.client.get(reverse('app:experience_lab'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'app/layout/experience_lab.html')
+
+    def test_page_shows_key_content(self):
+        response = self.client.get(reverse('app:experience_lab'))
+        self.assertContains(response, 'Know yourself')
+        self.assertContains(response, "qui l&#x27;on est")
+        self.assertContains(response, 'Définir leur positionnement')
+        self.assertContains(response, 'Mieux te connaître')
+
+    def test_programmes_page_links_to_it(self):
+        response = self.client.get(reverse('app:nos_programmes'))
+        self.assertContains(response, reverse('app:experience_lab'))
