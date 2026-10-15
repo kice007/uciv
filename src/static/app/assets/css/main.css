@@ -1715,3 +1715,87 @@ button { font: inherit; color: inherit; cursor: pointer; }
   .eng-hero__disque, .eng-hero__photo, .eng-hero__anneau-jaune, .eng-hero__anneau-vert, .eng-hero__note { animation: none; }
   .eng-option { transition: none; }
 }
+/* 20. Page Partenaires ---------------------------------------------------------------
+   Valeurs de la maquette (1440 px) : hero 620 px, disque crème 540 en (790, 80), photo ronde 480,
+   anneau jaune 440 (0,8) en (1150, -180), anneau vert 340 (0,74) en (-170, 470). */
+.par-hero { position: relative; background: var(--orange); color: var(--blanc); overflow: hidden; }
+.par-hero__anneau-vert {
+  left: -11.8vw; bottom: -13.2vw; width: clamp(110px, 23.6vw, 340px); aspect-ratio: 1;
+  background: radial-gradient(circle closest-side, transparent 74%, var(--vert) 74.6%);
+}
+.par-hero__grille { position: relative; display: grid; gap: 40px; padding-top: 28px; padding-bottom: 56px; }
+.par-hero__texte { display: flex; flex-direction: column; align-items: flex-start; gap: 22px; }
+.par-hero .fil { margin: 0; padding-bottom: 26px; }
+.par-hero .surtitre { margin: 0; }
+.par-hero__titre { font-family: var(--f-titre); font-weight: 800; font-size: clamp(36px, 4.17vw, 60px); line-height: 1.02; letter-spacing: -.0278em; }
+.par-hero__titre em { display: block; font-family: var(--f-accent); font-style: italic; font-weight: 400; font-size: 1.1em; line-height: 1.04; letter-spacing: 0; color: var(--jaune); }
+.par-hero__chapo { max-width: 580px; font-size: 18px; line-height: 1.55; color: rgba(255, 255, 255, .95); }
+.par-hero__cta { padding-top: 8px; }
+.par-hero__visuel { position: relative; width: min(100%, 540px); aspect-ratio: 1; margin-inline: auto; }
+.par-hero__anneau-jaune {
+  left: 66.7%; top: -48.1%; width: 81.5%; aspect-ratio: 1;
+  background: radial-gradient(circle closest-side, transparent 80%, var(--jaune) 80.6%);
+}
+.par-hero__disque { position: absolute; inset: 0; border-radius: 50%; background: var(--creme); }
+.par-hero__photo { position: absolute; inset: 5.56%; overflow: hidden; border-radius: 50%; background: var(--sable); }
+.par-hero__photo img { width: 100%; height: 100%; object-fit: cover; }
+@media (min-width: 900px) {
+  .par-hero__grille {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; gap: 40px;
+    padding-block: 0; min-height: clamp(520px, 43.1vw, 680px);
+  }
+  .par-hero__texte { max-width: 680px; padding-top: clamp(28px, 3.6vw, 52px); }
+  .par-hero__chapo { font-size: 19px; }
+  .par-hero__visuel { width: min(100%, 37.5vw, 540px); margin: min(5.56vw, 80px) min(2.6vw, 38px) 0 auto; }
+}
+
+/* Ils nous accompagnent : cartes de 416 x 250, rembourrage 32 */
+.par-accompagnent .entete-section { margin-bottom: 56px; }
+.par-accompagnent .surtitre { margin-bottom: 22px; }
+.par-cartes { display: grid; gap: 20px; }
+.par-carte {
+  display: flex; flex-direction: column; justify-content: space-between; gap: 32px; min-height: 250px; padding: 32px;
+  border-radius: var(--rayon-lg); background: var(--blanc); box-shadow: inset 0 0 0 1px rgba(23, 18, 12, .1);
+}
+.par-carte__haut { display: flex; align-items: flex-start; justify-content: space-between; }
+.par-carte__picto { display: grid; place-items: center; width: 56px; height: 56px; border-radius: 50%; background: var(--orange); color: var(--blanc); }
+.par-carte__picto .icon { width: 24px; height: 24px; }
+.par-carte--vert .par-carte__picto { background: var(--vert); }
+.par-carte--profond .par-carte__picto { background: var(--vert-profond); }
+.par-carte__etiquette { padding-top: 6px; color: var(--texte); font-size: 11px; font-weight: 700; letter-spacing: .145em; text-transform: uppercase; }
+.par-carte h3 { font-family: var(--f-titre); font-weight: 800; font-size: clamp(26px, 2.2vw, 32px); letter-spacing: -.025em; line-height: 1.12; }
+.par-carte p { margin-top: 6px; font-family: var(--f-accent); font-style: italic; font-size: 24px; line-height: 1.2; color: var(--orange-fonce); }
+@media (min-width: 900px) { .par-cartes { grid-template-columns: repeat(3, 1fr); gap: 24px; } }
+
+/* Formes de collaboration : 10 lignes sur 2 colonnes de 624 px, écart 48 px */
+.par-formes .entete-section { margin-bottom: 56px; }
+.par-formes .surtitre { margin-bottom: 22px; }
+.par-formes__titre em { color: var(--jaune); }
+.par-formes .eng-titre { color: var(--blanc); }
+.par-formes__liste { display: grid; gap: 0 48px; }
+.par-formes__liste li {
+  display: flex; align-items: center; gap: 22px; padding-block: 22px;
+  border-bottom: 1px solid rgba(255, 255, 255, .2);
+}
+.par-formes__num { flex: none; width: 44px; font-family: var(--f-accent); font-style: italic; font-size: 30px; line-height: 1; color: var(--jaune); }
+.par-formes__nom { flex: 1; font-family: var(--f-titre); font-weight: 700; font-size: clamp(20px, 1.8vw, 26px); letter-spacing: -.02em; line-height: 1.2; }
+.par-formes__liste .icon { flex: none; width: 18px; height: 18px; opacity: .75; }
+@media (min-width: 900px) { .par-formes__liste { grid-template-columns: 1fr 1fr; } }
+
+/* Formulaire de partenariat : réutilise les contrôles de la page d'engagement */
+.par-form__titre { font-family: var(--f-titre); font-weight: 800; font-size: clamp(28px, 3.19vw, 46px); line-height: 1.02; letter-spacing: -.0278em; }
+.par-form__titre em { display: block; font-family: var(--f-accent); font-style: italic; font-weight: 400; font-size: 1.109em; line-height: 1.04; letter-spacing: 0; color: var(--orange); }
+.eng-champ--select {
+  appearance: none; color: var(--texte); cursor: pointer;
+  background: var(--blanc) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%235C5247' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 20px center;
+  padding-right: 52px;
+}
+.eng-form__bas--droite { justify-content: flex-end; }
+
+/* Animations : mêmes entrées que l'accueil */
+.par-hero__disque { animation: entree-disque 900ms var(--ease-out) both; }
+.par-hero__photo { animation: entree-photo 900ms var(--ease-out) 120ms both; }
+.par-hero__anneau-jaune, .par-hero__anneau-vert { animation: entree-disque 900ms var(--ease-out) 150ms both; }
+@media (prefers-reduced-motion: reduce) {
+  .par-hero__disque, .par-hero__photo, .par-hero__anneau-jaune, .par-hero__anneau-vert { animation: none; }
+}

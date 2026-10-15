@@ -1,0 +1,10 @@
+<p>Nouvelle proposition de partenariat reçue sur le site UCIV.</p>
+<ul>
+  <li><strong>Nom :</strong> {{ soumission.nom }}</li>
+  <li><strong>Organisation :</strong> {{ soumission.organisation }}</li>
+  <li><strong>E-mail :</strong> {{ soumission.email }}</li>
+  <li><strong>Téléphone :</strong> {{ soumission.telephone|default:"—" }}</li>
+  <li><strong>Type de collaboration :</strong> {{ soumission.type_collaboration }}</li>
+</ul>
+<p><strong>Présentation et idée :</strong></p>
+<p>{{ soumission.message|linebreaksbr }}</p>

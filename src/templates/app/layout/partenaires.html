@@ -1,0 +1,165 @@
+{% extends "app/base/base.html" %}
+{% load static %}
+
+{% block title %}Partenaires — Une Côte d'Ivoire Volontaire{% endblock %}
+{% block description %}Ensemble, créons plus d'opportunités pour la jeunesse : devenez partenaire d'UCIV et construisons une collaboration utile aux jeunes.{% endblock %}
+
+{% block content %}
+
+{# ---------------------------------------------------------------- Hero #}
+<section class="par-hero">
+  <span class="forme par-hero__anneau-vert" aria-hidden="true"></span>
+  <div class="conteneur par-hero__grille">
+    <div class="par-hero__texte">
+      <nav class="fil fil--clair" aria-label="Fil d'Ariane">
+        <ol>
+          <li><a href="{% url 'app:home' %}">Accueil</a></li>
+          <li aria-current="page"><strong>Partenaires</strong></li>
+        </ol>
+      </nav>
+      <p class="surtitre surtitre--blanc hero__entree" style="--i: 0">Partenaires</p>
+      <h1 class="par-hero__titre hero__entree" style="--i: 1">{{ par.hero_titre }} <em>{{ par.hero_suite }}</em></h1>
+      <p class="par-hero__chapo hero__entree" style="--i: 2">{{ par.hero_chapo }}</p>
+      <div class="par-hero__cta hero__entree" style="--i: 3">
+        <a class="btn btn--blanc" href="#proposer">
+          <span>Devenir partenaire</span>
+          <span class="btn__rond">{% include "app/includes/_icon.html" with name="arrow-right" %}</span>
+        </a>
+      </div>
+    </div>
+    <div class="par-hero__visuel">
+      <span class="forme par-hero__anneau-jaune" aria-hidden="true"></span>
+      <span class="par-hero__disque" aria-hidden="true"></span>
+      <div class="par-hero__photo">
+        <img src="{% static 'app/assets/img/partenariat-paipro.jpg' %}" width="1200" height="900"
+             alt="Poignée de main lors de la signature entre UCIV et PAIPRO-JEUNES." fetchpriority="high">
+      </div>
+    </div>
+  </div>
+</section>
+
+{# ------------------------------------------------------ Ils nous accompagnent #}
+<section class="section par-accompagnent">
+  <div class="conteneur">
+    <div class="entete-section" data-reveal>
+      <div>
+        <p class="surtitre">Ils nous accompagnent</p>
+        <h2 class="eng-titre">Ce qu'un partenariat <em>bien construit peut apporter.</em></h2>
+      </div>
+      <p class="texte">{{ par.accompagnent_intro }}</p>
+    </div>
+    <ul class="par-cartes">
+      {% for partenaire in par.partenaires %}
+        <li class="par-carte par-carte--{{ partenaire.couleur }}" data-reveal style="--i: {{ forloop.counter0 }}">
+          <div class="par-carte__haut">
+            <span class="par-carte__picto">{% include "app/includes/_icon.html" with name=partenaire.icone %}</span>
+            <span class="par-carte__etiquette">Partenaire</span>
+          </div>
+          <div>
+            <h3>{{ partenaire.nom }}</h3>
+            <p>{{ partenaire.apport }}</p>
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+
+{# ------------------------------------------------- Formes de collaboration #}
+<section class="section section--sombre par-formes">
+  <div class="conteneur">
+    <div class="entete-section" data-reveal>
+      <div>
+        <p class="surtitre surtitre--jaune">Formes de collaboration</p>
+        <h2 class="eng-titre par-formes__titre">Nous sommes <em>ouverts à…</em></h2>
+      </div>
+      <p class="texte texte--clair">{{ par.formes_intro }}</p>
+    </div>
+    <ol class="par-formes__liste">
+      {% for forme in par.formes %}
+        <li data-reveal style="--i: {{ forloop.counter0 }}">
+          <span class="par-formes__num">{% if forloop.counter < 10 %}0{% endif %}{{ forloop.counter }}</span>
+          <span class="par-formes__nom">{{ forme }}</span>
+          {% include "app/includes/_icon.html" with name="arrow-up-right" %}
+        </li>
+      {% endfor %}
+    </ol>
+  </div>
+</section>
+
+{# ------------------------------------------------- Proposer un partenariat #}
+<section class="section section--blanc eng-formulaire" id="proposer">
+  <div class="conteneur eng-formulaire__grille">
+    <div data-reveal>
+      <p class="surtitre">Proposer un partenariat</p>
+      <h2 class="par-form__titre">Vous souhaitez collaborer <em>avec UCIV ?</em></h2>
+      <p class="texte">{{ par.formulaire_texte }}</p>
+    </div>
+
+    <form class="eng-form" method="post" action="{% url 'app:partenaires' %}#proposer" data-reveal style="--i: 1" novalidate>
+      {% csrf_token %}
+
+      {% if messages %}
+        {% for message in messages %}
+          <p class="eng-alerte eng-alerte--{{ message.tags }}" role="status">{{ message }}</p>
+        {% endfor %}
+      {% endif %}
+
+      <div class="eng-piege" aria-hidden="true">
+        <label for="id_site_web">Ne pas remplir</label>
+        <input type="text" id="id_site_web" name="site_web" tabindex="-1" autocomplete="off">
+      </div>
+
+      <div class="eng-ligne">
+        <div class="eng-groupe">
+          <label class="eng-label" for="id_nom">Nom et prénom</label>
+          <input class="eng-champ" type="text" id="id_nom" name="nom" placeholder="Votre nom" value="{{ form.nom.value|default:'' }}" autocomplete="name" required>
+          {% for erreur in form.nom.errors %}<p class="eng-erreur">{{ erreur }}</p>{% endfor %}
+        </div>
+        <div class="eng-groupe">
+          <label class="eng-label" for="id_organisation">Organisation</label>
+          <input class="eng-champ" type="text" id="id_organisation" name="organisation" placeholder="Nom de votre structure" value="{{ form.organisation.value|default:'' }}" autocomplete="organization" required>
+          {% for erreur in form.organisation.errors %}<p class="eng-erreur">{{ erreur }}</p>{% endfor %}
+        </div>
+      </div>
+
+      <div class="eng-ligne">
+        <div class="eng-groupe">
+          <label class="eng-label" for="id_email">Adresse e-mail</label>
+          <input class="eng-champ" type="email" id="id_email" name="email" placeholder="nom@organisation.com" value="{{ form.email.value|default:'' }}" autocomplete="email" required>
+          {% for erreur in form.email.errors %}<p class="eng-erreur">{{ erreur }}</p>{% endfor %}
+        </div>
+        <div class="eng-groupe">
+          <label class="eng-label" for="id_telephone">Téléphone</label>
+          <input class="eng-champ" type="tel" id="id_telephone" name="telephone" placeholder="+225" value="{{ form.telephone.value|default:'' }}" autocomplete="tel">
+          {% for erreur in form.telephone.errors %}<p class="eng-erreur">{{ erreur }}</p>{% endfor %}
+        </div>
+      </div>
+
+      <div class="eng-groupe">
+        <label class="eng-label" for="id_type_collaboration">Type de collaboration envisagée</label>
+        <select class="eng-champ eng-champ--select" id="id_type_collaboration" name="type_collaboration" required>
+          {% for valeur, libelle in form.type_collaboration.field.choices %}
+            <option value="{{ valeur }}"{% if form.type_collaboration.value == valeur %} selected{% endif %}>{{ libelle }}</option>
+          {% endfor %}
+        </select>
+        {% for erreur in form.type_collaboration.errors %}<p class="eng-erreur">{{ erreur }}</p>{% endfor %}
+      </div>
+
+      <div class="eng-groupe">
+        <label class="eng-label" for="id_message">Présentation et idée de collaboration</label>
+        <textarea class="eng-champ eng-champ--zone" id="id_message" name="message" rows="5" placeholder="Présentez votre organisation et votre idée…" required>{{ form.message.value|default:'' }}</textarea>
+        {% for erreur in form.message.errors %}<p class="eng-erreur">{{ erreur }}</p>{% endfor %}
+      </div>
+
+      <div class="eng-form__bas eng-form__bas--droite">
+        <button class="btn btn--orange" type="submit">
+          <span>Devenir partenaire</span>
+          <span class="btn__rond">{% include "app/includes/_icon.html" with name="arrow-right" %}</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</section>
+
+{% endblock %}

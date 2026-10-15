@@ -2,7 +2,7 @@ from django.core import mail
 from django.test import TestCase, override_settings
 from django.urls import reverse
 
-from .models import SoumissionEngagement
+from .models import SoumissionEngagement, SoumissionPartenariat
 
 
 class HomePageTests(TestCase):
@@ -181,3 +181,50 @@ class EngagementPageTests(TestCase):
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].to, ['equipe@exemple.test'])
         self.assertIn('Aya Konan', mail.outbox[0].alternatives[0][0])
+
+class PartenairesPageTests(TestCase):
+    def donnees(self, **extra):
+        data = {
+            'nom': 'Kouadio Yao', 'organisation': 'Entreprise Test', 'email': 'yao@test.ci',
+            'telephone': '+225 05 06 07 08', 'type_collaboration': 'Sponsoring',
+            'message': 'Nous aimerions soutenir vos programmes.',
+        }
+        data.update(extra)
+        return data
+
+    def test_page_renders(self):
+        response = self.client.get(reverse('app:partenaires'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'app/layout/partenaires.html')
+        self.assertContains(response, 'Ensemble, créons')
+        self.assertContains(response, 'Nous sommes')
+        self.assertContains(response, 'Projets communs')
+        self.assertContains(response, 'ONG Light for All CI')
+
+    def test_valid_submission_is_saved(self):
+        response = self.client.post(reverse('app:partenaires'), self.donnees())
+        self.assertEqual(response.status_code, 302)
+        soumission = SoumissionPartenariat.objects.get()
+        self.assertEqual(soumission.organisation, 'Entreprise Test')
+        self.assertEqual(soumission.type_collaboration, 'Sponsoring')
+
+    def test_invalid_submission_shows_errors(self):
+        response = self.client.post(reverse('app:partenaires'), self.donnees(email='nope', type_collaboration='???'))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(SoumissionPartenariat.objects.count(), 0)
+        self.assertContains(response, 'eng-erreur')
+
+    def test_honeypot_blocks_robots(self):
+        response = self.client.post(reverse('app:partenaires'), self.donnees(site_web='http://spam'))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(SoumissionPartenariat.objects.count(), 0)
+
+    @override_settings(EMAIL_HOST='smtp.exemple.test', CONTACT_EMAIL='equipe@exemple.test')
+    def test_team_is_notified_by_email(self):
+        self.client.post(reverse('app:partenaires'), self.donnees())
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].to, ['equipe@exemple.test'])
+
+    def test_home_links_to_page(self):
+        response = self.client.get(reverse('app:home'))
+        self.assertContains(response, reverse('app:partenaires'))

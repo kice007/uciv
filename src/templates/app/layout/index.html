@@ -297,7 +297,7 @@
       <p class="surtitre">Partenaires</p>
       <h2 class="titre titre--46">Construisons ensemble <em>des opportunités pour la jeunesse.</em></h2>
       <p class="texte">Nos programmes s'appuient déjà sur des partenaires comme BonixUp, PAIPRO-JEUNES et l'ONG Light for All CI, avec qui nous construisons formations, accompagnement à l'insertion et logistique de terrain.</p>
-      <a class="btn btn--orange" href="#">
+      <a class="btn btn--orange" href="{% url 'app:partenaires' %}">
         <span>Devenir partenaire</span>
         <span class="btn__rond">{% include "app/includes/_icon.html" with name="arrow-right" %}</span>
       </a>
@@ -310,7 +310,7 @@
         </li>
       {% endfor %}
       <li data-reveal style="--i: 3">
-        <a class="carte-partenaire carte-partenaire--appel" href="#">
+        <a class="carte-partenaire carte-partenaire--appel" href="{% url 'app:partenaires' %}#proposer">
           <span class="carte-partenaire__apport">Institutionnel · technique · financier</span>
           <strong>Votre organisation&nbsp;? {% include "app/includes/_icon.html" with name="plus" %}</strong>
         </a>

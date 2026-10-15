@@ -15,6 +15,7 @@ from django.utils.functional import lazy
 URL_LEADERSHIP = reverse_lazy('app:uciv_leadership')
 URL_QUI = reverse_lazy('app:qui_sommes_nous')
 URL_PROGRAMMES = reverse_lazy('app:nos_programmes')
+URL_PARTENAIRES = reverse_lazy('app:partenaires')
 
 def _engagement(choix=''):
     return reverse('app:engagement') + (f'?choix={choix}' if choix else '')
@@ -85,7 +86,7 @@ PIED_COLONNES = [
         'liens': [
             {'label': 'Qui sommes-nous ?', 'url': URL_QUI},
             {'label': 'Notre impact', 'url': '#'},
-            {'label': 'Nos partenaires', 'url': '#'},
+            {'label': 'Nos partenaires', 'url': URL_PARTENAIRES},
             {'label': 'Actualités', 'url': '#'},
             {'label': 'Ressources', 'url': '#'},
             {'label': 'Contact', 'url': '#'},
@@ -647,4 +648,39 @@ ENGAGEMENT = {
                         "L'équipe revient vers toi pour la suite.",
     'merci': "Merci ! Ta demande a bien été envoyée. L'équipe revient vers toi pour "
              "la suite.",
+}
+
+# --- Page Partenaires -------------------------------------------------------
+
+PAGE_PARTENAIRES = {
+    'hero_titre': "Ensemble, créons plus d'opportunités",
+    'hero_suite': 'pour la jeunesse.',
+    'hero_chapo': "Les défis liés à la jeunesse ne se résolvent pas par une seule "
+                  "organisation agissant seule. UCIV développe des collaborations "
+                  "avec toute organisation partageant la volonté de contribuer au "
+                  "développement de la jeunesse ivoirienne.",
+    'accompagnent_intro': "Des collaborations comme celles menées avec BonixUp, "
+                          "PAIPRO-JEUNES et Light for All CI montrent ce qu'un "
+                          "partenariat peut apporter aux jeunes.",
+    'partenaires': [
+        {'nom': 'BonixUp', 'apport': 'Accès à des formateurs',
+         'couleur': 'orange', 'icone': 'graduation-cap'},
+        {'nom': 'PAIPRO-JEUNES', 'apport': "Accompagnement vers l'emploi",
+         'couleur': 'vert', 'icone': 'briefcase'},
+        {'nom': 'ONG Light for All CI', 'apport': 'Logistique de terrain',
+         'couleur': 'profond', 'icone': 'truck'},
+    ],
+    'formes_intro': "Institutions, entreprises, associations, ONG, établissements de "
+                    "formation : plusieurs manières de construire ensemble.",
+    'formes': [
+        'Partenariats institutionnels', 'Partenariats techniques',
+        'Partenariats financiers', 'Sponsoring', 'Mécénat',
+        'Collaborations sur des programmes', 'Formations',
+        'Opportunités de stage', 'Opportunités professionnelles', 'Projets communs',
+    ],
+    'formulaire_texte': "Présentez-nous votre organisation et expliquez-nous comment "
+                        "nous pourrions construire une collaboration utile aux jeunes "
+                        "que nous accompagnons.",
+    'merci': "Merci ! Votre proposition a bien été envoyée. L'équipe vous recontacte "
+             "rapidement.",
 }

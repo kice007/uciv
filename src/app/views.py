@@ -12,8 +12,8 @@ from django.urls import reverse
 from core.utils import send_customize_email
 
 from . import content
-from .forms import EngagementForm
-from .models import SoumissionEngagement
+from .forms import EngagementForm, PartenariatForm
+from .models import SoumissionEngagement, SoumissionPartenariat
 
 
 def home(request):
@@ -83,3 +83,24 @@ def engagement(request):
     else:
         form = EngagementForm(initial={'choix': request.GET.get('choix')})
     return render(request, 'app/layout/engagement.html', {'eng': content.ENGAGEMENT, 'form': form})
+
+
+def partenaires(request):
+    """Page « Partenaires » : collaborations existantes, formes de partenariat et formulaire."""
+    if request.method == 'POST':
+        form = PartenariatForm(request.POST)
+        if form.is_valid():
+            soumission = SoumissionPartenariat.objects.create(
+                **{cle: form.cleaned_data[cle] for cle in
+                   ('nom', 'organisation', 'email', 'telephone', 'type_collaboration', 'message')}
+            )
+            if settings.EMAIL_HOST:
+                send_customize_email(
+                    f'Nouvelle proposition de partenariat : {soumission.organisation}',
+                    [settings.CONTACT_EMAIL], 'emails/partenariat.html', {'soumission': soumission},
+                )
+            messages.success(request, content.PAGE_PARTENAIRES['merci'])
+            return redirect(reverse('app:partenaires') + '#proposer')
+    else:
+        form = PartenariatForm()
+    return render(request, 'app/layout/partenaires.html', {'par': content.PAGE_PARTENAIRES, 'form': form})

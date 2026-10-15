@@ -14,9 +14,9 @@ Documents liés : [PLAN.md](PLAN.md) (ce qu'il faut construire),
 | Structure du projet (`src/core`, `src/app`) | Fait |
 | Dépendances | Fait : Django 6.1.2 uniquement |
 | Page d'accueil | Faite, alignée sur la maquette |
-| Pages intérieures (14) | 7 faites (UCIV Leadership, Qui sommes-nous ?, Nos programmes, Les Go du Digital, Experience Lab, Équipe, Je veux m'engager), 7 à faire |
-| Modèles de données et administration | 1 modèle (`SoumissionEngagement`) et son administration ; le reste à faire |
-| Formulaires | 1 fait (engagement) ; partenariat, contact et newsletter à faire |
+| Pages intérieures (14) | 8 faites (UCIV Leadership, Qui sommes-nous ?, Nos programmes, Les Go du Digital, Experience Lab, Équipe, Je veux m'engager, Partenaires), 6 à faire |
+| Modèles de données et administration | 2 modèles (`SoumissionEngagement`, `SoumissionPartenariat`) et leur administration ; le reste à faire |
+| Formulaires | 2 faits (engagement, partenariat) ; contact et newsletter à faire |
 | Responsive mobile/tablette | Fait pour l'accueil seulement |
 | Documentation | Faite (voir ci-dessus) |
 | Mise en ligne | Non commencée |
@@ -66,6 +66,14 @@ Documents liés : [PLAN.md](PLAN.md) (ce qu'il faut construire),
 - Contenu dans `content.EXPERIENCE_LAB` ; vue `experience_lab` ; gabarit `layout/experience_lab.html` ; styles `el-*` dans `main.css` (section 16), hero et inscriptions réutilisent les classes `gd-*`.
 - Les liens « Experience Lab » (navigation, pied de page, accueil, page Nos programmes) pointent vers la page.
 - 3 tests ajoutés (17 au total). Valeurs lues dans la maquette (positions, tailles, interlignes, espacements et rotations relevés à 1440 px, appliqués en `vw` en dessous) ; rendu à valider dans un navigateur.
+
+### Page Partenaires (`/partenaires/`)
+- 4 sections : hero orange (disque crème, photo ronde PAIPRO, anneaux jaune et vert), « Ils nous accompagnent » (3 cartes), « Formes de collaboration » (10 lignes sur fond vert profond), formulaire « Proposer un partenariat ».
+- Contenu dans `content.PAGE_PARTENAIRES` ; vue `partenaires` ; gabarit `layout/partenaires.html` ; styles `par-*` dans `main.css` (section 20), contrôles de formulaire partagés avec la page d'engagement (`eng-*`).
+- Formulaire fonctionnel : `PartenariatForm`, modèle `SoumissionPartenariat` (migration `0002`), administration, champ piège, e-mail à l'équipe si `EMAIL_HOST` est configuré (gabarit `emails/partenariat.html`).
+- Les boutons « Devenir partenaire » et la carte « Votre organisation ? » de l'accueil, ainsi que le lien « Nos partenaires » du pied de page, mènent à la page.
+- 6 tests ajoutés (33 au total). Valeurs et anneaux lus dans la maquette ; rendu à valider dans un navigateur.
+- À faire : `python manage.py migrate` (migration `0002`).
 
 ### Page Je veux m'engager (`/engagement/`)
 - 3 sections : hero (disque orange, photo ronde, anneaux jaune et vert, « il y a une place pour toi ! »), trois façons de nous rejoindre (cartes blanche, jaune, vert profond), formulaire d'engagement.
