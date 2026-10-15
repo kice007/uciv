@@ -57,3 +57,25 @@ class PartenariatForm(forms.Form):
         if self.cleaned_data.get('site_web'):
             raise forms.ValidationError('Envoi refusé.')
         return ''
+
+
+OBJETS = [
+    'Devenir volontaire', 'Programme', 'UCIV Leadership', 'Partenariat',
+    'Proposition de compétences', 'Presse-média', 'Autre',
+]
+
+
+class ContactForm(forms.Form):
+    nom = forms.CharField(label='Nom et prénom', max_length=120)
+    email = forms.EmailField(label='Adresse e-mail', max_length=254)
+    telephone = forms.CharField(label='Téléphone', max_length=30, required=False)
+    organisation = forms.CharField(label='Organisation', max_length=160, required=False)
+    objet = forms.ChoiceField(label='Objet', choices=[(o, o) for o in OBJETS])
+    message = forms.CharField(label='Message', max_length=3000, widget=forms.Textarea)
+    # Champ piège : invisible pour les personnes, rempli par les robots.
+    site_web = forms.CharField(required=False)
+
+    def clean_site_web(self):
+        if self.cleaned_data.get('site_web'):
+            raise forms.ValidationError('Envoi refusé.')
+        return ''

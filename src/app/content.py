@@ -16,6 +16,7 @@ URL_LEADERSHIP = reverse_lazy('app:uciv_leadership')
 URL_QUI = reverse_lazy('app:qui_sommes_nous')
 URL_PROGRAMMES = reverse_lazy('app:nos_programmes')
 URL_PARTENAIRES = reverse_lazy('app:partenaires')
+URL_CONTACT = reverse_lazy('app:contact')
 
 def _engagement(choix=''):
     return reverse('app:engagement') + (f'?choix={choix}' if choix else '')
@@ -89,7 +90,7 @@ PIED_COLONNES = [
             {'label': 'Nos partenaires', 'url': URL_PARTENAIRES},
             {'label': 'Actualités', 'url': '#'},
             {'label': 'Ressources', 'url': '#'},
-            {'label': 'Contact', 'url': '#'},
+            {'label': 'Contact', 'url': URL_CONTACT},
         ],
     },
 ]
@@ -683,4 +684,22 @@ PAGE_PARTENAIRES = {
                         "que nous accompagnons.",
     'merci': "Merci ! Votre proposition a bien été envoyée. L'équipe vous recontacte "
              "rapidement.",
+}
+
+
+# --- Page Contact -----------------------------------------------------------
+
+CONTACT = {
+    'hero_titre': 'Parlons-',
+    'hero_suite': 'nous.',
+    'hero_chapo': "Une question ? Une proposition de partenariat ? Une envie de "
+                  "rejoindre UCIV ? Une idée de projet ? Notre équipe est disponible "
+                  "pour échanger avec vous.",
+    'hero_note': 'on vous répond !',
+    'telephones': [
+        {'label': '+225 07 87 56 17 66', 'href': 'tel:+2250787561766'},
+        {'label': '+225 07 07 722 078', 'href': 'tel:+2250707722078'},
+    ],
+    'merci': "Merci ! Votre message a bien été envoyé. Nous vous répondons dès que "
+             "possible.",
 }

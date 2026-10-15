@@ -5,6 +5,7 @@
  * 3. Menu mobile
  * 4. Points des carrousels à défilement horizontal
  * 5. Formulaires pas encore branchés
+ * 6. Pastilles « Objet » du formulaire de contact
  */
 (function () {
   'use strict';
@@ -145,5 +146,22 @@
       var note = formulaire.parentElement.querySelector('p');
       if (note) note.textContent = "L'inscription à la lettre d'information sera bientôt disponible.";
     });
+  });
+  /* 6. Pastilles « Objet » : elles pilotent la liste déroulante du formulaire de contact. */
+  document.querySelectorAll('[data-objet]').forEach(function (liste) {
+    var pastilles = document.querySelectorAll('[data-objet-valeur]');
+    function synchroniser() {
+      pastilles.forEach(function (pastille) {
+        pastille.classList.toggle('est-actif', pastille.getAttribute('data-objet-valeur') === liste.value);
+      });
+    }
+    pastilles.forEach(function (pastille) {
+      pastille.addEventListener('click', function () {
+        liste.value = pastille.getAttribute('data-objet-valeur');
+        synchroniser();
+      });
+    });
+    liste.addEventListener('change', synchroniser);
+    synchroniser();
   });
 })();

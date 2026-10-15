@@ -1,0 +1,142 @@
+{% extends "app/base/base.html" %}
+{% load static %}
+
+{% block title %}Contact — Une Côte d'Ivoire Volontaire{% endblock %}
+{% block description %}Une question, une proposition de partenariat, une envie de rejoindre UCIV ? Écrivez-nous ou retrouvez nos coordonnées officielles.{% endblock %}
+
+{% block content %}
+
+{# ---------------------------------------------------------------- Hero #}
+<section class="con-hero">
+  <span class="forme con-hero__anneau-creme" aria-hidden="true"></span>
+  <span class="forme con-hero__disque" aria-hidden="true"></span>
+  <span class="forme con-hero__anneau-jaune" aria-hidden="true"></span>
+  <p class="manuscrit con-hero__note" aria-hidden="true">{{ ct.hero_note }}</p>
+  <div class="conteneur con-hero__grille">
+    <div class="con-hero__texte">
+      <nav class="fil fil--clair" aria-label="Fil d'Ariane">
+        <ol>
+          <li><a href="{% url 'app:home' %}">Accueil</a></li>
+          <li aria-current="page"><strong>Contact</strong></li>
+        </ol>
+      </nav>
+      <p class="surtitre surtitre--blanc hero__entree" style="--i: 0">Contact</p>
+      <h1 class="con-hero__titre hero__entree" style="--i: 1">{{ ct.hero_titre }} <em>{{ ct.hero_suite }}</em></h1>
+      <p class="con-hero__chapo hero__entree" style="--i: 2">{{ ct.hero_chapo }}</p>
+    </div>
+  </div>
+</section>
+
+{# ------------------------------------------------ Formulaire & coordonnées #}
+<section class="con-corps" id="ecrire">
+  <div class="conteneur con-corps__grille">
+    <form class="con-form" method="post" action="{% url 'app:contact' %}#ecrire" data-reveal novalidate>
+      {% csrf_token %}
+      <h2 class="con-form__titre">Écrivez-<em>nous.</em></h2>
+
+      {% if messages %}
+        {% for message in messages %}
+          <p class="eng-alerte eng-alerte--{{ message.tags }}" role="status">{{ message }}</p>
+        {% endfor %}
+      {% endif %}
+
+      <div class="eng-piege" aria-hidden="true">
+        <label for="id_site_web">Ne pas remplir</label>
+        <input type="text" id="id_site_web" name="site_web" tabindex="-1" autocomplete="off">
+      </div>
+
+      <div class="eng-ligne">
+        <div class="eng-groupe">
+          <label class="eng-label" for="id_nom">Nom et prénom</label>
+          <input class="eng-champ" type="text" id="id_nom" name="nom" placeholder="Votre nom" value="{{ form.nom.value|default:'' }}" autocomplete="name" required>
+          {% for erreur in form.nom.errors %}<p class="eng-erreur">{{ erreur }}</p>{% endfor %}
+        </div>
+        <div class="eng-groupe">
+          <label class="eng-label" for="id_email">Adresse e-mail</label>
+          <input class="eng-champ" type="email" id="id_email" name="email" placeholder="nom@exemple.com" value="{{ form.email.value|default:'' }}" autocomplete="email" required>
+          {% for erreur in form.email.errors %}<p class="eng-erreur">{{ erreur }}</p>{% endfor %}
+        </div>
+      </div>
+
+      <div class="eng-ligne">
+        <div class="eng-groupe">
+          <label class="eng-label" for="id_telephone">Téléphone</label>
+          <input class="eng-champ" type="tel" id="id_telephone" name="telephone" placeholder="+225" value="{{ form.telephone.value|default:'' }}" autocomplete="tel">
+          {% for erreur in form.telephone.errors %}<p class="eng-erreur">{{ erreur }}</p>{% endfor %}
+        </div>
+        <div class="eng-groupe">
+          <label class="eng-label" for="id_organisation">Organisation <span class="eng-label__aide">(facultatif)</span></label>
+          <input class="eng-champ" type="text" id="id_organisation" name="organisation" placeholder="Nom de votre structure" value="{{ form.organisation.value|default:'' }}" autocomplete="organization">
+          {% for erreur in form.organisation.errors %}<p class="eng-erreur">{{ erreur }}</p>{% endfor %}
+        </div>
+      </div>
+
+      <div class="eng-groupe">
+        <label class="eng-label" for="id_objet">Objet</label>
+        <select class="eng-champ eng-champ--select" id="id_objet" name="objet" data-objet required>
+          {% for valeur, libelle in form.objet.field.choices %}
+            <option value="{{ valeur }}"{% if form.objet.value == valeur %} selected{% endif %}>{{ libelle }}</option>
+          {% endfor %}
+        </select>
+        <div class="con-chips" aria-hidden="true">
+          {% for valeur, libelle in form.objet.field.choices %}
+            <button class="con-chip{% if form.objet.value == valeur %} est-actif{% endif %}" type="button" tabindex="-1" data-objet-valeur="{{ valeur }}">{{ libelle }}</button>
+          {% endfor %}
+        </div>
+        {% for erreur in form.objet.errors %}<p class="eng-erreur">{{ erreur }}</p>{% endfor %}
+      </div>
+
+      <div class="eng-groupe">
+        <label class="eng-label" for="id_message">Message</label>
+        <textarea class="eng-champ eng-champ--zone" id="id_message" name="message" rows="5" placeholder="Votre message…" required>{{ form.message.value|default:'' }}</textarea>
+        {% for erreur in form.message.errors %}<p class="eng-erreur">{{ erreur }}</p>{% endfor %}
+      </div>
+
+      <div class="eng-form__bas">
+        <p>Vos données servent uniquement à vous répondre. <a href="#">Voir la politique de confidentialité.</a></p>
+        <button class="btn btn--vert" type="submit">
+          <span>Envoyer</span>
+          <span class="btn__rond">{% include "app/includes/_icon.html" with name="arrow-right" %}</span>
+        </button>
+      </div>
+    </form>
+
+    <aside class="con-coord" data-reveal style="--i: 1">
+      <span class="forme con-coord__anneau" aria-hidden="true"></span>
+      <p class="surtitre surtitre--jaune">Coordonnées officielles</p>
+      <ul class="con-coord__liste">
+        <li>
+          <span class="con-coord__picto">{% include "app/includes/_icon.html" with name="phone" %}</span>
+          <div>
+            <span class="con-coord__label">Téléphone</span>
+            {% for tel in ct.telephones %}<a href="{{ tel.href }}">{{ tel.label }}</a>{% endfor %}
+          </div>
+        </li>
+        <li>
+          <span class="con-coord__picto">{% include "app/includes/_icon.html" with name="mail" %}</span>
+          <div>
+            <span class="con-coord__label">E-mail</span>
+            <a href="mailto:{{ coordonnees.email }}">{{ coordonnees.email }}</a>
+          </div>
+        </li>
+        <li>
+          <span class="con-coord__picto">{% include "app/includes/_icon.html" with name="map-pin" %}</span>
+          <div>
+            <span class="con-coord__label">Adresse postale</span>
+            <span class="con-coord__valeur">{{ coordonnees.adresse }}</span>
+          </div>
+        </li>
+      </ul>
+      <div class="con-coord__suivre">
+        <p class="con-coord__label">Suivre UCIV</p>
+        <ul>
+          {% for reseau in reseaux %}
+            <li><a href="{{ reseau.url }}" target="_blank" rel="noopener">{{ reseau.label }}</a></li>
+          {% endfor %}
+        </ul>
+      </div>
+    </aside>
+  </div>
+</section>
+
+{% endblock %}

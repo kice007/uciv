@@ -12,8 +12,8 @@ from django.urls import reverse
 from core.utils import send_customize_email
 
 from . import content
-from .forms import EngagementForm, PartenariatForm
-from .models import SoumissionEngagement, SoumissionPartenariat
+from .forms import ContactForm, EngagementForm, PartenariatForm
+from .models import SoumissionContact, SoumissionEngagement, SoumissionPartenariat
 
 
 def home(request):
@@ -77,6 +77,7 @@ def engagement(request):
                 send_customize_email(
                     f"Nouvelle demande d'engagement : {soumission.nom}",
                     [settings.CONTACT_EMAIL], 'emails/engagement.html', {'soumission': soumission},
+                    reply_to=[soumission.email],
                 )
             messages.success(request, content.ENGAGEMENT['merci'])
             return redirect(reverse('app:engagement') + '#formulaire')
@@ -98,9 +99,32 @@ def partenaires(request):
                 send_customize_email(
                     f'Nouvelle proposition de partenariat : {soumission.organisation}',
                     [settings.CONTACT_EMAIL], 'emails/partenariat.html', {'soumission': soumission},
+                    reply_to=[soumission.email],
                 )
             messages.success(request, content.PAGE_PARTENAIRES['merci'])
             return redirect(reverse('app:partenaires') + '#proposer')
     else:
         form = PartenariatForm()
     return render(request, 'app/layout/partenaires.html', {'par': content.PAGE_PARTENAIRES, 'form': form})
+
+
+def contact(request):
+    """Page « Contact » : formulaire et coordonnées officielles."""
+    if request.method == 'POST':
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            soumission = SoumissionContact.objects.create(
+                **{cle: form.cleaned_data[cle] for cle in
+                   ('nom', 'email', 'telephone', 'organisation', 'objet', 'message')}
+            )
+            if settings.EMAIL_HOST:
+                send_customize_email(
+                    f'Message de contact : {soumission.objet} — {soumission.nom}',
+                    [settings.CONTACT_EMAIL], 'emails/contact.html', {'soumission': soumission},
+                    reply_to=[soumission.email],
+                )
+            messages.success(request, content.CONTACT['merci'])
+            return redirect(reverse('app:contact') + '#ecrire')
+    else:
+        form = ContactForm(initial={'objet': request.GET.get('objet')})
+    return render(request, 'app/layout/contact.html', {'ct': content.CONTACT, 'form': form})

@@ -70,7 +70,7 @@
       <p class="texte">{{ eng.formulaire_texte }}</p>
       <p class="eng-note">
         <span class="eng-note__picto">{% include "app/includes/_icon.html" with name="mail" %}</span>
-        <span>Une question avant de t'inscrire ? Écris-nous.</span>
+        <span>Une question avant de t'inscrire ? <a href="{% url 'app:contact' %}">Écris-nous.</a></span>
       </p>
     </div>
 

@@ -51,3 +51,22 @@ class SoumissionPartenariat(Convention):
 
     def __str__(self):
         return f'{self.organisation} — {self.nom}'
+
+
+class SoumissionContact(Convention):
+    """Message envoyé depuis le formulaire de la page Contact."""
+
+    nom = models.CharField('nom et prénom', max_length=120)
+    email = models.EmailField('adresse e-mail')
+    telephone = models.CharField('téléphone', max_length=30, blank=True)
+    organisation = models.CharField(max_length=160, blank=True)
+    objet = models.CharField(max_length=60)
+    message = models.TextField()
+
+    class Meta:
+        verbose_name = 'message de contact'
+        verbose_name_plural = 'messages de contact'
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f'{self.nom} — {self.objet}'

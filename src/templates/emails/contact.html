@@ -1,0 +1,10 @@
+<p>Nouveau message reçu depuis la page Contact du site UCIV.</p>
+<ul>
+  <li><strong>Nom :</strong> {{ soumission.nom }}</li>
+  <li><strong>E-mail :</strong> {{ soumission.email }}</li>
+  <li><strong>Téléphone :</strong> {{ soumission.telephone|default:"—" }}</li>
+  <li><strong>Organisation :</strong> {{ soumission.organisation|default:"—" }}</li>
+  <li><strong>Objet :</strong> {{ soumission.objet }}</li>
+</ul>
+<p><strong>Message :</strong></p>
+<p>{{ soumission.message|linebreaksbr }}</p>

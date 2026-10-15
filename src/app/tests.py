@@ -2,7 +2,7 @@ from django.core import mail
 from django.test import TestCase, override_settings
 from django.urls import reverse
 
-from .models import SoumissionEngagement, SoumissionPartenariat
+from .models import SoumissionContact, SoumissionEngagement, SoumissionPartenariat
 
 
 class HomePageTests(TestCase):
@@ -228,3 +228,49 @@ class PartenairesPageTests(TestCase):
     def test_home_links_to_page(self):
         response = self.client.get(reverse('app:home'))
         self.assertContains(response, reverse('app:partenaires'))
+
+class ContactPageTests(TestCase):
+    def donnees(self, **extra):
+        data = {
+            'nom': 'Awa Traoré', 'email': 'awa@exemple.ci', 'telephone': '+225 07 00 00 00',
+            'organisation': '', 'objet': 'Presse-média', 'message': 'Bonjour, une question.',
+        }
+        data.update(extra)
+        return data
+
+    def test_page_renders(self):
+        response = self.client.get(reverse('app:contact'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'app/layout/contact.html')
+        self.assertContains(response, 'Parlons-')
+        self.assertContains(response, 'Coordonnées officielles')
+        self.assertContains(response, '+225 07 07 722 078')
+        self.assertContains(response, 'organisationuciv@gmail.com')
+
+    def test_valid_submission_is_saved(self):
+        response = self.client.post(reverse('app:contact'), self.donnees())
+        self.assertEqual(response.status_code, 302)
+        soumission = SoumissionContact.objects.get()
+        self.assertEqual(soumission.objet, 'Presse-média')
+        self.assertEqual(soumission.organisation, '')
+
+    def test_invalid_submission_shows_errors(self):
+        response = self.client.post(reverse('app:contact'), self.donnees(objet='???', message=''))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(SoumissionContact.objects.count(), 0)
+        self.assertContains(response, 'eng-erreur')
+
+    def test_honeypot_blocks_robots(self):
+        response = self.client.post(reverse('app:contact'), self.donnees(site_web='http://spam'))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(SoumissionContact.objects.count(), 0)
+
+    @override_settings(EMAIL_HOST='smtp.exemple.test', CONTACT_EMAIL='equipe@exemple.test')
+    def test_team_is_notified_by_email(self):
+        self.client.post(reverse('app:contact'), self.donnees())
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].reply_to, ['awa@exemple.ci'])
+
+    def test_footer_links_to_page(self):
+        response = self.client.get(reverse('app:home'))
+        self.assertContains(response, reverse('app:contact'))

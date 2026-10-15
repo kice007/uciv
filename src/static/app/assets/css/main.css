@@ -1799,3 +1799,93 @@ button { font: inherit; color: inherit; cursor: pointer; }
 @media (prefers-reduced-motion: reduce) {
   .par-hero__disque, .par-hero__photo, .par-hero__anneau-jaune, .par-hero__anneau-vert { animation: none; }
 }
+/* 21. Page Contact ---------------------------------------------------------------------
+   Valeurs de la maquette (1440 px) : hero 500 px, anneau crème 520 (0,8) en (1070, -130), disque vert profond
+   340 en (960, 250), anneau jaune 340 (0,74) en (-170, 360) ; formulaire 804 px + coordonnées 460 px, écart 32 px. */
+.con-hero { position: relative; background: var(--orange); color: var(--blanc); overflow: hidden; }
+.con-hero__anneau-creme {
+  left: 74.3vw; top: -9vw; width: clamp(150px, 36.1vw, 520px); aspect-ratio: 1;
+  background: radial-gradient(circle closest-side, transparent 80%, var(--creme) 80.6%);
+}
+.con-hero__disque { left: 66.7vw; top: 17.4vw; width: clamp(110px, 23.6vw, 340px); aspect-ratio: 1; background: var(--vert-profond); }
+.con-hero__anneau-jaune {
+  left: -11.8vw; top: 25vw; width: clamp(110px, 23.6vw, 340px); aspect-ratio: 1;
+  background: radial-gradient(circle closest-side, transparent 74%, var(--jaune) 74.6%);
+}
+.con-hero__note {
+  position: absolute; z-index: 2; left: 68.75vw; top: 22.8vw; rotate: -7deg; white-space: nowrap;
+  font-size: clamp(22px, 3.33vw, 48px); color: var(--jaune);
+}
+.con-hero__grille { position: relative; padding-top: 28px; padding-bottom: 40px; }
+.con-hero__texte { display: flex; flex-direction: column; align-items: flex-start; gap: 22px; max-width: 700px; }
+.con-hero .fil { margin: 0; padding-bottom: 26px; }
+.con-hero .surtitre { margin: 0; }
+.con-hero__titre { font-family: var(--f-titre); font-weight: 800; font-size: clamp(48px, 7.78vw, 112px); line-height: 1.02; letter-spacing: -.0278em; }
+.con-hero__titre em { display: block; font-family: var(--f-accent); font-style: italic; font-weight: 400; font-size: 1.098em; line-height: 1.04; letter-spacing: 0; color: var(--jaune); }
+.con-hero__chapo { max-width: 600px; font-size: 18px; line-height: 1.55; color: rgba(255, 255, 255, .95); }
+@media (min-width: 900px) {
+  .con-hero__grille { padding-top: clamp(28px, 3.6vw, 52px); padding-bottom: 48px; min-height: clamp(460px, 34.7vw, 560px); }
+  .con-hero__chapo { font-size: 19px; }
+}
+
+/* Formulaire */
+.con-corps { padding-block: clamp(48px, 7.2vw, 104px); }
+.con-corps__grille { display: grid; gap: 32px; align-items: start; }
+.con-form {
+  display: flex; flex-direction: column; gap: 22px; padding: 28px 22px;
+  border-radius: var(--rayon-lg); background: var(--blanc); box-shadow: inset 0 0 0 1px rgba(23, 18, 12, .1);
+}
+.con-form__titre { font-family: var(--f-titre); font-weight: 800; font-size: clamp(32px, 3.06vw, 44px); line-height: 1.02; letter-spacing: -.0278em; }
+.con-form__titre em { display: block; font-family: var(--f-accent); font-style: italic; font-weight: 400; font-size: 1.09em; line-height: 1.04; letter-spacing: 0; color: var(--orange); }
+.eng-label__aide { color: var(--texte); font-weight: 400; }
+.con-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+.con-chip {
+  padding: 10px 18px; border: 0; border-radius: 999px; background: transparent; color: var(--encre);
+  box-shadow: inset 0 0 0 1px rgba(23, 18, 12, .2); font: inherit; font-size: 14px; font-weight: 600; line-height: 1.2; cursor: pointer;
+  transition: background-color 160ms ease, color 160ms ease;
+}
+.con-chip.est-actif { background: var(--encre); color: var(--blanc); box-shadow: none; }
+
+/* Coordonnées officielles */
+.con-coord {
+  position: relative; overflow: hidden; display: flex; flex-direction: column; gap: 28px; padding: 32px 28px;
+  border-radius: var(--rayon-lg); background: var(--vert-profond); color: var(--blanc);
+}
+.con-coord > * { position: relative; }
+.con-coord .surtitre { margin: 0; }
+.con-coord__anneau {
+  left: 56.5%; top: -140px; width: 78.3%; aspect-ratio: 1; position: absolute;
+  background: radial-gradient(circle closest-side, transparent 76%, rgba(255, 255, 255, .08) 76.6%);
+}
+.con-coord__liste { display: flex; flex-direction: column; gap: 28px; }
+.con-coord__liste li { display: flex; align-items: center; gap: 16px; }
+.con-coord__picto { display: grid; place-items: center; flex: none; width: 48px; height: 48px; border-radius: 50%; background: var(--jaune); color: var(--encre); }
+.con-coord__picto .icon { width: 20px; height: 20px; }
+.con-coord__liste li > div { display: flex; flex-direction: column; min-width: 0; }
+.con-coord__label { color: rgba(255, 255, 255, .6); font-size: 11px; font-weight: 700; letter-spacing: .145em; text-transform: uppercase; }
+.con-coord__liste a, .con-coord__valeur { font-family: var(--f-titre); font-weight: 700; font-size: 21px; line-height: 1.35; overflow-wrap: anywhere; }
+.con-coord__suivre { display: flex; flex-direction: column; gap: 14px; padding-top: 26px; border-top: 1px solid rgba(255, 255, 255, .2); }
+.con-coord__suivre ul { display: flex; flex-wrap: wrap; gap: 8px; }
+.con-coord__suivre a { display: inline-block; padding: 10px 18px; border-radius: 999px; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .35); font-size: 14px; font-weight: 600; line-height: 1.2; }
+@media (min-width: 720px) {
+  .con-form { padding: 40px; }
+  .con-coord { padding: 44px; }
+}
+@media (min-width: 1100px) {
+  .con-corps__grille { grid-template-columns: minmax(0, 804px) minmax(0, 460px); justify-content: space-between; }
+  .con-form { padding: 48px; }
+}
+@media (hover: hover) and (pointer: fine) {
+  .con-chip:not(.est-actif):hover { background: rgba(23, 18, 12, .06); }
+  .con-coord__suivre a:hover { background: var(--blanc); color: var(--vert-profond); box-shadow: none; }
+  .con-coord__liste a:hover { color: var(--jaune); }
+}
+
+/* Animations : mêmes entrées que l'accueil */
+.con-hero__disque { animation: entree-disque 900ms var(--ease-out) both; }
+.con-hero__anneau-creme, .con-hero__anneau-jaune { animation: entree-disque 900ms var(--ease-out) 150ms both; }
+.con-hero__note { animation: entree 700ms var(--ease-out) 520ms both; }
+@media (prefers-reduced-motion: reduce) {
+  .con-hero__disque, .con-hero__anneau-creme, .con-hero__anneau-jaune, .con-hero__note { animation: none; }
+  .con-chip { transition: none; }
+}
