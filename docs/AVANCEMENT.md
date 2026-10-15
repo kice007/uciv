@@ -14,7 +14,7 @@ Documents liés : [PLAN.md](PLAN.md) (ce qu'il faut construire),
 | Structure du projet (`src/core`, `src/app`) | Fait |
 | Dépendances | Fait : Django 6.1.2 uniquement |
 | Page d'accueil | Faite, alignée sur la maquette |
-| Pages intérieures (14) | 2 faites (UCIV Leadership, Qui sommes-nous ?), 12 à faire |
+| Pages intérieures (14) | 3 faites (UCIV Leadership, Qui sommes-nous ?, Nos programmes), 11 à faire |
 | Modèles de données et administration | Non commencés |
 | Formulaires | Non commencés |
 | Responsive mobile/tablette | Fait pour l'accueil seulement |
@@ -46,6 +46,13 @@ Documents liés : [PLAN.md](PLAN.md) (ce qu'il faut construire),
 - Contenu dans `content.QUI_SOMMES_NOUS` ; vue `qui_sommes_nous` ; gabarit `layout/qui_sommes_nous.html` ; styles `qs-*` dans `main.css` (section 13).
 - Les liens « Qui sommes-nous ? » (navigation, pied de page) pointent vers la page ; la section fondateur réutilise le bloc de l'accueil.
 - 3 tests ajoutés (8 au total). Rendu à valider visuellement dans un navigateur.
+
+### Page Nos programmes (`/programmes/`)
+- 4 sections : hero (vert, disque orange « apprendre en faisant »), méthode (3 étapes colorées), les 3 programmes en alternance, bandeau « D'autres programmes à venir », appel à l'engagement.
+- Contenu dans `content.NOS_PROGRAMMES` ; vue `nos_programmes` ; gabarit `layout/nos_programmes.html` ; styles `np-*` dans `main.css` (section 14).
+- Les liens « Nos programmes » (navigation, accueil, page Leadership) pointent vers la page ; la carte UCIV Leadership mène à sa page, les deux autres à `#` (pages à venir).
+- 3 tests ajoutés (11 au total). Rendu à valider visuellement dans un navigateur.
+- Le hero des 2 pages accueil et UCIV Leadership occupe 90 vh à partir de 1100 px.
 
 ### Maquette
 - `maquette/design_uciv.pen` : 16 écrans desktop analysés ; le plan de réalisation en est tiré.

@@ -419,7 +419,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
 /* 5. Sections de la page d'accueil ----------------------------------------- */
 
 /* Hero
-   Valeurs reprises de la maquette. Sur ordinateur, le hero mesure 680 px de haut (maquette : 780 px, réduit de 13 %) et ses
+   Valeurs reprises de la maquette. Sur ordinateur (≥ 1100 px), le hero mesure 90 vh (entre 620 et 1000 px ; maquette : 780 px) et ses
    éléments sont placés aux coordonnées du cadre de 1440 px de la maquette. */
 .hero { position: relative; overflow: hidden; background: var(--orange); color: var(--blanc); }
 .hero__cadre {
@@ -459,15 +459,16 @@ button { font: inherit; color: inherit; cursor: pointer; }
 }
 
 @media (min-width: 1100px) {
-  .hero__cadre { display: block; height: 680px; padding: 0; }
+  /* Hauteur : 90 % de l'écran (bornée), pour les écrans d'environ 12 pouces et plus. */
+  .hero__cadre { display: block; height: clamp(620px, 90vh, 1000px); padding: 0; }
 
-  .hero__texte { position: absolute; left: 72px; top: 76px; width: 620px; }
+  .hero__texte { position: absolute; left: 72px; top: 50%; translate: 0 -54%; width: 620px; }
   .hero__titre { font-size: 80px; letter-spacing: -2.5px; }
   .hero__titre em { font-size: 90px; letter-spacing: -1px; }
   .hero__chapo { width: 480px; max-width: none; font-size: 18px; }
 
   .hero__parcours {
-    position: absolute; left: 72px; top: 630px;
+    position: absolute; left: 72px; bottom: 34px;
     display: flex; align-items: center; gap: 14px;
     font-size: 13px; font-weight: 700; line-height: 16px; letter-spacing: 1.6px; text-transform: uppercase;
   }
@@ -879,6 +880,10 @@ button { font: inherit; color: inherit; cursor: pointer; }
   .lead-hero__visuel { align-self: end; margin-inline: 0; }
   .lead-hero__logo { top: -72px; }
 }
+/* Écrans d'environ 12 pouces et plus : le hero occupe 90 % de la hauteur de l'écran. */
+@media (min-width: 1100px) {
+  .lead-hero__grille { min-height: clamp(560px, 90vh, 1000px); }
+}
 
 /* Repères */
 .lead-reperes { background: var(--blanc); padding-block: 36px; }
@@ -1083,4 +1088,118 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .qs-hero__photo { animation: entree-photo 900ms var(--ease-out) 120ms both; }
 @media (prefers-reduced-motion: reduce) {
   .qs-hero__photo, .qs-hero__anneau { animation: none; }
+}
+/* 14. Page Nos programmes ----------------------------------------------------- */
+.btn--encre .btn__rond, .btn--orange .btn__rond, .btn--vert .btn__rond { background: rgba(255, 255, 255, .2); }
+
+/* Hero */
+.np-hero { position: relative; background: var(--vert-profond); color: var(--blanc); overflow: hidden; }
+.np-hero__grille { position: relative; display: grid; gap: 40px; padding-block: 28px 56px; }
+.np-hero__titre {
+  font-family: var(--f-titre); font-weight: 800;
+  font-size: clamp(36px, 4.45vw, 64px); line-height: 1; letter-spacing: -.03em;
+}
+.np-hero__titre em {
+  display: block; margin-top: 4px;
+  font-family: var(--f-accent); font-style: italic; font-weight: 400;
+  font-size: 1.1em; letter-spacing: -.01em; line-height: 1.04; color: var(--jaune);
+}
+.np-hero__chapo { margin-top: 24px; max-width: 560px; font-size: 17px; line-height: 1.6; color: rgba(255, 255, 255, .92); }
+.np-hero__visuel { position: relative; width: min(100%, 360px); aspect-ratio: 1; margin-inline: auto; }
+.np-hero__disque { position: absolute; inset: 0; border-radius: 50%; background: var(--orange); }
+.np-hero__rond { right: -4%; bottom: -6%; width: 34%; aspect-ratio: 1; border: 22px solid var(--jaune); background: transparent; }
+.np-hero__note {
+  position: absolute; left: 50%; top: 46%; translate: -50% -50%; rotate: -8deg;
+  font-size: clamp(28px, 4vw, 46px); white-space: nowrap; color: var(--blanc);
+}
+.np-hero__anneau { top: -120px; right: 38%; width: 240px; aspect-ratio: 1; border-width: 22px; border-color: rgba(255, 255, 255, .12); }
+@media (min-width: 900px) {
+  .np-hero__grille { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); align-items: center; padding-block: 0; min-height: 520px; }
+  .np-hero__texte { padding-block: 56px; }
+  .np-hero__chapo { font-size: 19px; }
+  .np-hero__visuel { width: min(100%, 460px); margin-inline: auto 0; }
+}
+
+/* Méthode */
+.np-etapes { display: grid; gap: 16px; }
+.np-etape {
+  display: flex; flex-direction: column; justify-content: space-between; gap: 28px;
+  min-height: 200px; padding: 28px; border-radius: var(--rayon-lg);
+}
+.np-etape__haut { display: flex; align-items: flex-start; justify-content: space-between; }
+.np-etape__num { font-family: var(--f-accent); font-style: italic; font-size: 64px; line-height: 1; }
+.np-etape h3 { font-family: var(--f-titre); font-weight: 800; font-size: clamp(22px, 2vw, 28px); letter-spacing: -.02em; line-height: 1.12; }
+.np-etape--orange { background: var(--orange); color: var(--blanc); }
+.np-etape--jaune { background: var(--jaune); color: var(--encre); }
+.np-etape--vert { background: var(--vert-profond); color: var(--blanc); }
+@media (min-width: 900px) { .np-etapes { grid-template-columns: repeat(3, 1fr); gap: 24px; } .np-etape { min-height: 230px; padding: 32px; } }
+
+/* Programmes */
+.np-programme { display: grid; gap: 28px; align-items: center; padding-block: 40px; }
+.np-programme + .np-programme { border-top: 1px solid var(--filet); }
+.np-programme__visuel { position: relative; max-width: 560px; width: 100%; margin-inline: auto; }
+.np-programme__forme {
+  position: absolute; z-index: 0; width: 38%; aspect-ratio: 1; border-radius: 50%;
+  top: -7%; left: -5%; background: var(--orange);
+}
+/* Programme 2 (maquette) : cadre jaune 560 x 420, grand arrondi en haut à droite,
+   photo du groupe 468 x 390 posée à 56 px du bord gauche, collée en bas. */
+.np-programme--jaune .np-programme__forme {
+  top: -9%; left: 56.7%; width: 50%; background: var(--jaune);   /* cercle 300 px, derrière le cadre */
+}
+.np-programme__rond {   /* cercle blanc translucide 380 px à l'intérieur du cadre jaune */
+  position: absolute; left: 19.6%; top: 14.3%; width: 67.9%; aspect-ratio: 1;
+  border-radius: 50%; background: rgba(255, 255, 255, .4);
+}
+.np-programme--jaune .np-programme__photo { background: var(--jaune); aspect-ratio: 560 / 420; overflow: hidden; }
+.np-programme--jaune .np-programme__photo img {
+  position: absolute; left: 10%; bottom: 0; width: 83.6%; height: 92.9%;
+  object-fit: cover; object-position: center bottom;
+}
+.np-programme--vert .np-programme__forme { top: -7%; left: -5%; background: var(--vert); }
+.np-programme__photo {
+  position: relative; z-index: 1; overflow: hidden; aspect-ratio: 4 / 3;
+  border-radius: 28px; background: var(--sable);
+  border-top-left-radius: clamp(80px, 30vw, 210px);
+}
+.np-programme:nth-of-type(even) .np-programme__photo { border-top-left-radius: 28px; border-top-right-radius: clamp(80px, 30vw, 210px); }
+.np-programme__photo img { width: 100%; height: 100%; object-fit: cover; }
+.np-programme__photo--detouree { background: transparent; overflow: visible; }
+.np-programme__photo--detouree img { object-fit: contain; object-position: center bottom; }
+.np-programme__num { display: block; font-family: var(--f-accent); font-style: italic; font-size: 34px; line-height: 1; color: var(--texte); }
+.np-programme__tag { margin-top: 14px; background: var(--sable); }
+.np-programme h2 { margin-top: 14px; font-family: var(--f-titre); font-weight: 800; font-size: clamp(36px, 4vw, 56px); line-height: 1.02; letter-spacing: -.03em; }
+.np-programme__accroche { margin-top: 12px; font-family: var(--f-accent); font-style: italic; font-size: clamp(24px, 2.3vw, 32px); line-height: 1.15; color: var(--orange); }
+.np-programme--jaune .np-programme__accroche { color: var(--orange-fonce); }
+.np-programme--vert .np-programme__accroche { color: var(--vert); }
+.np-programme .texte { margin-top: 18px; }
+.np-programme .btn { margin-top: 28px; }
+@media (min-width: 900px) {
+  .np-programme { grid-template-columns: minmax(0, 560fr) minmax(0, 640fr); gap: clamp(40px, 6vw, 96px); padding-block: 48px; }
+  .np-programme:nth-of-type(even) .np-programme__visuel { order: 2; }
+  .np-programme__photo { border-top-left-radius: clamp(110px, 15.5vw, 210px); }
+  .np-programme:nth-of-type(even) .np-programme__photo { border-top-left-radius: 28px; border-top-right-radius: clamp(110px, 15.5vw, 210px); }
+}
+.np-avenir {
+  display: flex; flex-direction: column; gap: 6px; margin-top: 40px; padding: 30px 28px;
+  border-radius: var(--rayon); background: var(--creme);
+}
+.np-avenir strong { font-family: var(--f-titre); font-weight: 800; font-size: 24px; letter-spacing: -.02em; }
+.np-avenir p { color: var(--texte); }
+@media (min-width: 720px) { .np-avenir { flex-direction: row; align-items: center; justify-content: space-between; padding-inline: 36px; } }
+
+/* Appel */
+.np-appel { position: relative; padding-block: clamp(56px, 7vw, 96px); background: var(--vert); color: var(--blanc); overflow: hidden; }
+.np-appel__cadre { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 32px; }
+.np-appel__titre { max-width: 14em; font-family: var(--f-titre); font-weight: 800; font-size: clamp(30px, 3.6vw, 52px); line-height: 1.06; letter-spacing: -.03em; }
+.np-appel__titre em { display: block; font-family: var(--f-accent); font-style: italic; font-weight: 400; font-size: 1.1em; letter-spacing: -.01em; color: var(--jaune); }
+.np-appel__anneau { right: -80px; top: -120px; width: 340px; aspect-ratio: 1; border-width: 36px; border-color: rgba(255, 255, 255, .12); }
+@media (min-width: 900px) { .np-appel__cadre { flex-direction: row; align-items: center; justify-content: space-between; } }
+
+/* Animations : entrée du hero, comme sur l'accueil. */
+.np-hero__disque { animation: entree-disque 900ms var(--ease-out) both; }
+.np-hero__rond { animation: entree-disque 900ms var(--ease-out) 150ms both; }
+.np-hero__note { animation: entree 700ms var(--ease-out) 520ms both; }
+@media (prefers-reduced-motion: reduce) {
+  .np-hero__disque, .np-hero__rond, .np-hero__note { animation: none; }
 }

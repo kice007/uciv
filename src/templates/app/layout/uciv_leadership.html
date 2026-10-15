@@ -13,7 +13,7 @@
       <nav class="fil" aria-label="Fil d'Ariane">
         <ol>
           <li><a href="{% url 'app:home' %}">Accueil</a></li>
-          <li><a href="#">Nos programmes</a></li>
+          <li><a href="{% url 'app:nos_programmes' %}">Nos programmes</a></li>
           <li aria-current="page"><strong>UCIV Leadership</strong></li>
         </ol>
       </nav>
@@ -27,7 +27,7 @@
           <span>Rejoindre UCIV Leadership</span>
           <span class="btn__rond">{% include "app/includes/_icon.html" with name="arrow-right" %}</span>
         </a>
-        <a class="btn btn--contour" href="#">Découvrir nos programmes</a>
+        <a class="btn btn--contour" href="{% url 'app:nos_programmes' %}">Découvrir nos programmes</a>
       </div>
     </div>
 

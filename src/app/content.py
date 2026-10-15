@@ -13,6 +13,7 @@ from django.urls import reverse_lazy
 
 URL_LEADERSHIP = reverse_lazy('app:uciv_leadership')
 URL_QUI = reverse_lazy('app:qui_sommes_nous')
+URL_PROGRAMMES = reverse_lazy('app:nos_programmes')
 
 # --- Éléments communs à toutes les pages ----------------------------------
 
@@ -28,7 +29,7 @@ NAVIGATION = [
     {'label': 'Qui sommes-nous ?', 'url': URL_QUI, 'enfants': []},
     {
         'label': 'Nos programmes',
-        'url': '#',
+        'url': URL_PROGRAMMES,
         'enfants': [
             {'label': 'Les Go du Digital', 'url': '#'},
             {'label': 'UCIV Leadership', 'url': URL_LEADERSHIP},
@@ -398,4 +399,72 @@ QUI_SOMMES_NOUS = {
     ],
     'citation': 'Chaque engagement peut devenir une expérience.',
     'citation_suite': 'Chaque expérience peut devenir une compétence.',
+}
+
+# --- Page Nos programmes ----------------------------------------------------
+
+NOS_PROGRAMMES = {
+    'hero_titre': 'Des programmes pour apprendre,',
+    'hero_suite': "s'engager et agir.",
+    'hero_chapo': "UCIV développe des programmes conçus pour répondre à des besoins "
+                  "précis des jeunes ivoiriens : compétences numériques, leadership, "
+                  "personal branding, employabilité.",
+    'methode_intro': "De la formation courte et pratique jusqu'à la mise en situation "
+                     "réelle, avec un accompagnement qui ne s'arrête pas à la dernière "
+                     "séance.",
+    'methode': [
+        {'couleur': 'orange', 'titre': 'Une formation courte et pratique'},
+        {'couleur': 'jaune', 'titre': 'Une mise en situation réelle'},
+        {'couleur': 'vert', 'titre': 'Un accompagnement après la dernière séance'},
+    ],
+    'programmes': [
+        {
+            'theme': 'orange',
+            'bouton': 'orange',
+            'etiquette': '6 samedis · Jeunes femmes',
+            'titre': 'Les Go du Digital',
+            'accroche': "Le digital comme outil d'autonomie, d'expression et "
+                        "d'opportunité.",
+            'texte': "Un programme pratique à 90 %, organisé autour de quatre volets : "
+                     "Personal Branding, Sécurité Numérique, Stratégie de Contenu et "
+                     "Techniques de Tournage. Chaque édition se conclut par la "
+                     "compétition « La Reine du Digital ».",
+            'lien_label': 'Découvrir le programme',
+            'url': '#',
+            'image': 'app/assets/img/go-du-digital.jpg',
+            'image_alt': 'Une jeune femme se filme avec son téléphone pendant un atelier.',
+            'detouree': False,
+        },
+        {
+            'theme': 'jaune',
+            'bouton': 'encre',
+            'etiquette': 'Réseau sélectif · 30 à 50 membres',
+            'titre': 'UCIV Leadership',
+            'accroche': 'Un réseau. Un engagement. Un impact.',
+            'texte': "Le réseau des jeunes leaders et futurs leaders d'UCIV : "
+                     "formations par des spécialistes, mentorat, conférences avec des "
+                     "personnalités qui ont réussi, et un réseau d'opportunités "
+                     "partagées entre membres.",
+            'lien_label': 'Rejoindre UCIV Leadership',
+            'url': URL_LEADERSHIP,
+            'image': 'app/assets/img/groupe-nb.png',
+            'image_alt': 'Quatre jeunes leaders souriants, en tenue professionnelle.',
+            'detouree': True,
+        },
+        {
+            'theme': 'vert',
+            'bouton': 'vert',
+            'etiquette': 'Personal branding · Pitch',
+            'titre': 'Experience Lab',
+            'accroche': '« Know yourself before showing yourself. »',
+            'texte': "Un espace consacré au personal branding et au pitch "
+                     "professionnel, pour mieux se connaître avant de chercher à se "
+                     "présenter.",
+            'lien_label': 'Découvrir Experience Lab',
+            'url': '#',
+            'image': 'app/assets/img/experience-lab.jpg',
+            'image_alt': 'Un jeune homme présente son parcours devant un petit groupe.',
+            'detouree': False,
+        },
+    ],
 }

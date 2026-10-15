@@ -8,5 +8,6 @@ app_name = 'app'
 urlpatterns = [
     path('', views.home, name='home'),
     path('qui-sommes-nous/', views.qui_sommes_nous, name='qui_sommes_nous'),
+    path('programmes/', views.nos_programmes, name='nos_programmes'),
     path('programmes/uciv-leadership/', views.uciv_leadership, name='uciv_leadership'),
 ]

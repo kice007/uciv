@@ -51,3 +51,23 @@ class QuiSommesNousPageTests(TestCase):
     def test_home_links_to_page(self):
         response = self.client.get(reverse('app:home'))
         self.assertContains(response, reverse('app:qui_sommes_nous'))
+
+class NosProgrammesPageTests(TestCase):
+    def test_page_renders(self):
+        response = self.client.get(reverse('app:nos_programmes'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'app/layout/nos_programmes.html')
+
+    def test_page_shows_key_content(self):
+        response = self.client.get(reverse('app:nos_programmes'))
+        self.assertContains(response, 'Une même logique')
+        self.assertContains(response, 'Les Go du Digital')
+        self.assertContains(response, 'UCIV Leadership')
+        self.assertContains(response, 'Experience Lab')
+        self.assertContains(response, "D'autres programmes à venir")
+
+    def test_links_to_page(self):
+        response = self.client.get(reverse('app:home'))
+        self.assertContains(response, reverse('app:nos_programmes'))
+        response = self.client.get(reverse('app:uciv_leadership'))
+        self.assertContains(response, reverse('app:nos_programmes'))

@@ -33,3 +33,8 @@ def uciv_leadership(request):
 def qui_sommes_nous(request):
     """Page « Qui sommes-nous ? »."""
     return render(request, 'app/layout/qui_sommes_nous.html', {'qui': content.QUI_SOMMES_NOUS})
+
+
+def nos_programmes(request):
+    """Page « Nos programmes »."""
+    return render(request, 'app/layout/nos_programmes.html', {'np': content.NOS_PROGRAMMES})

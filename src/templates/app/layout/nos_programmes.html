@@ -1,0 +1,107 @@
+{% extends "app/base/base.html" %}
+{% load static %}
+
+{% block title %}Nos programmes — Une Côte d'Ivoire Volontaire{% endblock %}
+{% block description %}Les programmes d'UCIV : Les Go du Digital, UCIV Leadership et Experience Lab. Des formations courtes et pratiques, des mises en situation réelles et un accompagnement après la dernière séance.{% endblock %}
+
+{% block content %}
+
+{# ---------------------------------------------------------------- Hero #}
+<section class="np-hero">
+  <span class="forme forme--anneau np-hero__anneau" aria-hidden="true"></span>
+  <div class="conteneur np-hero__grille">
+    <div class="np-hero__texte">
+      <nav class="fil fil--clair" aria-label="Fil d'Ariane">
+        <ol>
+          <li><a href="{% url 'app:home' %}">Accueil</a></li>
+          <li aria-current="page"><strong>Nos programmes</strong></li>
+        </ol>
+      </nav>
+      <p class="surtitre surtitre--blanc hero__entree" style="--i: 0">Nos programmes</p>
+      <h1 class="np-hero__titre hero__entree" style="--i: 1">
+        {{ np.hero_titre }} <em>{{ np.hero_suite }}</em>
+      </h1>
+      <p class="np-hero__chapo hero__entree" style="--i: 2">{{ np.hero_chapo }}</p>
+    </div>
+    <div class="np-hero__visuel" aria-hidden="true">
+      <span class="np-hero__disque"></span>
+      <span class="forme np-hero__rond"></span>
+      <p class="manuscrit np-hero__note">apprendre en faisant</p>
+    </div>
+  </div>
+</section>
+
+{# --------------------------------------------------------------- Méthode #}
+<section class="section np-methode">
+  <div class="conteneur">
+    <div class="entete-section" data-reveal>
+      <div>
+        <p class="surtitre">Notre méthode</p>
+        <h2 class="titre titre--52">Une même logique <em>pour chaque programme.</em></h2>
+      </div>
+      <p class="texte">{{ np.methode_intro }}</p>
+    </div>
+    <ol class="np-etapes">
+      {% for etape in np.methode %}
+        <li class="np-etape np-etape--{{ etape.couleur }}" data-reveal style="--i: {{ forloop.counter0 }}">
+          <div class="np-etape__haut">
+            <span class="np-etape__num">0{{ forloop.counter }}</span>
+            {% if forloop.last %}
+              {% include "app/includes/_icon.html" with name="check" %}
+            {% else %}
+              {% include "app/includes/_icon.html" with name="arrow-right" %}
+            {% endif %}
+          </div>
+          <h3>{{ etape.titre }}</h3>
+        </li>
+      {% endfor %}
+    </ol>
+  </div>
+</section>
+
+{# ------------------------------------------------------- Les programmes #}
+<section class="section section--blanc np-programmes">
+  <div class="conteneur">
+    {% for p in np.programmes %}
+      <article class="np-programme np-programme--{{ p.theme }}">
+        <div class="np-programme__visuel" data-reveal="image">
+          <span class="np-programme__forme" aria-hidden="true"></span>
+          <div class="np-programme__photo{% if p.detouree %} np-programme__photo--detouree{% endif %}">
+            {% if p.theme == 'jaune' %}<span class="np-programme__rond" aria-hidden="true"></span>{% endif %}
+            <img src="{% static p.image %}" alt="{{ p.image_alt }}" loading="lazy">
+          </div>
+        </div>
+        <div class="np-programme__texte" data-reveal>
+          <span class="np-programme__num">0{{ forloop.counter }}</span>
+          <span class="etiquette np-programme__tag">{{ p.etiquette }}</span>
+          <h2>{{ p.titre }}</h2>
+          <p class="np-programme__accroche">{{ p.accroche }}</p>
+          <p class="texte">{{ p.texte }}</p>
+          <a class="btn btn--{{ p.bouton }}" href="{{ p.url }}">
+            <span>{{ p.lien_label }}</span>
+            <span class="btn__rond">{% include "app/includes/_icon.html" with name="arrow-right" %}</span>
+          </a>
+        </div>
+      </article>
+    {% endfor %}
+
+    <aside class="np-avenir" data-reveal>
+      <strong>D'autres programmes à venir</strong>
+      <p>De nouveaux programmes seront annoncés ici.</p>
+    </aside>
+  </div>
+</section>
+
+{# ----------------------------------------------------------------- Appel #}
+<section class="np-appel">
+  <span class="forme forme--anneau np-appel__anneau" aria-hidden="true"></span>
+  <div class="conteneur np-appel__cadre" data-reveal>
+    <h2 class="np-appel__titre">Il existe une place pour ton engagement <em>au sein d'UCIV.</em></h2>
+    <a class="btn btn--blanc" href="#">
+      <span>Je veux m'engager</span>
+      <span class="btn__rond">{% include "app/includes/_icon.html" with name="arrow-right" %}</span>
+    </a>
+  </div>
+</section>
+
+{% endblock %}
