@@ -9,11 +9,21 @@ modèles Django et l'interface d'administration.
 Les liens marqués '#' pointent vers des pages qui n'existent pas encore.
 """
 
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
+from django.utils.functional import lazy
 
 URL_LEADERSHIP = reverse_lazy('app:uciv_leadership')
 URL_QUI = reverse_lazy('app:qui_sommes_nous')
 URL_PROGRAMMES = reverse_lazy('app:nos_programmes')
+
+def _engagement(choix=''):
+    return reverse('app:engagement') + (f'?choix={choix}' if choix else '')
+
+
+URL_ENGAGEMENT = lazy(_engagement, str)()
+URL_VOLONTAIRE = lazy(_engagement, str)('volontaire')
+URL_COMPETENCES = lazy(_engagement, str)('competences')
+
 URL_GO = reverse_lazy('app:go_du_digital')
 URL_EXPERIENCE = reverse_lazy('app:experience_lab')
 
@@ -40,11 +50,11 @@ NAVIGATION = [
     },
     {
         'label': "S'engager",
-        'url': '#',
+        'url': URL_ENGAGEMENT,
         'enfants': [
-            {'label': 'Devenir volontaire', 'url': '#'},
+            {'label': 'Devenir volontaire', 'url': URL_VOLONTAIRE},
             {'label': 'Rejoindre UCIV Leadership', 'url': URL_LEADERSHIP},
-            {'label': 'Proposer mes compétences', 'url': '#'},
+            {'label': 'Proposer mes compétences', 'url': URL_COMPETENCES},
         ],
     },
     {'label': 'Opportunités', 'url': '#', 'enfants': []},
@@ -56,9 +66,9 @@ PIED_COLONNES = [
     {
         'titre': "S'engager",
         'liens': [
-            {'label': "Je veux m'engager", 'url': '#'},
-            {'label': 'Devenir volontaire', 'url': '#'},
-            {'label': 'Proposer mes compétences', 'url': '#'},
+            {'label': "Je veux m'engager", 'url': URL_ENGAGEMENT},
+            {'label': 'Devenir volontaire', 'url': URL_VOLONTAIRE},
+            {'label': 'Proposer mes compétences', 'url': URL_COMPETENCES},
             {'label': 'Opportunités', 'url': '#'},
         ],
     },
@@ -209,19 +219,19 @@ FACONS_DE_S_ENGAGER = [
         'couleur': 'orange',
         'titre': 'Devenir volontaire',
         'texte': "Participe aux activités et aux projets d'UCIV, sur le terrain.",
-        'url': '#',
+        'url': URL_VOLONTAIRE,
     },
     {
         'couleur': 'jaune',
         'titre': 'Rejoindre UCIV Leadership',
         'texte': 'Intègre un réseau sélectif de jeunes leaders et futurs leaders.',
-        'url': '#',
+        'url': URL_LEADERSHIP,
     },
     {
         'couleur': 'vert',
         'titre': 'Proposer mes compétences',
         'texte': 'Communication, graphisme, audiovisuel, formation, numérique…',
-        'url': '#',
+        'url': URL_COMPETENCES,
     },
 ]
 
@@ -605,4 +615,36 @@ EQUIPE = {
         {'nom': 'Ago Maria Konan', 'initiales': 'AM', 'couleur': 'profond',
          'role': 'Secrétaire Générale adjointe et créatrice de contenu'},
     ],
+}
+
+# --- Page Je veux m'engager -------------------------------------------------
+
+ENGAGEMENT = {
+    'hero_titre': 'Ton engagement peut',
+    'hero_suite': 'commencer ici.',
+    'hero_chapo': "UCIV rassemble des jeunes qui souhaitent apprendre, contribuer et "
+                  "agir. Tu peux nous rejoindre de différentes manières, selon ce que "
+                  "tu as envie d'apporter et le temps que tu peux y consacrer.",
+    'hero_note': 'il y a une place pour toi !',
+    'facons': [
+        {'couleur': 'blanc', 'bouton': 'vert', 'titre': 'Devenir volontaire',
+         'texte': "Participe aux activités et aux projets d'UCIV et mets tes "
+                  "compétences au service d'actions concrètes, sur le terrain.",
+         'url': URL_VOLONTAIRE},
+        {'couleur': 'jaune', 'bouton': 'encre', 'titre': 'Rejoindre UCIV Leadership',
+         'texte': "Intègre un réseau sélectif de jeunes leaders et futurs leaders "
+                  "qui souhaitent développer leurs capacités et agir ensemble.",
+         'url': URL_LEADERSHIP},
+        {'couleur': 'profond', 'bouton': 'blanc', 'titre': 'Proposer mes compétences',
+         'texte': "Tu as une compétence ou une expertise à mettre au service d'UCIV ? "
+                  "Nous pouvons avoir besoin de profils dans différents domaines :",
+         'puces': ['Communication', 'Graphisme', 'Audiovisuel', 'Photographie',
+                   'Formation', 'Événementiel', 'Ressources humaines',
+                   'Gestion de projet', 'Numérique', 'Développement web'],
+         'url': URL_COMPETENCES},
+    ],
+    'formulaire_texte': "Il existe une place pour ton engagement au sein d'UCIV. "
+                        "L'équipe revient vers toi pour la suite.",
+    'merci': "Merci ! Ta demande a bien été envoyée. L'équipe revient vers toi pour "
+             "la suite.",
 }

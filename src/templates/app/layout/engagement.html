@@ -1,0 +1,154 @@
+{% extends "app/base/base.html" %}
+{% load static %}
+
+{% block title %}Je veux m'engager — Une Côte d'Ivoire Volontaire{% endblock %}
+{% block description %}Il existe une place pour ton engagement au sein d'UCIV : devenir volontaire, rejoindre UCIV Leadership ou proposer tes compétences.{% endblock %}
+
+{% block content %}
+
+{# ---------------------------------------------------------------- Hero #}
+<section class="eng-hero">
+  <span class="forme eng-hero__anneau-vert" aria-hidden="true"></span>
+  <div class="conteneur eng-hero__grille">
+    <div class="eng-hero__texte">
+      <nav class="fil fil--clair" aria-label="Fil d'Ariane">
+        <ol>
+          <li><a href="{% url 'app:home' %}">Accueil</a></li>
+          <li aria-current="page"><strong>Je veux m'engager</strong></li>
+        </ol>
+      </nav>
+      <p class="surtitre surtitre--blanc hero__entree" style="--i: 0">Je veux m'engager</p>
+      <h1 class="eng-hero__titre hero__entree" style="--i: 1">{{ eng.hero_titre }} <em>{{ eng.hero_suite }}</em></h1>
+      <p class="eng-hero__chapo hero__entree" style="--i: 2">{{ eng.hero_chapo }}</p>
+    </div>
+    <div class="eng-hero__visuel">
+      <span class="forme eng-hero__anneau-jaune" aria-hidden="true"></span>
+      <span class="eng-hero__disque" aria-hidden="true"></span>
+      <div class="eng-hero__photo">
+        <img src="{% static 'app/assets/img/volontaires-terrain.jpg' %}" width="928" height="1136"
+             alt="De jeunes volontaires en tee-shirt orange lors d'une action de terrain." fetchpriority="high">
+      </div>
+      <p class="manuscrit eng-hero__note" aria-hidden="true">{{ eng.hero_note }}</p>
+    </div>
+  </div>
+</section>
+
+{# ----------------------------------------------------------- Trois façons #}
+<section class="section eng-facons">
+  <div class="conteneur">
+    <div data-reveal>
+      <p class="surtitre">Trois façons de nous rejoindre</p>
+      <h2 class="eng-titre">Choisis <em>ta manière d'agir.</em></h2>
+    </div>
+    <ol class="eng-facons__liste">
+      {% for facon in eng.facons %}
+        <li class="eng-facon eng-facon--{{ facon.couleur }}" data-reveal style="--i: {{ forloop.counter0 }}">
+          <span class="eng-facon__num">0{{ forloop.counter }}</span>
+          <h3>{{ facon.titre }}</h3>
+          <p>{{ facon.texte }}</p>
+          {% if facon.puces %}
+            <ul class="eng-facon__puces">
+              {% for puce in facon.puces %}<li>{{ puce }}</li>{% endfor %}
+            </ul>
+          {% endif %}
+          <a class="btn btn--{{ facon.bouton }}" href="{{ facon.url }}">
+            <span>{{ facon.titre }}</span>
+            <span class="btn__rond">{% include "app/includes/_icon.html" with name="arrow-right" %}</span>
+          </a>
+        </li>
+      {% endfor %}
+    </ol>
+  </div>
+</section>
+
+{# ------------------------------------------------- Formulaire d'engagement #}
+<section class="section section--blanc eng-formulaire" id="formulaire">
+  <div class="conteneur eng-formulaire__grille">
+    <div data-reveal>
+      <p class="surtitre">Formulaire d'engagement</p>
+      <h2 class="eng-formulaire__titre">Dis-nous comment <em>tu veux t'engager.</em></h2>
+      <p class="texte">{{ eng.formulaire_texte }}</p>
+      <p class="eng-note">
+        <span class="eng-note__picto">{% include "app/includes/_icon.html" with name="mail" %}</span>
+        <span>Une question avant de t'inscrire ? Écris-nous.</span>
+      </p>
+    </div>
+
+    <form class="eng-form" method="post" action="{% url 'app:engagement' %}#formulaire" data-reveal style="--i: 1" novalidate>
+      {% csrf_token %}
+
+      {% if messages %}
+        {% for message in messages %}
+          <p class="eng-alerte eng-alerte--{{ message.tags }}" role="status">{{ message }}</p>
+        {% endfor %}
+      {% endif %}
+
+      <div class="eng-piege" aria-hidden="true">
+        <label for="id_site_web">Ne pas remplir</label>
+        <input type="text" id="id_site_web" name="site_web" tabindex="-1" autocomplete="off">
+      </div>
+
+      <div class="eng-groupe">
+        <label class="eng-label" for="id_nom">Nom et prénom</label>
+        <input class="eng-champ" type="text" id="id_nom" name="nom" placeholder="Ex. Aya Konan" value="{{ form.nom.value|default:'' }}" autocomplete="name" required>
+        {% for erreur in form.nom.errors %}<p class="eng-erreur">{{ erreur }}</p>{% endfor %}
+      </div>
+
+      <div class="eng-ligne">
+        <div class="eng-groupe">
+          <label class="eng-label" for="id_email">Adresse e-mail</label>
+          <input class="eng-champ" type="email" id="id_email" name="email" placeholder="nom@exemple.com" value="{{ form.email.value|default:'' }}" autocomplete="email" required>
+          {% for erreur in form.email.errors %}<p class="eng-erreur">{{ erreur }}</p>{% endfor %}
+        </div>
+        <div class="eng-groupe">
+          <label class="eng-label" for="id_telephone">Téléphone</label>
+          <input class="eng-champ" type="tel" id="id_telephone" name="telephone" placeholder="+225" value="{{ form.telephone.value|default:'' }}" autocomplete="tel">
+          {% for erreur in form.telephone.errors %}<p class="eng-erreur">{{ erreur }}</p>{% endfor %}
+        </div>
+      </div>
+
+      <fieldset class="eng-groupe">
+        <legend class="eng-label">Je souhaite</legend>
+        <div class="eng-options">
+          {% for valeur, libelle in form.choix.field.choices %}
+            <label class="eng-option">
+              <input type="radio" name="choix" value="{{ valeur }}"{% if form.choix.value == valeur %} checked{% endif %} required>
+              <span class="eng-option__case eng-option__case--rond">{% include "app/includes/_icon.html" with name="check" %}</span>
+              <span>{{ libelle }}</span>
+            </label>
+          {% endfor %}
+        </div>
+        {% for erreur in form.choix.errors %}<p class="eng-erreur">{{ erreur }}</p>{% endfor %}
+      </fieldset>
+
+      <fieldset class="eng-groupe">
+        <legend class="eng-label">Mes domaines de compétences <span>(facultatif)</span></legend>
+        <div class="eng-options">
+          {% for valeur, libelle in form.competences.field.choices %}
+            <label class="eng-option">
+              <input type="checkbox" name="competences" value="{{ valeur }}"{% if valeur in form.competences.value %} checked{% endif %}>
+              <span class="eng-option__case">{% include "app/includes/_icon.html" with name="check" %}</span>
+              <span>{{ libelle }}</span>
+            </label>
+          {% endfor %}
+        </div>
+      </fieldset>
+
+      <div class="eng-groupe">
+        <label class="eng-label" for="id_message">Ce que tu as envie d'apporter</label>
+        <textarea class="eng-champ eng-champ--zone" id="id_message" name="message" rows="4" placeholder="Parle-nous de toi, de ton temps disponible, de ce qui te motive…">{{ form.message.value|default:'' }}</textarea>
+        {% for erreur in form.message.errors %}<p class="eng-erreur">{{ erreur }}</p>{% endfor %}
+      </div>
+
+      <div class="eng-form__bas">
+        <p>Tes données servent uniquement à te recontacter. <a href="#">Voir la politique de confidentialité.</a></p>
+        <button class="btn btn--vert" type="submit">
+          <span>Envoyer</span>
+          <span class="btn__rond">{% include "app/includes/_icon.html" with name="arrow-right" %}</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</section>
+
+{% endblock %}

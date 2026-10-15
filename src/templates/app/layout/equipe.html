@@ -99,7 +99,7 @@
   <span class="forme np-appel__anneau" aria-hidden="true"></span>
   <div class="conteneur np-appel__cadre" data-reveal>
     <h2 class="np-appel__titre">Envie de rejoindre <em>l'équipe ?</em></h2>
-    <a class="btn btn--blanc" href="#">
+    <a class="btn btn--blanc" href="{% url 'app:engagement' %}?choix=competences">
       <span>Proposer mes compétences</span>
       <span class="btn__rond">{% include "app/includes/_icon.html" with name="arrow-right" %}</span>
     </a>

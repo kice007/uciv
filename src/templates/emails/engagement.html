@@ -1,0 +1,10 @@
+<p>Nouvelle demande d'engagement reçue sur le site UCIV.</p>
+<ul>
+  <li><strong>Nom :</strong> {{ soumission.nom }}</li>
+  <li><strong>E-mail :</strong> {{ soumission.email }}</li>
+  <li><strong>Téléphone :</strong> {{ soumission.telephone|default:"—" }}</li>
+  <li><strong>Souhaite :</strong> {{ soumission.get_choix_display }}</li>
+  <li><strong>Compétences :</strong> {{ soumission.competences|default:"—" }}</li>
+</ul>
+<p><strong>Message :</strong></p>
+<p>{{ soumission.message|default:"—"|linebreaksbr }}</p>

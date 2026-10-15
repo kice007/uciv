@@ -18,7 +18,7 @@
         par le volontariat et l'engagement citoyen.
       </p>
       <div class="hero__cta hero__entree" style="--i: 3">
-        <a class="btn btn--blanc" href="#">
+        <a class="btn btn--blanc" href="{% url 'app:engagement' %}">
           <span>Je veux m'engager</span>
           <span class="btn__rond">{% include "app/includes/_icon.html" with name="arrow-right" %}</span>
         </a>
@@ -190,7 +190,7 @@
       <p class="surtitre">Rejoindre UCIV</p>
       <h2 class="titre titre--xl">Tu veux agir <em>pour le pays ?</em></h2>
       <p class="texte">Que tu souhaites devenir volontaire, rejoindre un programme, proposer tes compétences ou contribuer à un projet, il existe une place pour ton engagement au sein d'UCIV.</p>
-      <a class="btn btn--vert" href="#">
+      <a class="btn btn--vert" href="{% url 'app:engagement' %}">
         <span>Je veux m'engager</span>
         <span class="btn__rond">{% include "app/includes/_icon.html" with name="arrow-right" %}</span>
       </a>

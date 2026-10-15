@@ -42,7 +42,7 @@
       <a class="rond-bouton entete__recherche" href="#" aria-label="Rechercher">
         {% include "app/includes/_icon.html" with name="search" %}
       </a>
-      <a class="btn btn--vert btn--compact entete__cta" href="#">Je veux m'engager</a>
+      <a class="btn btn--vert btn--compact entete__cta" href="{% url 'app:engagement' %}">Je veux m'engager</a>
       <button class="rond-bouton rond-bouton--vert entete__burger" type="button"
               aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="menu-mobile" data-menu-ouvrir>
         {% include "app/includes/_icon.html" with name="menu" %}
@@ -77,7 +77,7 @@
         {% endfor %}
       </ul>
     </nav>
-    <a class="btn btn--vert menu-mobile__cta" href="#">
+    <a class="btn btn--vert menu-mobile__cta" href="{% url 'app:engagement' %}">
       <span>Je veux m'engager</span>
       <span class="btn__rond">{% include "app/includes/_icon.html" with name="arrow-right" %}</span>
     </a>

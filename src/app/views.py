@@ -4,9 +4,16 @@ Vues de l'application `app`.
 Une vue reçoit la requête du navigateur, prépare les données (le « contexte »)
 et les envoie à un gabarit HTML qui produit la page.
 """
-from django.shortcuts import render
+from django.conf import settings
+from django.contrib import messages
+from django.shortcuts import redirect, render
+from django.urls import reverse
+
+from core.utils import send_customize_email
 
 from . import content
+from .forms import EngagementForm
+from .models import SoumissionEngagement
 
 
 def home(request):
@@ -53,3 +60,26 @@ def experience_lab(request):
 def equipe(request):
     """Page « Équipe »."""
     return render(request, 'app/layout/equipe.html', {'eq': content.EQUIPE})
+
+
+def engagement(request):
+    """Page « Je veux m'engager » : présentation des 3 façons et formulaire d'engagement."""
+    if request.method == 'POST':
+        form = EngagementForm(request.POST)
+        if form.is_valid():
+            donnees = form.cleaned_data
+            soumission = SoumissionEngagement.objects.create(
+                nom=donnees['nom'], email=donnees['email'], telephone=donnees['telephone'],
+                choix=donnees['choix'], competences=', '.join(donnees['competences']),
+                message=donnees['message'],
+            )
+            if settings.EMAIL_HOST:
+                send_customize_email(
+                    f"Nouvelle demande d'engagement : {soumission.nom}",
+                    [settings.CONTACT_EMAIL], 'emails/engagement.html', {'soumission': soumission},
+                )
+            messages.success(request, content.ENGAGEMENT['merci'])
+            return redirect(reverse('app:engagement') + '#formulaire')
+    else:
+        form = EngagementForm(initial={'choix': request.GET.get('choix')})
+    return render(request, 'app/layout/engagement.html', {'eng': content.ENGAGEMENT, 'form': form})
