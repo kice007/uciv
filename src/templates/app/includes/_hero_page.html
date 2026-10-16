@@ -1,0 +1,19 @@
+{# Bandeau de page à formes décoratives. Reçoit `hero` (voir content.py : OPPORTUNITES_PAGE, ACTUALITES_PAGE…). #}
+<section class="ph ph--{{ hero.fond }}" style="--h: {{ hero.hauteur }}">
+  {% for f in hero.formes %}<span class="forme ph-forme" style="--x: {{ f.x }}; --y: {{ f.y }}; --w: {{ f.w }}; --c: {{ f.c }}; --in: {{ f.creux }}" aria-hidden="true"></span>{% endfor %}
+  {% if hero.note %}<p class="manuscrit ph-note" style="--x: {{ hero.note.x }}; --y: {{ hero.note.y }}; --fs: {{ hero.note.taille }}; --rot: {{ hero.note.rot }}; --c: {{ hero.note.c }}" aria-hidden="true">{{ hero.note.texte }}</p>{% endif %}
+  <div class="conteneur ph-grille">
+    <div class="ph-texte" style="--tw: {{ hero.largeur_texte }}">
+      <nav class="fil fil--clair" aria-label="Fil d'Ariane">
+        <ol>
+          {% for etape in hero.fil %}
+            <li{% if forloop.last %} aria-current="page"{% endif %}>{% if etape.url %}<a href="{{ etape.url }}">{{ etape.label }}</a>{% else %}<strong>{{ etape.label }}</strong>{% endif %}</li>
+          {% endfor %}
+        </ol>
+      </nav>
+      <p class="surtitre surtitre--blanc hero__entree" style="--i: 0">{{ hero.surtitre }}</p>
+      <h1 class="ph-titre hero__entree" style="--i: 1; --fs: {{ hero.taille }}">{{ hero.titre }} <em>{{ hero.suite }}</em></h1>
+      <p class="ph-chapo hero__entree" style="--i: 2; --cw: {{ hero.largeur_chapo }}">{{ hero.chapo }}</p>
+    </div>
+  </div>
+</section>

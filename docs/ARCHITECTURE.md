@@ -22,12 +22,12 @@ sans dépendance tierce : `requirements.txt` ne contient que Django.
     ├── app/              # contenu éditorial du site
     │   ├── content.py            # textes, navigation, programmes, articles
     │   ├── context_processors.py # variables communes (navigation, pied de page)
-    │   ├── models.py             # Convention (abstrait), SoumissionEngagement, SoumissionPartenariat, SoumissionContact
+    │   ├── models.py             # Convention (abstrait), 3 modèles de formulaires, Article, Opportunite, Ressource, Indicateur
     │   ├── forms.py              # formulaires (Engagement, Partenariat, Contact)
     │   ├── migrations/           # migrations de la base
     │   ├── admin.py              # administration Django
     │   ├── views.py / urls.py    # page d'accueil, namespace « app »
-    │   ├── templatetags/custom_tags.py
+    │   ├── templatetags/custom_tags.py  # filtre corps_article (texte des articles)
     │   └── tests.py
     ├── templates/
     │   ├── app/base/base.html     # gabarit de base

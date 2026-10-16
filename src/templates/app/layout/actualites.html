@@ -1,0 +1,57 @@
+{% extends "app/base/base.html" %}
+
+{% block title %}Actualités — Une Côte d'Ivoire Volontaire{% endblock %}
+{% block description %}Les activités, projets, événements, partenariats et initiatives qui font vivre Une Côte d'Ivoire Volontaire.{% endblock %}
+
+{% block content %}
+
+{% include "app/includes/_hero_page.html" with hero=page.hero %}
+
+<section class="section lst-fil" id="fil">
+  <div class="conteneur">
+    <nav class="lst-chips" aria-label="Filtrer par catégorie">
+      {% for chip in chips %}<a class="lst-chip{% if chip.actif %} est-actif{% endif %}" href="{{ chip.url }}#fil"{% if chip.actif %} aria-current="true"{% endif %}>{{ chip.label }}</a>{% endfor %}
+    </nav>
+
+    {% if une %}
+      <article class="lst-une" data-reveal>
+        <a href="{% url 'app:article' une.slug %}">
+          <div class="lst-une__image">{% if une.image_url %}<img src="{{ une.image_url }}" alt="{{ une.image_alt }}">{% endif %}</div>
+          <div class="lst-une__texte">
+            <p class="lst-une__tags">
+              <span class="lst-tag lst-tag--encre">À la une</span>
+              <span class="lst-tag lst-tag--{{ une.theme }}">{{ une.etiquette_affichee }}</span>
+            </p>
+            <h2>{{ une.titre }}</h2>
+            <p>{{ une.chapo }}</p>
+            <span class="btn btn--vert">
+              <span>Lire l'article</span>
+              <span class="btn__rond">{% include "app/includes/_icon.html" with name="arrow-right" %}</span>
+            </span>
+          </div>
+        </a>
+      </article>
+    {% endif %}
+
+    {% if page_obj.object_list %}
+      <div class="lst-grille">
+        {% for article in page_obj.object_list %}
+          {% include "app/includes/_carte_article.html" with article=article delai=forloop.counter0 %}
+        {% endfor %}
+      </div>
+    {% elif not une %}
+      <p class="lst-vide">Aucune actualité dans cette catégorie pour le moment.</p>
+    {% endif %}
+
+    {% if pagination %}
+      <nav class="lst-pagination" aria-label="Pagination">
+        {% for p in pagination %}
+          <a class="lst-pagination__page{% if p.actif %} est-actif{% endif %}" href="{{ p.url }}#fil"{% if p.actif %} aria-current="page"{% endif %}>{{ p.numero }}</a>
+        {% endfor %}
+        {% if suivant %}<a class="lst-pagination__page" href="{{ suivant }}#fil" aria-label="Page suivante">{% include "app/includes/_icon.html" with name="arrow-right" %}</a>{% endif %}
+      </nav>
+    {% endif %}
+  </div>
+</section>
+
+{% endblock %}

@@ -14,8 +14,8 @@ Documents liés : [PLAN.md](PLAN.md) (ce qu'il faut construire),
 | Structure du projet (`src/core`, `src/app`) | Fait |
 | Dépendances | Fait : Django 6.1.2 uniquement |
 | Page d'accueil | Faite, alignée sur la maquette |
-| Pages intérieures (14) | 9 faites (UCIV Leadership, Qui sommes-nous ?, Nos programmes, Les Go du Digital, Experience Lab, Équipe, Je veux m'engager, Partenaires, Contact), 5 à faire |
-| Modèles de données et administration | 3 modèles (`SoumissionEngagement`, `SoumissionPartenariat`, `SoumissionContact`) et leur administration ; le reste à faire |
+| Pages intérieures (14) | **14 faites** : les 9 précédentes + Opportunités, Actualités, Article, Notre impact, Ressources |
+| Modèles de données et administration | 7 modèles administrables : 3 de formulaires (`SoumissionEngagement`, `SoumissionPartenariat`, `SoumissionContact`) et 4 de contenu (`Article`, `Opportunite`, `Ressource`, `Indicateur`) ; `MembreEquipe`, `Programme` et `Partenaire` restent dans `content.py` |
 | Formulaires | 3 faits (engagement, partenariat, contact) ; newsletter à faire |
 | Responsive mobile/tablette | Fait pour l'accueil seulement |
 | Documentation | Faite (voir ci-dessus) |
@@ -66,6 +66,19 @@ Documents liés : [PLAN.md](PLAN.md) (ce qu'il faut construire),
 - Contenu dans `content.EXPERIENCE_LAB` ; vue `experience_lab` ; gabarit `layout/experience_lab.html` ; styles `el-*` dans `main.css` (section 16), hero et inscriptions réutilisent les classes `gd-*`.
 - Les liens « Experience Lab » (navigation, pied de page, accueil, page Nos programmes) pointent vers la page.
 - 3 tests ajoutés (17 au total). Valeurs lues dans la maquette (positions, tailles, interlignes, espacements et rotations relevés à 1440 px, appliqués en `vw` en dessous) ; rendu à valider dans un navigateur.
+
+### Pages de contenu : Opportunités, Actualités, Article, Notre impact, Ressources
+- **Modèles administrables** (`Article`, `Opportunite`, `Ressource`, `Indicateur`, migration `0004`) : tout nouveau contenu est non publié par défaut ; la case « publié » (`publish`) le met en ligne.
+- **Contenu de départ** (migration de données `0005_contenu_initial`) : 7 articles + 3 « histoires » tirés de la maquette et de l'accueil, 6 indicateurs sans valeur, 6 opportunités et 8 ressources **d'exemple** (cases « fiche d'exemple » cochées, textes « À renseigner »). L'équipe les remplace ou les dépublie depuis l'administration ; la mention « emplacements » disparaît quand plus aucune fiche d'exemple n'est affichée.
+- **Opportunités** `/opportunites/` : bandeau, 5 catégories, fiches filtrables (`?categorie=`), appel « Devenir partenaire ».
+- **Actualités** `/actualites/` : article à la une, fil filtrable par catégorie (`?categorie=`), pagination de 6 ; **Article** `/actualites/<slug>/` : bandeau, image, corps mis en forme, partage Facebook / LinkedIn / WhatsApp, « À lire aussi ».
+- **Notre impact** `/impact/` : 6 indicateurs (« 000 » tant que la valeur est vide), « Nos histoires » (articles cochés `histoire`), citation. **Ressources** `/ressources/` : bibliothèque filtrable par type et thème (`?type=&theme=`).
+- **Texte d'un article** (champ « corps », sans HTML) : un bloc par ligne vide ; `!! ` chapô, `## ` sous-titre, `> ` citation (ligne `— Nom` pour la signature), lignes `- ` liste de points, sinon paragraphe. Filtre `corps_article`, texte échappé.
+- **Accueil** : la section « L'actualité d'UCIV » et les chiffres de « Vision & chiffres » lisent la base, avec repli sur `content.py` tant qu'elle est vide.
+- **Bandeaux** : composant commun `_hero_page.html` (formes en disques ou anneaux relevées dans la maquette, converties en `vw`).
+- Écarts : seule l'image principale d'un article est gérée (la maquette montre une 2e image avec légende) ; les images « générées » de la maquette sont remplacées par les photos du site.
+- 17 tests ajoutés (56 au total). Rendu à valider dans un navigateur.
+- À faire : `python manage.py migrate` (migrations `0004` et `0005`), puis ouvrir `/admin/` pour gérer le contenu.
 
 ### Page Contact (`/contact/`)
 - 2 parties : hero orange (anneau crème, disque vert profond avec « on vous répond ! », anneau jaune), formulaire « Écrivez-nous » et carte « Coordonnées officielles » (téléphones, e-mail, adresse, réseaux sociaux).
@@ -122,13 +135,13 @@ Les fichiers suivants sont dans le dossier de travail mais pas dans git :
 
 ## Prochaines étapes (par ordre)
 
-1. **Commiter** les documents et la correction des titres.
-2. **Socle des pages intérieures** : gabarit `app/base/page.html` (hero + contenu + appel), fil d'Ariane, état « page active » de la navigation, includes (appel, citation, repères, liste numérotée).
-3. **Pages statiques** : Qui sommes-nous, Nos programmes, Les Go du Digital, UCIV Leadership, Experience Lab.
-4. **Modèles et administration** : `Article`, `Opportunite`, `Ressource`, `MembreEquipe`, `Indicateur` ; migrer `content.py`.
-5. **Pages dynamiques** : Actualités, Article, Opportunités, Ressources, Équipe, Notre impact.
-6. **Formulaires** : engagement, partenariat, contact, newsletter (et envoi d'e-mails).
-7. **Finitions** : accessibilité, SEO, images, page 404, pages légales.
+1. **Appliquer les migrations** (`python manage.py migrate`) puis créer un compte administrateur (`createsuperuser`) pour gérer le contenu.
+2. **Vérifier visuellement** chaque page à 1440 px à côté de la maquette, puis en tablette et mobile (aucun rendu n'a pu être contrôlé dans un navigateur depuis l'assistant).
+3. **Newsletter** : brancher le formulaire du pied de page (enregistrement des adresses, désinscription).
+4. **Pages légales et 404** : mentions légales, politique de confidentialité, conditions d'utilisation, page d'erreur.
+5. **Images manquantes** : portraits du bureau exécutif, photos générées de la maquette, 2e image d'article.
+6. **Contenus à remplacer** : fiches d'exemple (opportunités, ressources), chiffres d'impact, bios, dates et tarifs des programmes, textes des articles.
+7. **Finitions** : accessibilité, SEO (métadonnées, `sitemap.xml`), optimisation des images.
 8. **Mise en ligne** : réglages de production, `collectstatic`, hébergement.
 
 Le détail de chaque page, composant, modèle et formulaire est dans [PLAN.md](PLAN.md).

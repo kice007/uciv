@@ -1,0 +1,72 @@
+{% extends "app/base/base.html" %}
+
+{% block title %}Opportunités — Une Côte d'Ivoire Volontaire{% endblock %}
+{% block description %}Volontariat, formations, stages, emploi, appels à candidatures : les opportunités proposées par UCIV et son réseau de partenaires.{% endblock %}
+
+{% block content %}
+
+{% include "app/includes/_hero_page.html" with hero=page.hero %}
+
+{# ------------------------------------------------------------ Catégories #}
+<section class="section opp-categories">
+  <div class="conteneur">
+    <ol class="opp-categories__liste">
+      {% for titre, texte in page.categories %}
+        <li class="opp-categorie{% if forloop.counter|divisibleby:2 %} opp-categorie--vert{% endif %}" data-reveal style="--i: {{ forloop.counter0 }}">
+          <span class="opp-categorie__num">0{{ forloop.counter }}</span>
+          <h2>{{ titre }}</h2>
+          <p>{{ texte }}</p>
+        </li>
+      {% endfor %}
+    </ol>
+  </div>
+</section>
+
+{# ------------------------------------------------ Opportunités du moment #}
+<section class="section section--blanc opp-moment" id="opportunites">
+  <div class="conteneur">
+    <div data-reveal>
+      <h2 class="eng-titre">Les opportunités <em>du moment.</em></h2>
+    </div>
+    <nav class="lst-chips" aria-label="Filtrer par catégorie">
+      {% for chip in chips %}<a class="lst-chip{% if chip.actif %} est-actif{% endif %}" href="{{ chip.url }}#opportunites"{% if chip.actif %} aria-current="true"{% endif %}>{{ chip.label }}</a>{% endfor %}
+    </nav>
+
+    {% if opportunites %}
+      <ul class="opp-cartes">
+        {% for o in opportunites %}
+          <li class="opp-carte" data-reveal style="--i: {{ forloop.counter0 }}">
+            <div class="opp-carte__haut">
+              <span class="lst-tag lst-tag--{{ o.categorie }}">{{ o.get_categorie_display }}</span>
+              <span class="opp-carte__source">{{ o.source }}</span>
+            </div>
+            <h3>{{ o.intitule }}</h3>
+            <ul class="opp-carte__infos">
+              <li>{% include "app/includes/_icon.html" with name="building" %}<span>Structure</span><strong>{{ o.structure|default:"À renseigner" }}</strong></li>
+              <li>{% include "app/includes/_icon.html" with name="map-pin" %}<span>Lieu</span><strong>{{ o.lieu|default:"À renseigner" }}</strong></li>
+              <li>{% include "app/includes/_icon.html" with name="calendar" %}<span>Date limite</span><strong class="opp-carte__date">{% if o.date_limite %}{{ o.date_limite|date:"d/m/Y" }}{% else %}jj/mm/aaaa{% endif %}</strong></li>
+            </ul>
+            <a class="lien-fleche lien-fleche--orange" href="{{ o.lien|default:'#' }}">Voir le détail{% include "app/includes/_icon.html" with name="arrow-right" %}</a>
+          </li>
+        {% endfor %}
+      </ul>
+      {% if modele %}<p class="lst-note">{{ page.note_modele }}</p>{% endif %}
+    {% else %}
+      <p class="lst-vide">Aucune opportunité dans cette catégorie pour le moment. Revenez bientôt.</p>
+    {% endif %}
+  </div>
+</section>
+
+{# ----------------------------------------------------------------- Appel #}
+<section class="np-appel np-appel--orange">
+  <span class="forme np-appel__anneau" aria-hidden="true"></span>
+  <div class="conteneur np-appel__cadre" data-reveal>
+    <h2 class="np-appel__titre">Vous avez une opportunité <em>à proposer aux jeunes ?</em></h2>
+    <a class="btn btn--blanc" href="{% url 'app:partenaires' %}">
+      <span>Devenir partenaire</span>
+      <span class="btn__rond">{% include "app/includes/_icon.html" with name="arrow-right" %}</span>
+    </a>
+  </div>
+</section>
+
+{% endblock %}

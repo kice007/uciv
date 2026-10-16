@@ -1,0 +1,64 @@
+{% extends "app/base/base.html" %}
+
+{% block title %}Ressources — Une Côte d'Ivoire Volontaire{% endblock %}
+{% block description %}Guides, manuels, supports de formation, articles, vidéos et podcasts produits ou recommandés par UCIV.{% endblock %}
+
+{% block content %}
+
+{% include "app/includes/_hero_page.html" with hero=page.hero %}
+
+{# ----------------------------------------------------------- Bibliothèque #}
+<section class="res-biblio" id="bibliotheque">
+  <div class="conteneur">
+    <div class="res-filtres" data-reveal>
+      <div class="res-filtres__ligne">
+        <span class="res-filtres__label">Type</span>
+        <nav class="lst-chips" aria-label="Filtrer par type">
+          {% for chip in chips_type %}<a class="lst-chip{% if chip.actif %} est-actif{% endif %}" href="{{ chip.url }}#bibliotheque"{% if chip.actif %} aria-current="true"{% endif %}>{{ chip.label }}</a>{% endfor %}
+        </nav>
+      </div>
+      <div class="res-filtres__ligne">
+        <span class="res-filtres__label">Thème</span>
+        <nav class="lst-chips" aria-label="Filtrer par thème">
+          {% for chip in chips_theme %}<a class="lst-chip{% if chip.actif %} est-actif{% endif %}" href="{{ chip.url }}#bibliotheque"{% if chip.actif %} aria-current="true"{% endif %}>{{ chip.label }}</a>{% endfor %}
+        </nav>
+      </div>
+    </div>
+
+    {% if ressources %}
+      <ul class="res-grille">
+        {% for r in ressources %}
+          <li class="res-carte" data-reveal style="--i: {{ forloop.counter0 }}">
+            <div class="res-carte__haut">
+              <span class="res-carte__picto res-carte__picto--{{ r.picto.couleur }}">{% include "app/includes/_icon.html" with name=r.picto.icone %}</span>
+              <span class="res-carte__theme">{{ r.get_theme_display }}</span>
+            </div>
+            <div class="res-carte__corps">
+              <p class="res-carte__type">{{ r.get_type_display }}</p>
+              <h2>{{ r.titre }}</h2>
+              <p class="res-carte__meta">{{ r.meta }}</p>
+            </div>
+            <a class="lien-fleche lien-fleche--orange" href="{{ r.url|default:'#' }}">Consulter{% include "app/includes/_icon.html" with name="arrow-right" %}</a>
+          </li>
+        {% endfor %}
+      </ul>
+      {% if modele %}<p class="lst-note">{{ page.note_modele }}</p>{% endif %}
+    {% else %}
+      <p class="lst-vide">Aucune ressource ne correspond à ces filtres pour le moment.</p>
+    {% endif %}
+  </div>
+</section>
+
+{# ----------------------------------------------------------------- Appel #}
+<section class="np-appel">
+  <span class="forme np-appel__anneau" aria-hidden="true"></span>
+  <div class="conteneur np-appel__cadre" data-reveal>
+    <h2 class="np-appel__titre">Envie de passer <em>de la lecture à l'action ?</em></h2>
+    <a class="btn btn--blanc" href="{% url 'app:nos_programmes' %}">
+      <span>Découvrir nos programmes</span>
+      <span class="btn__rond">{% include "app/includes/_icon.html" with name="arrow-right" %}</span>
+    </a>
+  </div>
+</section>
+
+{% endblock %}

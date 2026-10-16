@@ -15,6 +15,11 @@ from django.utils.functional import lazy
 URL_LEADERSHIP = reverse_lazy('app:uciv_leadership')
 URL_QUI = reverse_lazy('app:qui_sommes_nous')
 URL_PROGRAMMES = reverse_lazy('app:nos_programmes')
+URL_HOME = reverse_lazy('app:home')
+URL_OPPORTUNITES = reverse_lazy('app:opportunites')
+URL_ACTUALITES = reverse_lazy('app:actualites')
+URL_IMPACT = reverse_lazy('app:impact')
+URL_RESSOURCES = reverse_lazy('app:ressources')
 URL_PARTENAIRES = reverse_lazy('app:partenaires')
 URL_CONTACT = reverse_lazy('app:contact')
 
@@ -59,9 +64,9 @@ NAVIGATION = [
             {'label': 'Proposer mes compétences', 'url': URL_COMPETENCES},
         ],
     },
-    {'label': 'Opportunités', 'url': '#', 'enfants': []},
-    {'label': 'Notre impact', 'url': '#', 'enfants': []},
-    {'label': 'Actualités', 'url': '#', 'enfants': []},
+    {'label': 'Opportunités', 'url': URL_OPPORTUNITES, 'enfants': []},
+    {'label': 'Notre impact', 'url': URL_IMPACT, 'enfants': []},
+    {'label': 'Actualités', 'url': URL_ACTUALITES, 'enfants': []},
 ]
 
 PIED_COLONNES = [
@@ -71,7 +76,7 @@ PIED_COLONNES = [
             {'label': "Je veux m'engager", 'url': URL_ENGAGEMENT},
             {'label': 'Devenir volontaire', 'url': URL_VOLONTAIRE},
             {'label': 'Proposer mes compétences', 'url': URL_COMPETENCES},
-            {'label': 'Opportunités', 'url': '#'},
+            {'label': 'Opportunités', 'url': URL_OPPORTUNITES},
         ],
     },
     {
@@ -86,10 +91,10 @@ PIED_COLONNES = [
         'titre': 'Nous connaître',
         'liens': [
             {'label': 'Qui sommes-nous ?', 'url': URL_QUI},
-            {'label': 'Notre impact', 'url': '#'},
+            {'label': 'Notre impact', 'url': URL_IMPACT},
             {'label': 'Nos partenaires', 'url': URL_PARTENAIRES},
-            {'label': 'Actualités', 'url': '#'},
-            {'label': 'Ressources', 'url': '#'},
+            {'label': 'Actualités', 'url': URL_ACTUALITES},
+            {'label': 'Ressources', 'url': URL_RESSOURCES},
             {'label': 'Contact', 'url': URL_CONTACT},
         ],
     },
@@ -702,4 +707,115 @@ CONTACT = {
     ],
     'merci': "Merci ! Votre message a bien été envoyé. Nous vous répondons dès que "
              "possible.",
+}
+
+# --- Pages alimentées par la base : Opportunités, Actualités, Notre impact, Ressources ------------
+# Les formes décoratives des bandeaux sont exprimées en pixels sur la maquette de 1440 px ;
+# `creux` est le « rayon intérieur » (en %) : 0 = disque plein, 72 = anneau.
+
+_ACCUEIL = {'label': 'Accueil', 'url': URL_HOME}
+_ORANGE, _JAUNE, _VERT = 'var(--orange)', 'var(--jaune)', 'var(--vert)'
+_CREME, _BLANC_8 = 'var(--creme)', 'rgba(255, 255, 255, .08)'
+
+OPPORTUNITES_PAGE = {
+    'hero': {
+        'fond': 'vert-profond', 'hauteur': 580, 'taille': 62, 'largeur_texte': 760, 'largeur_chapo': 560,
+        'fil': [_ACCUEIL, {'label': 'Opportunités'}],
+        'surtitre': 'Opportunités',
+        'titre': 'Les opportunités qui peuvent', 'suite': 'faire grandir votre parcours.',
+        'chapo': "Retrouvez sur cette page les opportunités proposées par UCIV et son réseau de "
+                 "partenaires, mises à jour au fil de l'eau.",
+        'formes': [
+            {'x': 1020, 'y': 90, 'w': 520, 'c': _ORANGE, 'creux': 72},
+            {'x': 1120, 'y': 190, 'w': 320, 'c': _JAUNE, 'creux': 0},
+            {'x': 880, 'y': -150, 'w': 280, 'c': _BLANC_8, 'creux': 70},
+        ],
+        'note': {'texte': 'saisis ta chance !', 'x': 1000, 'y': 438, 'taille': 44, 'rot': -7, 'c': 'var(--blanc)'},
+    },
+    'categories': [
+        ('Volontariat', "Des missions permettant de s'engager et de développer son expérience."),
+        ('Formations', 'Des formations et ateliers pour développer ses compétences.'),
+        ('Stages', 'Des opportunités de mise en pratique professionnelle.'),
+        ('Emploi', 'Des opportunités professionnelles communiquées par les partenaires.'),
+        ('Appels à candidatures',
+         'Des programmes, concours et initiatives auxquels les jeunes peuvent participer.'),
+    ],
+    'note_modele': "Les fiches ci-dessous sont des emplacements : elles seront alimentées depuis "
+                   "l'espace d'administration du site.",
+}
+
+ACTUALITES_PAGE = {
+    'hero': {
+        'fond': 'vert-profond', 'hauteur': 500, 'taille': 88, 'largeur_texte': 700, 'largeur_chapo': 560,
+        'fil': [_ACCUEIL, {'label': 'Actualités'}],
+        'surtitre': 'Actualités',
+        'titre': "L'actualité", 'suite': "d'UCIV.",
+        'chapo': "Découvrez les activités, projets, événements, partenariats et initiatives qui "
+                 "font vivre Une Côte d'Ivoire Volontaire.",
+        'formes': [
+            {'x': 1080, 'y': -140, 'w': 520, 'c': _JAUNE, 'creux': 78},
+            {'x': 930, 'y': 250, 'w': 380, 'c': _ORANGE, 'creux': 0},
+            {'x': 1210, 'y': 330, 'w': 300, 'c': _VERT, 'creux': 70},
+        ],
+    },
+    'par_page': 6,
+}
+
+IMPACT_PAGE = {
+    'hero': {
+        'fond': 'vert', 'hauteur': 520, 'taille': 66, 'largeur_texte': 760, 'largeur_chapo': 560,
+        'fil': [_ACCUEIL, {'label': 'Notre impact'}],
+        'surtitre': 'Notre impact',
+        'titre': 'Des actions. Des expériences.', 'suite': "De l'impact.",
+        'chapo': "Nous voulons pouvoir mesurer notre engagement à travers des résultats concrets.",
+        'formes': [
+            {'x': 1050, 'y': -120, 'w': 540, 'c': _CREME, 'creux': 80},
+            {'x': 960, 'y': 270, 'w': 330, 'c': _JAUNE, 'creux': 0},
+            {'x': 1200, 'y': 300, 'w': 300, 'c': _ORANGE, 'creux': 70},
+        ],
+        'note': {'texte': 'des preuves, pas des promesses', 'x': 890, 'y': 406, 'taille': 38, 'rot': -5,
+                 'c': 'var(--blanc)'},
+    },
+    'chiffres_intro': "Une recherche est en cours pour établir des chiffres fiables. Les valeurs "
+                      "seront mises à jour depuis l'espace d'administration dès qu'elles seront "
+                      "disponibles.",
+    'histoires_intro': "Des jeunes qui ont participé à une activité, des volontaires qui ont "
+                       "développé de nouvelles compétences, des participants qui ont transformé "
+                       "leur expérience en opportunité.",
+    # Couleurs des cartes d'indicateurs, dans l'ordre de la maquette.
+    'couleurs': ['orange', 'vert', 'jaune', 'profond', 'sable', 'brun'],
+}
+
+RESSOURCES_PAGE = {
+    'hero': {
+        'fond': 'orange', 'hauteur': 500, 'taille': 76, 'largeur_texte': 760, 'largeur_chapo': 600,
+        'fil': [_ACCUEIL, {'label': 'Ressources'}],
+        'surtitre': 'Ressources',
+        'titre': "Apprendre. S'informer.", 'suite': 'Progresser.',
+        'chapo': "Retrouvez les ressources produites ou recommandées par UCIV pour accompagner les "
+                 "jeunes dans leur développement personnel, professionnel et citoyen.",
+        'formes': [
+            {'x': 1070, 'y': -130, 'w': 520, 'c': _CREME, 'creux': 80},
+            {'x': 980, 'y': 260, 'w': 320, 'c': _JAUNE, 'creux': 0},
+            {'x': 1220, 'y': 300, 'w': 300, 'c': _VERT, 'creux': 70},
+        ],
+    },
+    'note_modele': "Les fiches ci-dessus sont des emplacements : elles seront alimentées depuis "
+                   "l'espace d'administration du site.",
+    # Icône et couleur du picto de chaque type, d'après la maquette.
+    'types': {
+        'guide': {'icone': 'book-open', 'couleur': 'orange'},
+        'manuel': {'icone': 'notebook-text', 'couleur': 'brun'},
+        'support': {'icone': 'presentation', 'couleur': 'vert'},
+        'article': {'icone': 'newspaper', 'couleur': 'jaune'},
+        'video': {'icone': 'play', 'couleur': 'profond'},
+        'podcast': {'icone': 'mic', 'couleur': 'jaune'},
+    },
+}
+
+ARTICLE_PAGE = {
+    'formes': [
+        {'x': 1090, 'y': -160, 'w': 520, 'c': _ORANGE, 'creux': 78},
+        {'x': -160, 'y': 300, 'w': 320, 'c': _JAUNE, 'creux': 74},
+    ],
 }

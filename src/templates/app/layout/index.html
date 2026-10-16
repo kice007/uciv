@@ -240,14 +240,14 @@
         <p class="surtitre">À la une</p>
         <h2 class="titre">L'actualité <em>d'UCIV.</em></h2>
       </div>
-      <a class="lien-fleche" href="#">Toutes les actualités{% include "app/includes/_icon.html" with name="arrow-right" %}</a>
+      <a class="lien-fleche" href="{% url 'app:actualites' %}">Toutes les actualités{% include "app/includes/_icon.html" with name="arrow-right" %}</a>
     </div>
 
     <div class="defilement actualites__grille" data-defilement="actualites">
       <article class="article article--une" data-reveal>
         <a href="{{ article_une.url }}">
           <div class="article__image">
-            <img src="{% static article_une.image %}" alt="{{ article_une.image_alt }}" loading="lazy"
+            <img src="{{ article_une.image_url }}" alt="{{ article_une.image_alt }}" loading="lazy"
                  style="object-position: {{ article_une.position }}">
           </div>
           <div class="article__corps">
@@ -266,7 +266,7 @@
         <article class="article" data-reveal style="--i: {{ forloop.counter }}">
           <a href="{{ article.url }}">
             <div class="article__image{% if article.detouree %} article__image--detouree{% endif %}">
-              <img src="{% static article.image %}" alt="{{ article.image_alt }}" loading="lazy"
+              <img src="{{ article.image_url }}" alt="{{ article.image_alt }}" loading="lazy"
                    style="object-position: {{ article.position }}">
             </div>
             <div class="article__corps">

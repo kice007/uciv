@@ -1,0 +1,91 @@
+{% extends "app/base/base.html" %}
+{% load custom_tags %}
+
+{% block title %}{{ article.titre }} — Une Côte d'Ivoire Volontaire{% endblock %}
+{% block description %}{{ article.chapo|default:article.titre }}{% endblock %}
+
+{% block content %}
+
+{# ---------------------------------------------------------------- Hero #}
+<section class="art-hero">
+  {% for f in page.formes %}<span class="forme ph-forme" style="--x: {{ f.x }}; --y: {{ f.y }}; --w: {{ f.w }}; --c: {{ f.c }}; --in: {{ f.creux }}" aria-hidden="true"></span>{% endfor %}
+  <div class="conteneur art-hero__grille">
+    <nav class="fil fil--clair" aria-label="Fil d'Ariane">
+      <ol>
+        <li><a href="{% url 'app:home' %}">Accueil</a></li>
+        <li><a href="{% url 'app:actualites' %}">Actualités</a></li>
+        <li aria-current="page"><strong>{{ article.etiquette_affichee }}</strong></li>
+      </ol>
+    </nav>
+    <p class="lst-tag lst-tag--jaune art-hero__tag hero__entree" style="--i: 0">{{ article.etiquette_affichee }}</p>
+    <h1 class="art-hero__titre hero__entree" style="--i: 1">{{ article.titre }}</h1>
+    <ul class="art-hero__infos hero__entree" style="--i: 2">
+      <li>{% include "app/includes/_icon.html" with name="calendar" %}{{ article.date_publication|date:"d/m/Y" }}</li>
+      <li>{% include "app/includes/_icon.html" with name="user" %}Par {{ article.auteur }}</li>
+      <li>{% include "app/includes/_icon.html" with name="clock" %}{{ article.temps_lecture }} min de lecture</li>
+    </ul>
+  </div>
+</section>
+
+{# ----------------------------------------------------------------- Corps #}
+<section class="art-corps">
+  <div class="conteneur art-corps__cadre">
+    {% if article.image_url %}
+      <figure class="art-corps__image" data-reveal="image">
+        <img src="{{ article.image_url }}" alt="{{ article.image_alt }}" fetchpriority="high">
+        {% if article.image_legende %}<figcaption>{{ article.image_legende }}</figcaption>{% endif %}
+      </figure>
+    {% endif %}
+    <div class="art-texte" data-reveal>
+      {% if article.corps %}
+        {{ article.corps|corps_article }}
+      {% else %}
+        <p class="art-chapo">{{ article.chapo }}</p>
+      {% endif %}
+
+      <div class="art-partage">
+        <ul class="art-partage__tags">
+          <li>{{ article.etiquette_affichee }}</li>
+          {% if article.meta %}<li>{{ article.meta }}</li>{% endif %}
+        </ul>
+        <div class="art-partage__liens">
+          <strong>Partager :</strong>
+          <a href="https://www.facebook.com/sharer/sharer.php?u={{ url_complete|urlencode:'' }}" target="_blank" rel="noopener">Facebook</a>
+          <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ url_complete|urlencode:'' }}" target="_blank" rel="noopener">LinkedIn</a>
+          <a href="https://wa.me/?text={{ article.titre|urlencode:'' }}%20{{ url_complete|urlencode:'' }}" target="_blank" rel="noopener">WhatsApp</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{# ------------------------------------------------------------ À lire aussi #}
+{% if autres %}
+<section class="section section--blanc art-autres">
+  <div class="conteneur">
+    <div class="entete-section" data-reveal>
+      <h2 class="eng-titre">À lire <em>aussi.</em></h2>
+      <a class="lien-fleche" href="{% url 'app:actualites' %}">Toutes les actualités{% include "app/includes/_icon.html" with name="arrow-right" %}</a>
+    </div>
+    <div class="lst-grille">
+      {% for autre in autres %}
+        {% include "app/includes/_carte_article.html" with article=autre delai=forloop.counter0 %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{# ----------------------------------------------------------------- Appel #}
+<section class="np-appel np-appel--orange">
+  <span class="forme np-appel__anneau" aria-hidden="true"></span>
+  <div class="conteneur np-appel__cadre" data-reveal>
+    <h2 class="np-appel__titre">Tu veux agir <em>pour le pays ?</em></h2>
+    <a class="btn btn--blanc" href="{% url 'app:engagement' %}">
+      <span>Je veux m'engager</span>
+      <span class="btn__rond">{% include "app/includes/_icon.html" with name="arrow-right" %}</span>
+    </a>
+  </div>
+</section>
+
+{% endblock %}

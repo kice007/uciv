@@ -1,0 +1,63 @@
+{% extends "app/base/base.html" %}
+
+{% block title %}Notre impact — Une Côte d'Ivoire Volontaire{% endblock %}
+{% block description %}Des actions, des expériences, de l'impact : les indicateurs d'UCIV et les parcours de jeunes qui ont transformé leur engagement en opportunité.{% endblock %}
+
+{% block content %}
+
+{% include "app/includes/_hero_page.html" with hero=page.hero %}
+
+{# ------------------------------------------------------- UCIV en chiffres #}
+<section class="section imp-chiffres">
+  <div class="conteneur">
+    <div class="entete-section" data-reveal>
+      <div>
+        <p class="surtitre">Indicateurs</p>
+        <h2 class="imp-titre">UCIV <em>en chiffres.</em></h2>
+      </div>
+      <p class="texte">{{ page.chiffres_intro }}</p>
+    </div>
+    <ul class="imp-cartes">
+      {% for indicateur in indicateurs %}
+        <li class="imp-carte imp-carte--{{ indicateur.couleur }}" data-reveal style="--i: {{ forloop.counter0 }}">
+          <span class="forme imp-carte__anneau" aria-hidden="true"></span>
+          <p class="imp-carte__valeur">{% if indicateur.valeur is not None %}{{ indicateur.valeur }}{% else %}000{% endif %}</p>
+          <p class="imp-carte__libelle">{{ indicateur.libelle }}</p>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+
+{# ------------------------------------------------------------ Nos histoires #}
+{% if histoires %}
+<section class="section section--blanc imp-histoires">
+  <div class="conteneur">
+    <div class="entete-section" data-reveal>
+      <div>
+        <p class="surtitre">Nos histoires</p>
+        <h2 class="imp-titre">Au-delà des chiffres, <em>des parcours.</em></h2>
+      </div>
+      <p class="texte">{{ page.histoires_intro }}</p>
+    </div>
+    <div class="lst-grille">
+      {% for article in histoires %}
+        {% include "app/includes/_carte_article.html" with article=article avec_chapo=True haut=True delai=forloop.counter0 %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{# -------------------------------------------------------------- Citation #}
+<section class="qs-citation qs-citation--profond">
+  <div class="conteneur qs-citation__cadre" data-reveal>
+    <p class="qs-citation__texte">« Chaque engagement peut devenir une expérience. <em>Chaque expérience peut devenir une compétence. »</em></p>
+    <a class="btn btn--blanc" href="{% url 'app:engagement' %}">
+      <span>Je veux m'engager</span>
+      <span class="btn__rond">{% include "app/includes/_icon.html" with name="arrow-right" %}</span>
+    </a>
+  </div>
+</section>
+
+{% endblock %}

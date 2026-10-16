@@ -2,7 +2,10 @@ from django.core import mail
 from django.test import TestCase, override_settings
 from django.urls import reverse
 
-from .models import SoumissionContact, SoumissionEngagement, SoumissionPartenariat
+from .models import (
+    Article, Indicateur, Opportunite, Ressource, SoumissionContact, SoumissionEngagement,
+    SoumissionPartenariat,
+)
 
 
 class HomePageTests(TestCase):
@@ -274,3 +277,122 @@ class ContactPageTests(TestCase):
     def test_footer_links_to_page(self):
         response = self.client.get(reverse('app:home'))
         self.assertContains(response, reverse('app:contact'))
+
+class ContenuModelsTests(TestCase):
+    def test_article_image_url_prefers_static_path(self):
+        article = Article.objects.create(
+            titre='Un article', slug='un-article', categorie='activites',
+            date_publication='2026-10-01', image='app/assets/img/groupe-nb.png',
+        )
+        self.assertTrue(article.image_url.endswith('app/assets/img/groupe-nb.png'))
+        self.assertEqual(str(article), 'Un article')
+
+    def test_article_without_image_has_empty_url(self):
+        article = Article.objects.create(
+            titre='Sans image', slug='sans-image', categorie='portraits', date_publication='2026-10-01',
+        )
+        self.assertEqual(article.image_url, '')
+
+    def test_ressource_url_uses_link_without_file(self):
+        ressource = Ressource.objects.create(titre='Guide', type='guide', theme='leadership', lien='https://exemple.ci/guide.pdf')
+        self.assertEqual(ressource.url, 'https://exemple.ci/guide.pdf')
+
+    def test_new_content_is_unpublished_by_default(self):
+        opportunite = Opportunite.objects.create(categorie='stages', intitule='Stage test')
+        indicateur = Indicateur.objects.create(libelle='Volontaires')
+        self.assertFalse(opportunite.publish)
+        self.assertFalse(indicateur.publish)
+        self.assertIsNone(indicateur.valeur)
+
+class PagesDeContenuTests(TestCase):
+    def test_opportunites_page_lists_published_cards(self):
+        response = self.client.get(reverse('app:opportunites'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'app/layout/opportunites.html')
+        self.assertContains(response, 'Les opportunités qui peuvent')
+        self.assertContains(response, 'Intitulé de la mission de volontariat')
+        self.assertContains(response, 'emplacements')
+
+    def test_opportunites_filter_and_unpublished(self):
+        Opportunite.objects.create(categorie='stages', intitule='Stage secret')
+        publie = Opportunite.objects.create(categorie='stages', intitule='Stage communication', publish=True)
+        response = self.client.get(reverse('app:opportunites') + '?categorie=stages')
+        self.assertContains(response, publie.intitule)
+        self.assertNotContains(response, 'Stage secret')
+        self.assertNotContains(response, 'Intitulé de la mission de volontariat')
+
+    def test_actualites_page_has_featured_and_cards(self):
+        response = self.client.get(reverse('app:actualites'))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'lst-une')
+        self.assertContains(response, "UCIV et PAIPRO-JEUNES s&#x27;associent")
+        self.assertContains(response, 'Sur le terrain avec les volontaires')
+        self.assertNotContains(response, 'Portrait d&#x27;un volontaire')
+
+    def test_actualites_filter_by_category(self):
+        response = self.client.get(reverse('app:actualites') + '?categorie=leadership')
+        self.assertContains(response, 'conférence de lancement')
+        self.assertNotContains(response, 'Des rencontres pour construire')
+
+    def test_actualites_pagination(self):
+        for n in range(8):
+            Article.objects.create(titre=f'Article {n}', slug=f'article-{n}', categorie='activites',
+                                   date_publication='2026-09-01', publish=True)
+        response = self.client.get(reverse('app:actualites'))
+        self.assertContains(response, 'lst-pagination')
+        response = self.client.get(reverse('app:actualites') + '?page=2')
+        self.assertEqual(response.status_code, 200)
+
+    def test_article_page_renders_structured_body(self):
+        article = Article.objects.get(slug='uciv-et-paipro-jeunes-s-associent-pour-l-insertion-des-jeunes')
+        response = self.client.get(reverse('app:article', args=[article.slug]))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'art-chapo')
+        self.assertContains(response, 'Un partenariat au service de l&#x27;emploi')
+        self.assertContains(response, 'art-citation')
+        self.assertContains(response, 'art-points')
+        self.assertContains(response, 'À lire')
+
+    def test_unpublished_article_is_404(self):
+        Article.objects.create(titre='Brouillon', slug='brouillon', categorie='activites', date_publication='2026-10-01')
+        self.assertEqual(self.client.get(reverse('app:article', args=['brouillon'])).status_code, 404)
+
+    def test_body_filter_escapes_html(self):
+        from .templatetags.custom_tags import corps_article
+        html = corps_article('<script>alert(1)</script>\n\n## Titre <b>')
+        self.assertNotIn('<script>', html)
+        self.assertIn('&lt;script&gt;', html)
+
+    def test_impact_page(self):
+        response = self.client.get(reverse('app:impact'))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Des actions. Des expériences.')
+        self.assertContains(response, 'Jeunes mobilisés')
+        self.assertContains(response, '000')
+        self.assertContains(response, 'Au-delà des chiffres')
+        self.assertContains(response, 'Parcours d&#x27;un participant')
+
+    def test_impact_shows_verified_value(self):
+        Indicateur.objects.filter(libelle='Volontaires').update(valeur=128)
+        self.assertContains(self.client.get(reverse('app:impact')), '128')
+
+    def test_ressources_page_and_filters(self):
+        response = self.client.get(reverse('app:ressources'))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Apprendre. S&#x27;informer.')
+        self.assertContains(response, 'Titre de la vidéo')
+        response = self.client.get(reverse('app:ressources') + '?type=video&theme=numerique')
+        self.assertContains(response, 'Titre de la vidéo')
+        self.assertNotContains(response, 'Titre du guide')
+        response = self.client.get(reverse('app:ressources') + '?type=podcast&theme=volontariat')
+        self.assertContains(response, 'Aucune ressource')
+
+    def test_home_uses_database_articles_and_indicators(self):
+        response = self.client.get(reverse('app:home'))
+        self.assertContains(response, reverse('app:article', args=['uciv-et-paipro-jeunes-s-associent-pour-l-insertion-des-jeunes']))
+        self.assertContains(response, reverse('app:actualites'))
+
+    def test_navigation_links_to_new_pages(self):
+        response = self.client.get(reverse('app:home'))
+        for nom in ('opportunites', 'actualites', 'impact', 'ressources'):
+            self.assertContains(response, reverse('app:' + nom))

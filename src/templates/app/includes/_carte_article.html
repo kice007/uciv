@@ -1,0 +1,15 @@
+{# Carte d'article. Reçoit `article`, et en option `avec_chapo`, `haut` (image de 300 px) et `delai`. #}
+<article class="lst-article{% if haut %} lst-article--haut{% endif %}" data-reveal style="--i: {{ delai|default:0 }}">
+  <a class="lst-article__lien" href="{% url 'app:article' article.slug %}">
+    <div class="lst-article__image">
+      {% if article.image_url %}<img src="{{ article.image_url }}" alt="{{ article.image_alt }}" loading="lazy">{% endif %}
+    </div>
+    <p class="lst-article__meta">
+      <span class="lst-tag lst-tag--{{ article.theme }}">{{ article.etiquette_affichee }}</span>
+      <span>{{ article.meta }}</span>
+    </p>
+    <h3>{{ article.titre }}</h3>
+    {% if avec_chapo %}<p class="lst-article__chapo">{{ article.chapo }}</p>{% endif %}
+    <span class="lien-fleche lien-fleche--orange">Lire l'article{% include "app/includes/_icon.html" with name="arrow-right" %}</span>
+  </a>
+</article>
