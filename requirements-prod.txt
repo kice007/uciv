@@ -1,0 +1,4 @@
+# Dépendances du serveur de production : Django + MySQL + serveur d'application.
+# Gunicorn n'est nécessaire que sur le serveur (pas en développement).
+-r requirements-mysql.txt
+gunicorn>=23,<24

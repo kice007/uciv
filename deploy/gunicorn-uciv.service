@@ -1,0 +1,30 @@
+# Service systemd du site UCIV (copié dans /etc/systemd/system/uciv.service par deploy/deployer.sh).
+[Unit]
+Description=Site UCIV (Gunicorn)
+After=network.target mysql.service
+Wants=mysql.service
+
+[Service]
+User=uciv
+Group=www-data
+WorkingDirectory=/srv/uciv/src
+EnvironmentFile=/etc/uciv/uciv.env
+RuntimeDirectory=uciv
+RuntimeDirectoryMode=0750
+ExecStart=/srv/uciv/venv/bin/gunicorn core.wsgi:application \
+    --workers 3 \
+    --bind unix:/run/uciv/gunicorn.sock \
+    --umask 007 \
+    --access-logfile - \
+    --error-logfile -
+ExecReload=/bin/kill -s HUP $MAINPID
+Restart=on-failure
+RestartSec=3
+# Durcissement
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ReadWritePaths=/srv/uciv
+
+[Install]
+WantedBy=multi-user.target

@@ -72,7 +72,7 @@ Documents liés : [PLAN.md](PLAN.md) (ce qu'il faut construire),
 - Serveur : MySQL 8.4 et phpMyAdmin (https://bd.uciv.org, double authentification, HTTPS) installés ; base `uciv` et utilisateur `uciv_user` créés ; script `deploy/phpmyadmin.sh`.
 - Code : réglages MySQL corrigés (utf8mb4, SSL facultatif via `MYSQL_SSL_MODE`, connexions persistantes), en-tête proxy HTTPS et `CSRF_TRUSTED_ORIGINS` pour la production, `requirements-mysql.txt` (ajoute `mysqlclient`, `requirements.txt` reste Django seul), `.env.example` complété.
 - Procédure complète : [DEPLOIEMENT.md](DEPLOIEMENT.md). 3 tests ajoutés (62 au total).
-- À faire : installer `requirements-mysql.txt` sur le serveur, fournir les variables d'environnement, `migrate`, `createsuperuser`, `collectstatic`. Servir le site (Gunicorn + Nginx) reste à préparer.
+- **Déploiement préparé** (pas encore lancé) : `deploy/deployer.sh` (Git, environnement Python, variables d'environnement, migrations, statiques, service Gunicorn `uciv`, Nginx, HTTPS Let's Encrypt, commande `uciv-manage`), `deploy/gunicorn-uciv.service`, `deploy/nginx-uciv.conf`, `requirements-prod.txt` (ajoute `gunicorn`). Relançable pour mettre à jour. Détail dans [DEPLOIEMENT.md](DEPLOIEMENT.md).
 
 ### Administration aux couleurs d'UCIV (`/admin/`)
 - Habillage sans dépendance : gabarit `templates/admin/base_site.html` (logo, « Une Côte d'Ivoire *Volontaire* », badge « Administration ») et feuille `static/app/assets/css/admin.css`.

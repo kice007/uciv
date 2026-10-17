@@ -94,6 +94,69 @@ mysqldump -u uciv_user -p --single-transaction uciv > uciv_$(date +%F).sql
 | Boucle de redirections HTTPS | `DEBUG=False` sans l'en-tête `X-Forwarded-Proto` transmis par Nginx |
 | Erreur 403 CSRF sur les formulaires | `CSRF_TRUSTED_ORIGINS` absent ou sans le schéma `https://` |
 
-## Étape suivante (pas encore préparée)
+## Déployer le site sur uciv.org (Gunicorn + Nginx + HTTPS)
 
-Servir le site lui-même sur `uciv.org` : service Gunicorn, bloc Nginx (fichiers statiques et médias), HTTPS.
+Tout est automatisé par [`deploy/deployer.sh`](../deploy/deployer.sh), à lancer **en root sur le serveur**. Il est relançable :
+la première fois il installe tout, ensuite il sert de mise à jour.
+
+### Prérequis
+
+- Le DNS de `uciv.org` pointe vers le VPS (c'est le cas). `www.uciv.org` n'a pas d'enregistrement : ajoutez un `CNAME www -> uciv.org`
+  chez votre registrar si vous voulez qu'il fonctionne ; le script l'inclut automatiquement dès qu'il existe.
+- MySQL et la base `uciv` sont en place, avec `/root/identifiants-mysql.txt` (voir `deploy/phpmyadmin.sh`).
+- Les ports 80 et 443 sont ouverts chez l'hébergeur et sur le serveur.
+- Le dépôt GitHub est accessible depuis le serveur. S'il est privé : `DEPOT_URL=https://UTILISATEUR:JETON@github.com/kice007/uciv.git`.
+
+### Lancer
+
+```bash
+scp deploy/deployer.sh root@213.130.144.126:/root/
+ssh root@213.130.144.126 "bash /root/deployer.sh votre@email.com"
+ssh root@213.130.144.126 "uciv-manage createsuperuser"      # une seule fois : compte pour /admin/
+```
+
+### Ce que fait le script
+
+1. Installe les paquets système (Git, outils de compilation, bibliothèque MySQL, Nginx, Certbot).
+2. Crée l'utilisateur système `uciv` (sans connexion) et clone le dépôt dans `/srv/uciv`.
+3. Crée l'environnement Python (`/srv/uciv/venv`) et installe `requirements-prod.txt` (Django, `mysqlclient`, `gunicorn`).
+4. Crée `/etc/uciv/uciv.env` (lisible par root seulement) : clé secrète générée, `DEBUG=False`, hôtes autorisés, `USE_MYSQL=True`,
+   mot de passe de la base lu dans `/root/identifiants-mysql.txt`. Un fichier existant n'est jamais écrasé.
+5. Installe la commande `uciv-manage` (équivalent de `manage.py` avec l'environnement de production).
+6. Lance `check`, `migrate` et `collectstatic`.
+7. Installe le service systemd `uciv` (Gunicorn, 3 processus, socket `/run/uciv/gunicorn.sock`), redémarré automatiquement en cas d'échec.
+8. Configure Nginx : `/static/` et `/media/` servis directement, le reste transmis à Django.
+9. Obtient le certificat Let's Encrypt (renouvelé automatiquement) et redirige HTTP vers HTTPS.
+
+Il se termine par cinq vérifications (accueil, administration, actualités, feuille de style, redirection).
+
+### Mettre à jour le site
+
+Après un `git push` sur `main` : `ssh root@213.130.144.126 "bash /root/deployer.sh"`.
+Le script récupère le code, installe les dépendances, applique les migrations, regroupe les fichiers statiques et redémarre Gunicorn.
+La configuration Nginx et le certificat ne sont pas modifiés.
+
+### Commandes utiles sur le serveur
+
+| Besoin | Commande |
+|---|---|
+| Journaux du site | `journalctl -u uciv -f` |
+| Redémarrer le site | `systemctl restart uciv` |
+| Commande Django | `uciv-manage <commande>` (ex. `uciv-manage migrate`) |
+| Journaux Nginx | `tail -f /var/log/nginx/error.log` |
+| État du certificat | `certbot certificates` |
+
+### Fichiers téléversés (médias)
+
+Les images téléversées depuis l'administration vont dans `/srv/uciv/src/media_cdn/` et sont servies par Nginx sous `/media/`.
+Ce dossier n'est pas dans git : **incluez-le dans vos sauvegardes**, avec la base de données.
+
+### Si quelque chose ne marche pas
+
+| Symptôme | Cause probable |
+|---|---|
+| 502 Bad Gateway | Gunicorn arrêté : `systemctl status uciv` puis `journalctl -u uciv -n 50` |
+| 400 Bad Request | Domaine absent de `ALLOWED_HOSTS` dans `/etc/uciv/uciv.env` (puis `systemctl restart uciv`) |
+| 403 sur un formulaire | `CSRF_TRUSTED_ORIGINS` sans le schéma `https://` |
+| Page sans style | `collectstatic` non lancé, ou droits de lecture de `/srv/uciv/src/static_cdn` |
+| Échec de l'étape 9 | Port 80 bloqué ou DNS pas encore propagé : corrigez, puis relancez le script |
