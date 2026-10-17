@@ -7,7 +7,7 @@ sans dépendance tierce : `requirements.txt` ne contient que Django.
 .
 ├── .gitignore
 ├── .env.example          # variables d'environnement (lues via os.environ)
-├── requirements.txt      # Django uniquement
+├── requirements.txt      # Django et Pillow
 ├── requirements-mysql.txt  # + mysqlclient (production)
 ├── deploy/               # scripts serveur (phpMyAdmin)
 ├── README.md · CLAUDE.md · CONTRIBUTING.md
@@ -28,6 +28,7 @@ sans dépendance tierce : `requirements.txt` ne contient que Django.
     │   ├── forms.py              # formulaires (Engagement, Partenariat, Contact)
     │   ├── migrations/           # migrations de la base
     │   ├── admin.py              # administration Django
+    │   ├── seo.py                # SEO : balises, JSON-LD, robots.txt, sitemap, llms.txt
     │   ├── views.py / urls.py    # page d'accueil, namespace « app »
     │   ├── templatetags/custom_tags.py  # filtre corps_article (texte des articles)
     │   └── tests.py

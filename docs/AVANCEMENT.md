@@ -12,7 +12,7 @@ Documents liés : [PLAN.md](PLAN.md) (ce qu'il faut construire),
 | Domaine | État |
 |---|---|
 | Structure du projet (`src/core`, `src/app`) | Fait |
-| Dépendances | Fait : Django 6.1.2 uniquement |
+| Dépendances | Fait : Django 6.1.2 et Pillow 13.0.0 (images) |
 | Page d'accueil | Faite, alignée sur la maquette |
 | Pages intérieures (14) | **14 faites** : les 9 précédentes + Opportunités, Actualités, Article, Notre impact, Ressources |
 | Modèles de données et administration | 7 modèles administrables : 3 de formulaires (`SoumissionEngagement`, `SoumissionPartenariat`, `SoumissionContact`) et 4 de contenu (`Article`, `Opportunite`, `Ressource`, `Indicateur`) ; `MembreEquipe`, `Programme` et `Partenaire` restent dans `content.py` |
@@ -25,7 +25,7 @@ Documents liés : [PLAN.md](PLAN.md) (ce qu'il faut construire),
 
 ### Projet
 - Structure `django-init` : `src/core` (réglages, URLs, utilitaires) et `src/app` (contenu éditorial), gabarits dans `src/templates/app/`, statiques dans `src/static/app/assets/`.
-- Seule dépendance : Django. Les réglages lisent `os.environ` (pas de fichier `.env` chargé automatiquement).
+- Dépendances : Django, puis Pillow (ajouté pour le traitement des images). Les réglages lisent `os.environ` (pas de fichier `.env` chargé automatiquement).
 - L'historique git a été nettoyé : `main` contient 2 commits propres et est synchronisé avec `origin/main`.
 
 ### Page d'accueil (`/`)
@@ -67,6 +67,15 @@ Documents liés : [PLAN.md](PLAN.md) (ce qu'il faut construire),
 - Contenu dans `content.EXPERIENCE_LAB` ; vue `experience_lab` ; gabarit `layout/experience_lab.html` ; styles `el-*` dans `main.css` (section 16), hero et inscriptions réutilisent les classes `gd-*`.
 - Les liens « Experience Lab » (navigation, pied de page, accueil, page Nos programmes) pointent vers la page.
 - 3 tests ajoutés (17 au total). Valeurs lues dans la maquette (positions, tailles, interlignes, espacements et rotations relevés à 1440 px, appliqués en `vw` en dessous) ; rendu à valider dans un navigateur.
+
+### Référencement (SEO) de chaque page
+- **Balises par page** (`content.SEO_PAGES`, rendues par `app/seo.py`) : titre de 47 à 58 caractères, description de 138 à 159 caractères, uniques ; balise `canonical`, `robots`, Open Graph (`og:*`) et Twitter Card ; `og:image` propre à la page quand elle en a une. Le titre et la description d'un article viennent de l'article (titre, résumé, image, dates `article:*`).
+- **Données structurées JSON-LD** : accueil = `NGO` (organisation, fondateur, réseaux, contact) + `WebSite` ; pages intérieures = `WebPage`/`AboutPage`/`CollectionPage`/`ContactPage` + `BreadcrumbList` ; UCIV Leadership = `Event` (lancement le 24 octobre 2026, American Corner) ; Go du Digital et Experience Lab = `Course` ; Nos programmes = `ItemList` ; articles = `Article` (éditeur, image, dates). Aucun `FAQPage` ni `HowTo` (restreint / abandonné par Google).
+- **Indexation** : `/robots.txt` (tout autorisé sauf `/admin/`, adresse du sitemap), `/sitemap.xml` (14 pages + articles publiés, `lastmod` seulement quand une vraie date existe, sans `priority` ni `changefreq`), `/llms.txt` (présentation du site pour les moteurs de réponse), page 404 en `noindex`.
+- **Doublons évités** : les pages filtrées (`?categorie=`, `?type=`, `?theme=`, `?choix=`, `?objet=`) sont en `noindex, follow` avec une adresse canonique propre ; chaque page de la pagination des actualités a sa propre adresse canonique.
+- **`SITE_URL`** (ex. `https://uciv.org`) fixe l'adresse publique utilisée par les adresses canoniques, le sitemap et les données structurées : à renseigner en production (déjà dans `deploy/deployer.sh`).
+- 17 tests ajoutés (79 au total) : longueur des titres et descriptions, unicité, un seul `h1`, texte alternatif sur chaque image, JSON-LD valide, fil d'Ariane, événement, article, `noindex` des variantes, `robots.txt`, sitemap, `llms.txt`, 404.
+- **Recommandations restantes** : (1) alléger les images lourdes, `groupe-couleur.png` 2,2 Mo, `groupe-nb.png` 2,0 Mo, `volontaires-terrain.jpg` 0,9 Mo, `go-du-digital.jpg` 0,8 Mo, `experience-lab.jpg` 0,7 Mo (cible : moins de 200 Ko, format WebP ; Pillow est maintenant disponible pour les convertir) ; (2) après la mise en ligne, déclarer le site dans Google Search Console et lui soumettre `sitemap.xml` ; (3) remplacer le lien Facebook de partage par l'adresse réelle de la page ; (4) créer l'image de partage dédiée (1200 × 630) ; (5) rédiger les pages légales.
 
 ### Passage sur MySQL (préparé, pas encore appliqué au site)
 - Serveur : MySQL 8.4 et phpMyAdmin (https://bd.uciv.org, double authentification, HTTPS) installés ; base `uciv` et utilisateur `uciv_user` créés ; script `deploy/phpmyadmin.sh`.
@@ -151,10 +160,10 @@ Les fichiers suivants sont dans le dossier de travail mais pas dans git :
 1. **Appliquer les migrations** (`python manage.py migrate`) puis créer un compte administrateur (`createsuperuser`) pour gérer le contenu.
 2. **Vérifier visuellement** chaque page à 1440 px à côté de la maquette, puis en tablette et mobile (aucun rendu n'a pu être contrôlé dans un navigateur depuis l'assistant).
 3. **Newsletter** : brancher le formulaire du pied de page (enregistrement des adresses, désinscription).
-4. **Pages légales et 404** : mentions légales, politique de confidentialité, conditions d'utilisation, page d'erreur.
+4. **Pages légales** : mentions légales, politique de confidentialité, conditions d'utilisation (la page 404 est faite).
 5. **Images manquantes** : portraits du bureau exécutif, photos générées de la maquette, 2e image d'article.
 6. **Contenus à remplacer** : fiches d'exemple (opportunités, ressources), chiffres d'impact, bios, dates et tarifs des programmes, textes des articles.
-7. **Finitions** : accessibilité, SEO (métadonnées, `sitemap.xml`), optimisation des images.
+7. **Finitions** : alléger les images (SEO et vitesse), accessibilité, Google Search Console.
 8. **Mise en ligne** : réglages de production, `collectstatic`, hébergement.
 
 Le détail de chaque page, composant, modèle et formulaire est dans [PLAN.md](PLAN.md).

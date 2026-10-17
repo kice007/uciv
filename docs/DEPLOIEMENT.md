@@ -31,6 +31,7 @@ SECRET_KEY=<longue clé aléatoire : python -c "import secrets; print(secrets.to
 DEBUG=False
 ALLOWED_HOSTS=uciv.org,www.uciv.org
 CSRF_TRUSTED_ORIGINS=https://uciv.org,https://www.uciv.org
+SITE_URL=https://uciv.org
 USE_MYSQL=True
 MYSQL_DB=uciv
 MYSQL_USER=uciv_user

@@ -2,6 +2,7 @@ from django.core import mail
 from django.test import TestCase, override_settings
 from django.urls import reverse
 
+from . import content
 from .models import (
     Article, Indicateur, Opportunite, Ressource, SoumissionContact, SoumissionEngagement,
     SoumissionPartenariat,
@@ -456,3 +457,162 @@ class ReglagesBaseDeDonneesTests(TestCase):
     def test_mysql_ssl_is_opt_in(self):
         base = self.base(USE_MYSQL='True', MYSQL_DB='uciv', MYSQL_USER='u', MYSQL_PASSWORD='p', MYSQL_SSL_MODE='REQUIRED')
         self.assertEqual(base['OPTIONS']['ssl_mode'], 'REQUIRED')
+
+class ReferencementTests(TestCase):
+    def html(self, nom, **params):
+        reponse = self.client.get(reverse('app:' + nom), params)
+        self.assertEqual(reponse.status_code, 200, nom)
+        return reponse.content.decode()
+
+    def test_every_page_has_complete_meta_tags(self):
+        import re
+        for nom in content.PAGES_INDEXABLES:
+            html = self.html(nom)
+            from html import unescape  # les apostrophes sont écrites &#x27; dans le HTML : on mesure le texte lu
+            titre = unescape(re.search(r'<title>(.*?)</title>', html, re.S).group(1))
+            description = unescape(re.search(r'<meta name="description" content="(.*?)">', html, re.S).group(1))
+            self.assertTrue(30 <= len(titre) <= 60, f'{nom} : titre de {len(titre)} caractères')
+            self.assertTrue(110 <= len(description) <= 160, f'{nom} : description de {len(description)} caractères')
+            for balise in ('<link rel="canonical" href="http', '<meta name="robots" content="index, follow">',
+                           '<meta property="og:title"', '<meta property="og:description"', '<meta property="og:url"',
+                           '<meta property="og:image" content="http', '<meta name="twitter:card"',
+                           '<meta property="og:locale" content="fr_FR">'):
+                self.assertIn(balise, html, f'{nom} : {balise}')
+
+    def test_titles_and_descriptions_are_unique(self):
+        titres = [page['titre'] for page in content.SEO_PAGES.values()]
+        descriptions = [page['description'] for page in content.SEO_PAGES.values()]
+        self.assertEqual(len(set(titres)), len(titres))
+        self.assertEqual(len(set(descriptions)), len(descriptions))
+
+    def test_one_h1_and_alt_on_every_image(self):
+        import re
+        for nom in content.PAGES_INDEXABLES:
+            html = self.html(nom)
+            self.assertEqual(len(re.findall(r'<h1[\s>]', html)), 1, f'{nom} : un seul h1')
+            for image in re.findall(r'<img\b[^>]*>', html):
+                self.assertIn(' alt=', image, f'{nom} : image sans alt : {image[:80]}')
+
+    def test_structured_data_is_valid_and_current(self):
+        import json
+        import re
+        for nom in content.PAGES_INDEXABLES:
+            html = self.html(nom)
+            blocs = re.findall(r'<script type="application/ld\+json">(.*?)</script>', html, re.S)
+            self.assertTrue(blocs, nom)
+            for bloc in blocs:
+                donnees = json.loads(bloc)
+                self.assertEqual(donnees['@context'], 'https://schema.org')
+            for interdit in ('"FAQPage"', '"HowTo"'):
+                self.assertNotIn(interdit, html, f'{nom} : type obsolète ou restreint')
+
+    def test_home_declares_organization_and_website(self):
+        import json
+        import re
+        html = self.html('home')
+        types = [json.loads(b)['@type'] for b in re.findall(r'<script type="application/ld\+json">(.*?)</script>', html, re.S)]
+        self.assertEqual(types[:2], ['NGO', 'WebSite'])
+        organisation = json.loads(re.findall(r'<script type="application/ld\+json">(.*?)</script>', html, re.S)[0])
+        self.assertEqual(organisation['founder']['name'], 'Marshall Kouamé')
+        self.assertTrue(all(url.startswith('https://') for url in organisation['sameAs']))
+
+    def test_inner_pages_have_breadcrumbs(self):
+        import json
+        import re
+        html = self.html('go_du_digital')
+        fil = next(json.loads(b) for b in re.findall(r'<script type="application/ld\+json">(.*?)</script>', html, re.S)
+                   if '"BreadcrumbList"' in b)
+        self.assertEqual([i['name'] for i in fil['itemListElement']], ['Accueil', 'Nos programmes', 'Les Go du Digital'])
+        self.assertEqual([i['position'] for i in fil['itemListElement']], [1, 2, 3])
+
+    def test_leadership_declares_the_launch_event(self):
+        import json
+        import re
+        html = self.html('uciv_leadership')
+        evenement = next(json.loads(b) for b in re.findall(r'<script type="application/ld\+json">(.*?)</script>', html, re.S)
+                         if '"Event"' in b)
+        self.assertEqual(evenement['startDate'], '2026-10-24')
+        self.assertEqual(evenement['location']['name'], 'American Corner')
+
+    def test_programs_declare_courses(self):
+        for nom in ('go_du_digital', 'experience_lab'):
+            self.assertIn('"@type": "Course"', self.html(nom))
+
+    def test_article_page_has_article_markup(self):
+        import json
+        import re
+        article = Article.objects.get(slug='uciv-et-paipro-jeunes-s-associent-pour-l-insertion-des-jeunes')
+        html = self.client.get(reverse('app:article', args=[article.slug])).content.decode()
+        donnees = next(json.loads(b) for b in re.findall(r'<script type="application/ld\+json">(.*?)</script>', html, re.S)
+                       if '"Article"' in b)
+        self.assertEqual(donnees['@type'], 'Article')
+        self.assertLessEqual(len(donnees['headline']), 110)
+        self.assertIn('datePublished', donnees)
+        self.assertTrue(donnees['image'][0].startswith('http'))
+        self.assertIn('<meta property="og:type" content="article">', html)
+        self.assertIn('article:published_time', html)
+        self.assertIn(f'<link rel="canonical" href="http://testserver{article.get_absolute_url()}">', html)
+
+    def test_filtered_pages_are_not_indexed_and_keep_clean_canonical(self):
+        html = self.html('actualites', categorie='leadership')
+        self.assertIn('<meta name="robots" content="noindex, follow">', html)
+        self.assertIn('<link rel="canonical" href="http://testserver/actualites/">', html)
+        html = self.html('ressources', type='video')
+        self.assertIn('noindex, follow', html)
+        html = self.html('engagement', choix='volontaire')
+        self.assertIn('noindex, follow', html)
+
+    def test_pagination_page_is_indexed_with_its_own_canonical(self):
+        for n in range(8):
+            Article.objects.create(titre=f'Article {n}', slug=f'article-seo-{n}', categorie='activites',
+                                   date_publication='2026-09-01', publish=True)
+        html = self.html('actualites', page=2)
+        self.assertIn('<meta name="robots" content="index, follow">', html)
+        self.assertIn('<link rel="canonical" href="http://testserver/actualites/?page=2">', html)
+
+    @override_settings(SITE_URL='https://uciv.org')
+    def test_site_url_setting_fixes_canonical_host(self):
+        html = self.html('contact')
+        self.assertIn('<link rel="canonical" href="https://uciv.org/contact/">', html)
+        self.assertIn('<meta property="og:url" content="https://uciv.org/contact/">', html)
+
+    def test_robots_txt(self):
+        reponse = self.client.get('/robots.txt')
+        self.assertEqual(reponse.status_code, 200)
+        self.assertEqual(reponse['Content-Type'], 'text/plain; charset=utf-8')
+        texte = reponse.content.decode()
+        self.assertIn('Disallow: /admin/', texte)
+        self.assertIn('Sitemap: http://testserver/sitemap.xml', texte)
+
+    def test_sitemap_lists_pages_and_published_articles_only(self):
+        Article.objects.create(titre='Brouillon', slug='brouillon-sitemap', categorie='activites', date_publication='2026-10-01')
+        reponse = self.client.get('/sitemap.xml')
+        self.assertEqual(reponse.status_code, 200)
+        xml = reponse.content.decode()
+        for nom in content.PAGES_INDEXABLES:
+            self.assertIn(f'<loc>https://testserver{reverse("app:" + nom)}</loc>', xml, nom)
+        self.assertIn('/actualites/uciv-leadership-la-conference-de-lancement-au-format-tedx/', xml)
+        self.assertNotIn('brouillon-sitemap', xml)
+        self.assertNotIn('<priority>', xml)
+        self.assertNotIn('<changefreq>', xml)
+
+    @override_settings(SITE_URL='https://uciv.org')
+    def test_sitemap_uses_site_url(self):
+        xml = self.client.get('/sitemap.xml', HTTP_HOST='www.uciv.org').content.decode()
+        self.assertIn('<loc>https://uciv.org/</loc>', xml)
+        self.assertNotIn('www.uciv.org', xml)
+        self.assertNotIn('testserver', xml)
+
+    def test_llms_txt(self):
+        reponse = self.client.get('/llms.txt')
+        self.assertEqual(reponse.status_code, 200)
+        texte = reponse.content.decode()
+        self.assertTrue(texte.startswith("# Une Côte d'Ivoire Volontaire (UCIV)"))
+        self.assertIn('/programmes/uciv-leadership/', texte)
+
+    def test_not_found_page_is_noindex(self):
+        reponse = self.client.get('/page-qui-nexiste-pas/')
+        self.assertEqual(reponse.status_code, 404)
+        html = reponse.content.decode()
+        self.assertIn('noindex, nofollow', html)
+        self.assertIn('Page <em>introuvable.</em>', html)

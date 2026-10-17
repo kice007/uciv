@@ -2101,3 +2101,11 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .res-carte__meta { color: var(--texte); font-size: 14px; }
 @media (min-width: 640px) { .res-grille { grid-template-columns: repeat(2, 1fr); } }
 @media (min-width: 1100px) { .res-grille { grid-template-columns: repeat(4, 1fr); } }
+
+/* 23. Page 404 ------------------------------------------------------------------------------------------ */
+.err { padding-block: clamp(64px, 9vw, 128px); }
+.err__cadre { display: flex; flex-direction: column; align-items: flex-start; gap: 22px; }
+.err .surtitre { margin: 0; }
+.err__titre { font-family: var(--f-titre); font-weight: 800; font-size: clamp(48px, 6.4vw, 92px); line-height: 1.02; letter-spacing: -.0278em; }
+.err__titre em { display: block; font-family: var(--f-accent); font-style: italic; font-weight: 400; font-size: 1.1em; line-height: 1.04; letter-spacing: 0; color: var(--orange); }
+.err__liens { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 10px; }

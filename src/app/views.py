@@ -5,6 +5,7 @@ Une vue reçoit la requête du navigateur, prépare les données (le « contexte
 et les envoie à un gabarit HTML qui produit la page.
 """
 from django.conf import settings
+from django.http import HttpResponse
 from django.contrib import messages
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, redirect, render
@@ -15,6 +16,7 @@ from django.utils.http import urlencode
 from core.utils import send_customize_email
 
 from . import content
+from . import seo as referencement
 from .forms import ContactForm, EngagementForm, PartenariatForm
 from .models import (
     Article, Indicateur, Opportunite, Ressource, SoumissionContact, SoumissionEngagement,
@@ -235,6 +237,7 @@ def article(request, slug):
         'article': fiche,
         'autres': autres,
         'url_complete': request.build_absolute_uri(),
+        'seo': referencement.pour_article(request, fiche),
     })
 
 
@@ -274,3 +277,13 @@ def ressources(request):
         'chips_theme': _pastilles(request, 'theme', Ressource.THEMES, theme, conserver=('type',)),
         'modele': any(f.modele for f in fiches),
     })
+
+
+def robots_txt(request):
+    """robots.txt : tout est exploré sauf l'administration ; le sitemap est annoncé."""
+    return HttpResponse(referencement.texte_robots(request), content_type='text/plain; charset=utf-8')
+
+
+def llms_txt(request):
+    """llms.txt : présentation du site pour les moteurs de réponse (IA)."""
+    return HttpResponse(referencement.texte_llms(request), content_type='text/plain; charset=utf-8')

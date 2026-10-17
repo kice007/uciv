@@ -12,7 +12,7 @@ Depuis `src/` :
 
 ## Règles
 
-- **Dépendances** : Django uniquement. N'ajoute aucun paquet dans `requirements.txt` sans accord explicite.
+- **Dépendances** : Django et Pillow (traitement des images). N'ajoute aucun autre paquet dans `requirements.txt` sans accord explicite.
 - **Configuration** : variables d'environnement via `config()` de `core/settings.py`. Pas de secret dans le code ni dans git.
 - **Contenu éditorial** : textes, navigation, programmes et articles vivent dans `src/app/content.py`, pas dans les gabarits.
 - **Gabarits** : héritent de `app/base/base.html`. Les fragments réutilisables vont dans `templates/app/includes/`.

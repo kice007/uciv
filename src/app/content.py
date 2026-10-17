@@ -819,3 +819,113 @@ ARTICLE_PAGE = {
         {'x': -160, 'y': 300, 'w': 320, 'c': _JAUNE, 'creux': 74},
     ],
 }
+
+# --- Référencement (SEO) ----------------------------------------------------
+# Titre : 50-60 caractères ; description : 120-160 caractères ; une entrée par URL nommée de l'application.
+# `fil` : fil d'Ariane des données structurées (libellé, nom d'URL ; None = page courante).
+# `type` : type de page pour le balisage schema.org (voir app/seo.py).
+
+LANCEMENT_LEADERSHIP = {'date': '2026-10-24', 'lieu': 'American Corner', 'ville': 'Abidjan'}
+IMAGE_PAR_DEFAUT = 'app/assets/img/groupe-couleur.png'
+
+_ACC = ('Accueil', 'home')
+
+SEO_PAGES = {
+    'home': {
+        'titre': "Une Côte d'Ivoire Volontaire (UCIV) — Agir pour le pays",
+        'description': "UCIV mobilise la jeunesse ivoirienne par le volontariat et l'engagement citoyen : programmes, "
+                       "réseau de leaders, formations et opportunités pour agir.",
+        'type': 'accueil', 'fil': [],
+    },
+    'qui_sommes_nous': {
+        'titre': 'Qui sommes-nous ? Vision, mission et valeurs | UCIV',
+        'description': "Découvrez UCIV, initiative citoyenne qui mobilise la jeunesse : notre ambition, notre vision, "
+                       "notre mission et les six valeurs qui guident nos programmes.",
+        'type': 'a_propos', 'fil': [_ACC, ('Qui sommes-nous ?', None)],
+    },
+    'equipe': {
+        'titre': "L'équipe d'UCIV — Bureau exécutif et communication",
+        'description': "Rencontrez l'équipe d'UCIV : le président fondateur Marshall Kouamé, le bureau exécutif et la "
+                       "direction des médias et de la communication.",
+        'type': 'a_propos', 'fil': [_ACC, ('Qui sommes-nous ?', 'qui_sommes_nous'), ('Équipe', None)],
+    },
+    'nos_programmes': {
+        'titre': 'Nos programmes — Go du Digital, Leadership, Experience Lab',
+        'description': "Les Go du Digital, UCIV Leadership et Experience Lab : trois programmes pour apprendre en "
+                       "agissant, avec formation pratique, mise en situation réelle et suivi.",
+        'type': 'programmes', 'fil': [_ACC, ('Nos programmes', None)],
+    },
+    'go_du_digital': {
+        'titre': 'Les Go du Digital — Programme digital pour jeunes femmes',
+        'description': "Les Go du Digital : 6 samedis, 90 % de pratique, pour que les jeunes femmes fassent du digital "
+                       "un outil d'autonomie, d'expression et d'opportunité.",
+        'type': 'cours', 'fil': [_ACC, ('Nos programmes', 'nos_programmes'), ('Les Go du Digital', None)],
+        'cours': {'nom': 'Les Go du Digital', 'public': 'Jeunes femmes'},
+    },
+    'uciv_leadership': {
+        'titre': 'UCIV Leadership — Le réseau des futurs jeunes leaders',
+        'description': "UCIV Leadership, le réseau sélectif des jeunes leaders : formations, mentorat et projets à fort "
+                       "impact. Lancement le 24 octobre 2026 à l'American Corner.",
+        'type': 'evenement', 'fil': [_ACC, ('Nos programmes', 'nos_programmes'), ('UCIV Leadership', None)],
+        'image': 'app/assets/img/affiche-leadership-jaune.jpg',
+    },
+    'experience_lab': {
+        'titre': 'Experience Lab — Personal branding et pitch | UCIV',
+        'description': "Experience Lab : un espace pour apprendre à mieux se connaître, mieux se présenter et valoriser "
+                       "son expérience grâce au personal branding et au pitch.",
+        'type': 'cours', 'fil': [_ACC, ('Nos programmes', 'nos_programmes'), ('Experience Lab', None)],
+        'cours': {'nom': 'Experience Lab', 'public': 'Jeunes'},
+        'image': 'app/assets/img/experience-lab.jpg',
+    },
+    'engagement': {
+        'titre': "Je veux m'engager — Devenir volontaire avec UCIV",
+        'description': "Il y a une place pour ton engagement : deviens volontaire, rejoins UCIV Leadership ou propose "
+                       "tes compétences en communication, numérique ou formation.",
+        'type': 'page', 'fil': [_ACC, ("Je veux m'engager", None)],
+        'image': 'app/assets/img/volontaires-terrain.jpg',
+    },
+    'partenaires': {
+        'titre': "Devenir partenaire d'UCIV — Collaborer pour la jeunesse",
+        'description': "Devenez partenaire d'UCIV : partenariats institutionnels, techniques ou financiers, sponsoring, "
+                       "mécénat, formations et stages pour la jeunesse ivoirienne.",
+        'type': 'page', 'fil': [_ACC, ('Partenaires', None)],
+        'image': 'app/assets/img/partenariat-paipro.jpg',
+    },
+    'opportunites': {
+        'titre': 'Opportunités pour les jeunes — Volontariat, stages, emploi',
+        'description': "Volontariat, formations, stages, emploi, appels à candidatures : retrouvez les opportunités "
+                       "proposées par UCIV et ses partenaires, mises à jour régulièrement.",
+        'type': 'collection', 'fil': [_ACC, ('Opportunités', None)],
+    },
+    'actualites': {
+        'titre': "Actualités — Activités, projets et événements d'UCIV",
+        'description': "Activités, projets, événements, partenariats et témoignages : toute l'actualité d'Une Côte "
+                       "d'Ivoire Volontaire, de l'engagement citoyen au leadership.",
+        'type': 'collection', 'fil': [_ACC, ('Actualités', None)],
+    },
+    'impact': {
+        'titre': 'Notre impact — Indicateurs et parcours de jeunes | UCIV',
+        'description': "Des actions, des expériences, de l'impact : les indicateurs d'UCIV et des parcours de jeunes qui "
+                       "ont transformé leur engagement en compétences.",
+        'type': 'page', 'fil': [_ACC, ('Notre impact', None)],
+    },
+    'ressources': {
+        'titre': 'Ressources — Guides, supports et vidéos pour les jeunes',
+        'description': "Guides, manuels, supports de formation, articles, vidéos et podcasts produits ou recommandés par "
+                       "UCIV pour accompagner les jeunes dans leur parcours.",
+        'type': 'collection', 'fil': [_ACC, ('Ressources', None)],
+    },
+    'contact': {
+        'titre': "Contact — Écrire à Une Côte d'Ivoire Volontaire",
+        'description': "Une question, un partenariat, une envie de rejoindre UCIV ? Écrivez-nous ou appelez-nous : "
+                       "coordonnées officielles d'Une Côte d'Ivoire Volontaire, à Abidjan.",
+        'type': 'contact', 'fil': [_ACC, ('Contact', None)],
+    },
+}
+
+# Pages listées dans le sitemap et dans llms.txt, dans l'ordre d'importance.
+PAGES_INDEXABLES = ['home', 'qui_sommes_nous', 'equipe', 'nos_programmes', 'go_du_digital', 'uciv_leadership',
+                    'experience_lab', 'engagement', 'partenaires', 'opportunites', 'actualites', 'impact',
+                    'ressources', 'contact']
+# Paramètres d'URL qui ne changent que l'affichage : ces variantes ne sont pas indexées.
+PARAMETRES_FILTRES = ('categorie', 'type', 'theme', 'choix', 'objet')

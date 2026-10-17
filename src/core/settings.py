@@ -15,6 +15,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('SECRET_KEY', default='change-me-in-production')
 DEBUG = config('DEBUG', default=True, cast=bool)
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='*').split(',')
+# Adresse publique du site (ex. https://uciv.org) : fixe les URL canoniques, du sitemap et des données structurées.
+SITE_URL = config('SITE_URL', default='')
 
 DJANGO_APPS = [
     'django.contrib.admin',
@@ -23,6 +25,7 @@ DJANGO_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sitemaps',
 ]
 
 LOCAL_APPS = [
@@ -56,6 +59,8 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 # Variables communes à toutes les pages (navigation, pied de page…)
                 'app.context_processors.site',
+                # Balises de référencement (titre, description, canonique, données structurées)
+                'app.seo.seo',
             ],
         },
     },

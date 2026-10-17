@@ -1,5 +1,6 @@
 from django.db import models
 from django.templatetags.static import static
+from django.urls import reverse
 
 class Convention(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
@@ -120,6 +121,9 @@ class Article(Convention):
 
     def __str__(self):
         return self.titre
+
+    def get_absolute_url(self):
+        return reverse('app:article', args=[self.slug])
 
     @property
     def etiquette_affichee(self):

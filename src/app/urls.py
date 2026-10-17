@@ -1,12 +1,16 @@
 """URL de l'application `app` (les pages publiques du site)."""
+from django.contrib.sitemaps.views import sitemap
 from django.urls import path
 
-from . import views
+from . import seo, views
 
 app_name = 'app'
 
 urlpatterns = [
     path('', views.home, name='home'),
+    path('robots.txt', views.robots_txt, name='robots'),
+    path('llms.txt', views.llms_txt, name='llms'),
+    path('sitemap.xml', sitemap, {'sitemaps': seo.SITEMAPS}, name='sitemap'),
     path('engagement/', views.engagement, name='engagement'),
     path('partenaires/', views.partenaires, name='partenaires'),
     path('contact/', views.contact, name='contact'),
