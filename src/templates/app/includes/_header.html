@@ -56,7 +56,10 @@
   <div class="menu-mobile__voile" data-menu-fermer></div>
   <div class="menu-mobile__panneau" role="dialog" aria-modal="true" aria-label="Menu">
     <div class="menu-mobile__haut">
-      <span class="logo__nom">Une Côte d'Ivoire <span>Volontaire</span></span>
+      <a class="logo" href="{% url 'app:home' %}" aria-label="Une Côte d'Ivoire Volontaire — accueil">
+        <span class="logo__marque"><img src="{% static 'app/assets/img/logo-uciv.png' %}" alt="" width="52" height="55"></span>
+        <span class="logo__nom">Une Côte d'Ivoire <span>Volontaire</span></span>
+      </a>
       <button class="rond-bouton" type="button" aria-label="Fermer le menu" data-menu-fermer>
         {% include "app/includes/_icon.html" with name="x" %}
       </button>
