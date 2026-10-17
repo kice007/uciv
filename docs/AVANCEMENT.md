@@ -1,7 +1,7 @@
 # Avancement du projet UCIV
 
 Point de reprise : ce qui est fait, ce qui ne l'est pas, et par où continuer.
-Dernière mise à jour : 14 octobre 2026.
+Dernière mise à jour : 16 octobre 2026.
 
 Documents liés : [PLAN.md](PLAN.md) (ce qu'il faut construire),
 [ARCHITECTURE.md](ARCHITECTURE.md) (structure), [CLAUDE.md](../CLAUDE.md) (règles agents),
@@ -17,7 +17,7 @@ Documents liés : [PLAN.md](PLAN.md) (ce qu'il faut construire),
 | Pages intérieures (14) | **14 faites** : les 9 précédentes + Opportunités, Actualités, Article, Notre impact, Ressources |
 | Modèles de données et administration | 7 modèles administrables : 3 de formulaires (`SoumissionEngagement`, `SoumissionPartenariat`, `SoumissionContact`) et 4 de contenu (`Article`, `Opportunite`, `Ressource`, `Indicateur`) ; `MembreEquipe`, `Programme` et `Partenaire` restent dans `content.py` |
 | Formulaires | 3 faits (engagement, partenariat, contact) ; newsletter à faire |
-| Responsive mobile/tablette | Fait pour l'accueil seulement |
+| Responsive mobile (390 px) | **Fait pour les 15 pages**, aligné sur les écrans « … — Mobile » de la maquette ; tablette déduite (720–1099 px) |
 | Documentation | Faite (voir ci-dessus) |
 | Mise en ligne | Non commencée |
 
@@ -116,8 +116,23 @@ Documents liés : [PLAN.md](PLAN.md) (ce qu'il faut construire),
 - Les ellipses du bandeau et de plusieurs sections sont des anneaux (propriété `innerRadius` de Pencil : 0,7 à 0,8), pas des disques pleins. Ils sont reproduits par un dégradé radial (section 17 de `main.css`) sur les pages Go du Digital, Experience Lab, UCIV Leadership, Qui sommes-nous ?, Nos programmes ; l'anneau de la section « Vision & chiffres » de l'accueil est ajusté (57 px).
 - Les cercles pleins restent pleins là où la maquette n'a pas de rayon intérieur (disques crème, orange, blanc).
 
+### Responsive mobile (16 octobre 2026)
+- **Maquette mise à jour** : `maquette/design_uciv.pen` remplacée par la version de travail (écrans desktop **et** les 15 écrans « … — Mobile » à 390 px).
+- **Méthode** : chaque écran mobile a été exporté de Pencil, puis comparé au site à 390 px (tailles, interlignes, graisses de chaque texte, puis hauteur de chaque section). Toutes les sections sont alignées à quelques pixels près, sauf les écarts de contenu listés plus bas.
+- **Fichiers modifiés** :
+  - `static/app/assets/css/main.css` : nouvelle **section 23** « Mobile : valeurs de la maquette 390 px », un seul bloc `@media (max-width: 719px)`. Rien ne change au-dessus de 720 px (tablette et ordinateur).
+  - `templates/app/includes/_hero_page.html` et `app/content.py` : taille mobile du titre des bandeaux (`taille_mobile` : 40, 48, 40, 44 px selon la page).
+- **Ce qui change en mobile** : échelle typographique de la maquette (titres 32 à 44 px, textes 16/26 px), sections à 56 px de marge, bandeaux à un seul anneau avec la note manuscrite sous le texte, photos des bandeaux en rectangle arrondi (engagement, partenaires, programmes), bureau exécutif en grille 2 × 2, valeurs avec le numéro à gauche, indicateurs d'impact en 2 colonnes, programmes avec numéro et étiquette sur une ligne, portrait du fondateur au-dessus du texte, pied de page resserré.
+- **Débordements horizontaux corrigés** : Nos programmes (disque jaune) et Je veux m'engager (cartes).
+- **Menu mobile** : le panneau affiche maintenant le logo complet (image + nom), lien vers l'accueil (`includes/_header.html`).
+- **UCIV Leadership** : le logo posé sur la photo du hero est masqué en mobile, comme dans la maquette.
+
+### Autres changements du 16 octobre 2026
+- **Notre impact** : la citation n'a plus de bouton « Je veux m'engager » (modification de la maquette desktop et mobile) ; `templates/app/layout/impact.html`.
+- **Équipe** : les 4 portraits du bureau exécutif sont découpés dans l'affiche `bureau-executif.jpg` avec les cadrages de la maquette (`static/app/assets/img/bureau-*.jpg`, chemins dans `content.EQUIPE['bureau']`). L'affiche est en basse résolution : des photos HD restent à fournir.
+
 ### Maquette
-- `maquette/design_uciv.pen` : 16 écrans desktop analysés ; le plan de réalisation en est tiré.
+- `maquette/design_uciv.pen` : 16 écrans desktop et 15 écrans mobiles ; le plan de réalisation en est tiré.
 
 ## Écarts connus avec la maquette (volontaires ou à trancher)
 
@@ -129,17 +144,15 @@ Documents liés : [PLAN.md](PLAN.md) (ce qu'il faut construire),
 
 ## Non commité
 
-Les fichiers suivants sont dans le dossier de travail mais pas dans git :
-`README.md`, `CLAUDE.md`, `CONTRIBUTING.md`, le dossier `docs/` (`PLAN.md`, `AVANCEMENT.md`), le dossier `maquette/`
-(le `.pen` pèse 1,6 Mo), et les modifications des titres dans `main.css` et `index.html`.
+Rien. Le travail du 16 octobre est sur la branche `feature/responsive-mobile`, en attente de relecture avant fusion dans `main`.
 
 ## Prochaines étapes (par ordre)
 
-1. **Appliquer les migrations** (`python manage.py migrate`) puis créer un compte administrateur (`createsuperuser`) pour gérer le contenu.
-2. **Vérifier visuellement** chaque page à 1440 px à côté de la maquette, puis en tablette et mobile (aucun rendu n'a pu être contrôlé dans un navigateur depuis l'assistant).
+1. **Valider le mobile dans un vrai téléphone** (menu, formulaires, défilement des cartes) et décider de la tablette (720–1099 px, déduite du desktop, pas d'écran dans la maquette).
+2. **Écarts de contenu restants en mobile** : 2ᵉ photo d'article (non gérée par le modèle), pagination des actualités (s'affichera avec plus d'articles), images des « histoires » de Notre impact (articles sans image en base), une seule affiche pour le lancement de Leadership (la maquette en montre deux).
 3. **Newsletter** : brancher le formulaire du pied de page (enregistrement des adresses, désinscription).
 4. **Pages légales et 404** : mentions légales, politique de confidentialité, conditions d'utilisation, page d'erreur.
-5. **Images manquantes** : portraits du bureau exécutif, photos générées de la maquette, 2e image d'article.
+5. **Images à fournir** : portraits HD du bureau exécutif, photos générées de la maquette, 2ᵉ image d'article.
 6. **Contenus à remplacer** : fiches d'exemple (opportunités, ressources), chiffres d'impact, bios, dates et tarifs des programmes, textes des articles.
 7. **Finitions** : accessibilité, SEO (métadonnées, `sitemap.xml`), optimisation des images.
 8. **Mise en ligne** : réglages de production, `collectstatic`, hébergement.
@@ -148,7 +161,7 @@ Le détail de chaque page, composant, modèle et formulaire est dans [PLAN.md](P
 
 ## Décisions en attente
 
-- Responsive : produire des écrans mobile/tablette ou déduire du desktop ?
+- Tablette : garder la mise en page déduite du desktop ou produire des écrans dédiés ?
 - Newsletter : service d'envoi externe ou simple collecte d'adresses ?
 - Pillow pour les images téléversées, ou chemins statiques ?
 - Pages à rédiger : politique de confidentialité, mentions légales, conditions d'utilisation.
