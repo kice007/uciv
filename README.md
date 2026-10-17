@@ -35,6 +35,7 @@ python manage.py test app
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Structure des dossiers et conventions |
 | [docs/PLAN.md](docs/PLAN.md) | Ce qu'il faut construire, d'après la maquette |
 | [docs/AVANCEMENT.md](docs/AVANCEMENT.md) | Ce qui est fait, ce qui reste, point de reprise |
+| [docs/GEO.md](docs/GEO.md) | Être cité par les moteurs de réponse IA : état, règles de rédaction, actions |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | Workflow git, commits, relecture |
 | [CLAUDE.md](CLAUDE.md) | Règles pour les agents IA (Claude Code) |
 

@@ -180,7 +180,7 @@ PROGRAMMES = [
                  "de la stratégie de contenu et des techniques de tournage.",
         'lien_label': 'Découvrir le programme',
         'url': URL_GO,
-        'image': 'app/assets/img/go-du-digital.jpg',
+        'image': 'app/assets/img/go-du-digital.webp',
         'image_alt': "Une jeune femme se filme avec son téléphone pendant un atelier.",
         'detouree': False,
     },
@@ -192,7 +192,7 @@ PROGRAMMES = [
                  "d'opportunités partagées entre membres.",
         'lien_label': 'Rejoindre UCIV Leadership',
         'url': URL_LEADERSHIP,
-        'image': 'app/assets/img/groupe-nb.png',
+        'image': 'app/assets/img/groupe-nb.webp',
         'image_alt': 'Quatre jeunes leaders souriants, en tenue professionnelle.',
         'detouree': True,
     },
@@ -204,7 +204,7 @@ PROGRAMMES = [
                  "« Know yourself before showing yourself. »",
         'lien_label': 'Découvrir Experience Lab',
         'url': URL_EXPERIENCE,
-        'image': 'app/assets/img/experience-lab.jpg',
+        'image': 'app/assets/img/experience-lab.webp',
         'image_alt': 'Un jeune homme présente son parcours devant un petit groupe.',
         'detouree': False,
     },
@@ -251,7 +251,7 @@ ARTICLE_A_LA_UNE = {
     'titre': "UCIV et PAIPRO-JEUNES s'associent pour l'insertion des jeunes",
     'chapo': "À la fin des Go du Digital, les participantes sans emploi qui le "
              "souhaitent bénéficient d'un suivi vers l'insertion professionnelle.",
-    'image': 'app/assets/img/partenariat-paipro.jpg',
+    'image': 'app/assets/img/partenariat-paipro.webp',
     'image_alt': "Poignée de main lors de la signature entre UCIV et PAIPRO-JEUNES.",
     'position': 'center 22%',
     'url': '#',
@@ -263,7 +263,7 @@ AUTRES_ARTICLES = [
         'theme': 'jaune',
         'meta': '24 octobre 2026',
         'titre': 'UCIV Leadership : la conférence de lancement au format TEDx',
-        'image': 'app/assets/img/affiche-leadership-jaune.jpg',
+        'image': 'app/assets/img/affiche-leadership-jaune.webp',
         'image_alt': "Affiche d'UCIV Leadership : une jeune femme lève les poings.",
         'position': 'center 40%',
         'detouree': False,
@@ -274,7 +274,7 @@ AUTRES_ARTICLES = [
         'theme': 'vert',
         'meta': 'Rencontre',
         'titre': 'Des rencontres pour construire de nouvelles collaborations',
-        'image': 'app/assets/img/rencontre-galerie.jpg',
+        'image': 'app/assets/img/rencontre-galerie.webp',
         'image_alt': 'Deux hommes posent devant un tableau dans une galerie.',
         'position': 'center 28%',
         'detouree': False,
@@ -285,7 +285,7 @@ AUTRES_ARTICLES = [
         'theme': 'orange',
         'meta': 'Inscriptions',
         'titre': 'Les Go du Digital : la prochaine édition se prépare',
-        'image': 'app/assets/img/groupe-nb.png',
+        'image': 'app/assets/img/groupe-nb.webp',
         'image_alt': 'Quatre jeunes souriants, en tenue professionnelle.',
         'position': 'center top',
         'detouree': True,
@@ -450,7 +450,7 @@ NOS_PROGRAMMES = {
                      "compétition « La Reine du Digital ».",
             'lien_label': 'Découvrir le programme',
             'url': URL_GO,
-            'image': 'app/assets/img/go-du-digital.jpg',
+            'image': 'app/assets/img/go-du-digital.webp',
             'image_alt': 'Une jeune femme se filme avec son téléphone pendant un atelier.',
             'detouree': False,
         },
@@ -466,7 +466,7 @@ NOS_PROGRAMMES = {
                      "partagées entre membres.",
             'lien_label': 'Rejoindre UCIV Leadership',
             'url': URL_LEADERSHIP,
-            'image': 'app/assets/img/groupe-nb.png',
+            'image': 'app/assets/img/groupe-nb.webp',
             'image_alt': 'Quatre jeunes leaders souriants, en tenue professionnelle.',
             'detouree': True,
         },
@@ -481,7 +481,7 @@ NOS_PROGRAMMES = {
                      "présenter.",
             'lien_label': 'Découvrir Experience Lab',
             'url': URL_EXPERIENCE,
-            'image': 'app/assets/img/experience-lab.jpg',
+            'image': 'app/assets/img/experience-lab.webp',
             'image_alt': 'Un jeune homme présente son parcours devant un petit groupe.',
             'detouree': False,
         },
@@ -826,7 +826,7 @@ ARTICLE_PAGE = {
 # `type` : type de page pour le balisage schema.org (voir app/seo.py).
 
 LANCEMENT_LEADERSHIP = {'date': '2026-10-24', 'lieu': 'American Corner', 'ville': 'Abidjan'}
-IMAGE_PAR_DEFAUT = 'app/assets/img/groupe-couleur.png'
+IMAGE_PAR_DEFAUT = 'app/assets/img/og-defaut.jpg'
 
 _ACC = ('Accueil', 'home')
 
@@ -867,7 +867,7 @@ SEO_PAGES = {
         'description': "UCIV Leadership, le réseau sélectif des jeunes leaders : formations, mentorat et projets à fort "
                        "impact. Lancement le 24 octobre 2026 à l'American Corner.",
         'type': 'evenement', 'fil': [_ACC, ('Nos programmes', 'nos_programmes'), ('UCIV Leadership', None)],
-        'image': 'app/assets/img/affiche-leadership-jaune.jpg',
+        'image': 'app/assets/img/og-leadership.jpg',
     },
     'experience_lab': {
         'titre': 'Experience Lab — Personal branding et pitch | UCIV',
@@ -875,21 +875,21 @@ SEO_PAGES = {
                        "son expérience grâce au personal branding et au pitch.",
         'type': 'cours', 'fil': [_ACC, ('Nos programmes', 'nos_programmes'), ('Experience Lab', None)],
         'cours': {'nom': 'Experience Lab', 'public': 'Jeunes'},
-        'image': 'app/assets/img/experience-lab.jpg',
+        'image': 'app/assets/img/og-experience-lab.jpg',
     },
     'engagement': {
         'titre': "Je veux m'engager — Devenir volontaire avec UCIV",
         'description': "Il y a une place pour ton engagement : deviens volontaire, rejoins UCIV Leadership ou propose "
                        "tes compétences en communication, numérique ou formation.",
         'type': 'page', 'fil': [_ACC, ("Je veux m'engager", None)],
-        'image': 'app/assets/img/volontaires-terrain.jpg',
+        'image': 'app/assets/img/og-engagement.jpg',
     },
     'partenaires': {
         'titre': "Devenir partenaire d'UCIV — Collaborer pour la jeunesse",
         'description': "Devenez partenaire d'UCIV : partenariats institutionnels, techniques ou financiers, sponsoring, "
                        "mécénat, formations et stages pour la jeunesse ivoirienne.",
         'type': 'page', 'fil': [_ACC, ('Partenaires', None)],
-        'image': 'app/assets/img/partenariat-paipro.jpg',
+        'image': 'app/assets/img/og-partenaires.jpg',
     },
     'opportunites': {
         'titre': 'Opportunités pour les jeunes — Volontariat, stages, emploi',
@@ -929,3 +929,210 @@ PAGES_INDEXABLES = ['home', 'qui_sommes_nous', 'equipe', 'nos_programmes', 'go_d
                     'ressources', 'contact']
 # Paramètres d'URL qui ne changent que l'affichage : ces variantes ne sont pas indexées.
 PARAMETRES_FILTRES = ('categorie', 'type', 'theme', 'choix', 'objet')
+
+# --- GEO : réponses directes pour les moteurs de réponse IA ----------------------------------------------------
+# Section « Questions fréquentes » visible sur chaque page : titres en forme de question, réponse autonome
+# (extractible sans le reste de la page), chiffres et noms exacts. Les faits viennent des contenus du site ;
+# ne rien y ajouter qui ne soit pas vérifié (dates, tarifs et lieux « à confirmer » restent annoncés comme tels).
+# Pas de balisage FAQPage : réservé par Google aux sites publics et de santé (voir app/seo.py).
+
+FAQ_TITRE = 'Questions fréquentes'
+
+FAQ = {
+    'home': [
+        ("Qu'est-ce qu'Une Côte d'Ivoire Volontaire (UCIV) ?",
+         "Une Côte d'Ivoire Volontaire (UCIV) est une initiative citoyenne qui mobilise la jeunesse ivoirienne "
+         "autour du volontariat, du bénévolat et de l'engagement citoyen. Elle en fait un levier de compétences, "
+         "de leadership et d'employabilité grâce à des missions de terrain, des projets menés en équipe et des "
+         "formations suivies jusqu'au bout."),
+        ("Quels programmes propose UCIV ?",
+         "UCIV propose trois programmes : Les Go du Digital (6 samedis de formation, pratique à 90 %, pour les jeunes "
+         "femmes), UCIV Leadership (un réseau sélectif de 30 à 50 membres pour la cohorte pionnière) et Experience "
+         "Lab (un espace consacré au personal branding et au pitch professionnel)."),
+        ("Comment s'engager avec UCIV ?",
+         "Il existe trois façons de rejoindre UCIV : devenir volontaire, rejoindre le réseau UCIV Leadership ou "
+         "proposer ses compétences (communication, graphisme, audiovisuel, photographie, formation, numérique…). "
+         "Il suffit de remplir le formulaire d'engagement du site : l'équipe revient ensuite vers la personne."),
+        ("Où se trouve UCIV et comment la contacter ?",
+         "UCIV est basée à Abidjan (04 BP 2087 Abidjan, Côte d'Ivoire). On peut l'appeler au +225 07 87 56 17 66 ou "
+         "au +225 07 07 722 078, ou écrire à organisationuciv@gmail.com."),
+        ("Quelle est la prochaine grande date d'UCIV ?",
+         "La prochaine grande date d'UCIV est le 24 octobre 2026 : le lancement du réseau UCIV Leadership, lors "
+         "d'une conférence au format TEDx à l'American Corner d'Abidjan. L'heure sera confirmée sur le site."),
+    ],
+    'qui_sommes_nous': [
+        ("Qu'est-ce qu'UCIV ?",
+         "UCIV (Une Côte d'Ivoire Volontaire) est une initiative citoyenne qui mobilise la jeunesse autour du "
+         "volontariat, du bénévolat et de l'engagement citoyen. Son ambition est de faire du volontariat un véritable "
+         "espace de développement personnel, professionnel et citoyen : un lieu où l'on apprend en agissant, pas "
+         "seulement en écoutant."),
+        ("Quelle est la mission d'UCIV ?",
+         "La mission d'UCIV est de mobiliser les jeunes autour du volontariat et de l'engagement pour développer "
+         "leurs compétences et contribuer à leur employabilité. Elle agit à travers le volontariat et le bénévolat, "
+         "les formations, les programmes de développement des compétences, le leadership, les projets citoyens, la "
+         "mobilisation communautaire et les initiatives en faveur de l'employabilité."),
+        ("Quelle est la vision d'UCIV ?",
+         "UCIV veut former une génération de jeunes engagés, responsables et acteurs du changement. Elle croit "
+         "qu'une jeunesse qui développe ses compétences, prend des initiatives et s'engage dans sa communauté est "
+         "mieux préparée à contribuer au développement de la Côte d'Ivoire."),
+        ("Quelles sont les valeurs d'UCIV ?",
+         "UCIV s'appuie sur six valeurs : l'engagement, la responsabilité, la solidarité, l'apprentissage, "
+         "l'innovation et l'impact. Elles guident ses programmes, ses projets et la manière dont l'équipe travaille "
+         "ensemble."),
+        ("Qui a fondé UCIV ?",
+         "UCIV a été fondée par Marshall Kouamé, président et fondateur d'Une Côte d'Ivoire Volontaire."),
+    ],
+    'equipe': [
+        ("Qui dirige UCIV ?",
+         "UCIV est dirigée par son président et fondateur, Marshall Kouamé. Le bureau exécutif comprend Aïssata "
+         "Ouattara (Secrétaire Générale), le Dr Angèle Zang (Trésorière Générale), Roxane Atchia (Commissaire aux "
+         "comptes) et Martine Boa (Responsable Générale des projets)."),
+        ("Qui assure la communication d'UCIV ?",
+         "La direction des médias et de la communication réunit Emmanuel Fieni Kouassi (Responsable Communication & "
+         "mobilisation), Djamira Kamagaté (Commissaire aux comptes adjointe et créatrice de contenu), Mieimmo Kouassi "
+         "(Chargée de Marketing) et Ago Maria Konan (Secrétaire Générale adjointe et créatrice de contenu)."),
+        ("Comment rejoindre l'équipe d'UCIV ?",
+         "Toute personne qui souhaite mettre ses compétences au service d'UCIV peut proposer son aide depuis le "
+         "formulaire d'engagement du site, en choisissant « Proposer mes compétences »."),
+    ],
+    'nos_programmes': [
+        ("Quels sont les programmes d'UCIV ?",
+         "UCIV développe trois programmes : Les Go du Digital (le digital comme outil d'autonomie, d'expression et "
+         "d'opportunité), UCIV Leadership (le réseau des jeunes leaders et futurs leaders) et Experience Lab (le "
+         "personal branding et le pitch professionnel). D'autres programmes seront annoncés."),
+        ("Quelle est la méthode commune à tous les programmes ?",
+         "Chaque programme suit la même logique en trois temps : une formation courte et pratique, une mise en "
+         "situation réelle, puis un accompagnement qui ne s'arrête pas à la dernière séance."),
+        ("À qui s'adressent les programmes d'UCIV ?",
+         "Les programmes répondent à des besoins précis des jeunes ivoiriens : compétences numériques, leadership, "
+         "personal branding et employabilité."),
+    ],
+    'go_du_digital': [
+        ("Qu'est-ce que Les Go du Digital ?",
+         "Les Go du Digital est un programme d'UCIV destiné aux jeunes femmes, qui fait du digital un outil "
+         "d'autonomie, d'expression et d'opportunité. Il dure 6 samedis, avec 90 % de pratique, et s'organise "
+         "autour de quatre volets : Personal Branding, Sécurité Numérique, Stratégie de Contenu et Techniques de "
+         "Tournage."),
+        ("Qui peut participer aux Go du Digital ?",
+         "Le programme est pensé pour les jeunes femmes, les étudiantes, les jeunes professionnelles, les femmes "
+         "souhaitant développer une activité grâce au digital et les personnes souhaitant améliorer leurs "
+         "compétences numériques."),
+        ("Qu'apprennent les participantes ?",
+         "Les participantes apprennent à développer leur personal branding, à créer du contenu, à vendre en ligne, "
+         "à se protéger dans l'environnement numérique et à utiliser les réseaux sociaux de manière responsable."),
+        ("Qu'est-ce que « La Reine du Digital » ?",
+         "« La Reine du Digital » est la compétition qui conclut chaque édition des Go du Digital. Elle valorise les "
+         "meilleures productions des participantes devant un jury et le public."),
+        ("Quand a lieu la prochaine édition et combien coûte-t-elle ?",
+         "La date de la prochaine édition, le lieu, le tarif et les modalités d'inscription sont encore à confirmer. "
+         "Ils seront publiés sur cette page dès qu'ils seront connus."),
+    ],
+    'uciv_leadership': [
+        ("Qu'est-ce qu'UCIV Leadership ?",
+         "UCIV Leadership est le réseau des leaders et futurs leaders d'Une Côte d'Ivoire Volontaire : un cadre où "
+         "des jeunes triés sur le volet se forment, se connectent et passent à l'action ensemble, grâce à des "
+         "formations par des spécialistes, du mentorat, des échanges et des projets à fort impact."),
+        ("Comment intégrer le réseau UCIV Leadership ?",
+         "La sélection se fait en deux étapes : un pitch vidéo, puis un entretien collectif. Les nouveaux arrivants "
+         "sont d'abord membres aspirants, puis deviennent membres du réseau. Un système de points d'engagement suit "
+         "la contribution de chaque membre et conditionne son maintien."),
+        ("Quand a lieu le lancement d'UCIV Leadership ?",
+         "Le lancement a lieu le 24 octobre 2026 à l'American Corner d'Abidjan, avec une conférence au format TEDx. "
+         "L'heure reste à confirmer."),
+        ("Combien de membres compte la cohorte pionnière ?",
+         "La cohorte pionnière réunit entre 30 et 50 membres. Le réseau est mixte, sélectif et exigeant."),
+        ("Qu'apporte UCIV Leadership à ses membres ?",
+         "Le réseau fait circuler en priorité entre ses membres les bonnes opportunités, notamment en matière "
+         "d'emploi, de financement et de formations."),
+    ],
+    'experience_lab': [
+        ("Qu'est-ce qu'Experience Lab ?",
+         "Experience Lab est le programme d'UCIV consacré au personal branding et au pitch professionnel. C'est un "
+         "espace d'apprentissage et de partage qui aide les jeunes à mieux se connaître, mieux se présenter et "
+         "mieux valoriser leur expérience."),
+        ("Que signifie « Know yourself before showing yourself » ?",
+         "Cette phrase résume l'approche d'Experience Lab : avant de chercher à être visible, il faut comprendre qui "
+         "l'on est, ce que l'on sait faire, ce que l'on peut apporter et comment on souhaite être perçu."),
+        ("Quels sont les objectifs d'Experience Lab ?",
+         "Le programme permet aux participants de mieux comprendre leur identité et leurs forces, de définir leur "
+         "positionnement, de valoriser leurs compétences, de construire une présentation personnelle cohérente, "
+         "d'améliorer leur capacité à présenter leur parcours et de développer leur confiance dans les situations "
+         "professionnelles."),
+        ("Quel est le format et quelles sont les dates ?",
+         "Le format, les dates et les modalités d'inscription d'Experience Lab sont encore à confirmer."),
+    ],
+    'engagement': [
+        ("Comment devenir volontaire avec UCIV ?",
+         "Pour devenir volontaire, il suffit de remplir le formulaire d'engagement en choisissant « Devenir "
+         "volontaire ». Les volontaires participent aux activités et aux projets d'UCIV et mettent leurs compétences "
+         "au service d'actions concrètes, sur le terrain."),
+        ("Quelles compétences UCIV recherche-t-elle ?",
+         "UCIV peut avoir besoin de profils en communication, graphisme, audiovisuel, photographie, formation, "
+         "événementiel, ressources humaines, gestion de projet, numérique et développement web."),
+        ("Que se passe-t-il après l'envoi du formulaire ?",
+         "Après l'envoi du formulaire, l'équipe d'UCIV revient vers la personne pour la suite. Les données saisies "
+         "servent uniquement à la recontacter."),
+    ],
+    'partenaires': [
+        ("Qui sont les partenaires d'UCIV ?",
+         "UCIV collabore notamment avec BonixUp (accès à des formateurs), PAIPRO-JEUNES (accompagnement vers "
+         "l'emploi) et l'ONG Light for All CI (logistique de terrain)."),
+        ("Quelles formes de collaboration UCIV propose-t-elle ?",
+         "UCIV est ouverte aux partenariats institutionnels, techniques et financiers, au sponsoring, au mécénat, aux "
+         "collaborations sur des programmes, aux formations, aux opportunités de stage et professionnelles, et aux "
+         "projets communs."),
+        ("Comment proposer un partenariat à UCIV ?",
+         "Une organisation peut remplir le formulaire « Proposer un partenariat » de cette page en présentant sa "
+         "structure et son idée de collaboration, ou écrire à organisationuciv@gmail.com."),
+    ],
+    'opportunites': [
+        ("Quelles opportunités trouve-t-on sur le site d'UCIV ?",
+         "Le site présente cinq catégories d'opportunités : le volontariat, les formations, les stages, l'emploi et "
+         "les appels à candidatures. Chaque fiche indique la structure, le lieu et la date limite."),
+        ("Qui propose ces opportunités ?",
+         "Les opportunités sont proposées par UCIV et par son réseau de partenaires, et mises à jour au fil de l'eau."),
+        ("Comment proposer une opportunité aux jeunes ?",
+         "Une organisation qui souhaite publier une opportunité peut devenir partenaire d'UCIV depuis la page "
+         "Partenaires."),
+    ],
+    'actualites': [
+        ("Que trouve-t-on dans les actualités d'UCIV ?",
+         "Les actualités présentent les activités, projets, événements, partenariats et initiatives qui font vivre "
+         "Une Côte d'Ivoire Volontaire, ainsi que des témoignages et des portraits de jeunes."),
+        ("Comment filtrer les actualités ?",
+         "Les articles se filtrent par catégorie : nos activités, nos programmes, nos événements, nos partenariats, "
+         "témoignages, portraits, employabilité, leadership et engagement citoyen."),
+    ],
+    'impact': [
+        ("Comment UCIV mesure-t-elle son impact ?",
+         "UCIV suit six indicateurs : le nombre de jeunes mobilisés, de volontaires, de programmes réalisés, de "
+         "participants formés, de partenaires et de projets réalisés."),
+        ("Pourquoi certains chiffres sont-ils affichés à 000 ?",
+         "Une recherche est en cours pour établir des chiffres fiables. Les valeurs seront mises à jour dès qu'elles "
+         "seront disponibles : UCIV préfère ne publier que des résultats vérifiés."),
+        ("Où trouver des témoignages ?",
+         "La section « Nos histoires » de cette page présente des parcours de jeunes qui ont participé à une "
+         "activité, développé de nouvelles compétences ou transformé leur expérience en opportunité."),
+    ],
+    'ressources': [
+        ("Quels types de ressources propose UCIV ?",
+         "La bibliothèque réunit des guides, des manuels, des supports de formation, des articles, des vidéos et des "
+         "podcasts."),
+        ("Quels thèmes les ressources couvrent-elles ?",
+         "Les ressources portent sur l'employabilité, le leadership, le numérique et le volontariat."),
+        ("Qui produit les ressources ?",
+         "Ce sont des ressources produites ou recommandées par UCIV pour accompagner les jeunes dans leur "
+         "développement personnel, professionnel et citoyen."),
+    ],
+    'contact': [
+        ("Comment contacter UCIV ?",
+         "On peut contacter UCIV par téléphone au +225 07 87 56 17 66 ou au +225 07 07 722 078, par e-mail à "
+         "organisationuciv@gmail.com, par courrier au 04 BP 2087 Abidjan, ou depuis le formulaire de cette page."),
+        ("Sur quels réseaux sociaux suivre UCIV ?",
+         "UCIV est présente sur Facebook, sur TikTok (compte @uneciv) et sur LinkedIn. Les liens vers ces pages "
+         "figurent sur cette page et dans le pied de page de chaque page du site."),
+        ("Pour quels sujets écrire à UCIV ?",
+         "Le formulaire de contact couvre le volontariat, les programmes, UCIV Leadership, les partenariats, les "
+         "propositions de compétences, la presse et les médias, ainsi que toute autre demande."),
+    ],
+}

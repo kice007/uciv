@@ -82,11 +82,25 @@ def _fil(request, elements, url_courante, titre_courant=None):
     return {'@context': 'https://schema.org', '@type': 'BreadcrumbList', 'itemListElement': items}
 
 
+def _derniere_modification(nom):
+    """Date de dernière mise à jour des pages alimentées par la base (None pour les pages rédigées à la main)."""
+    modele, filtres = {'actualites': (Article, {'histoire': False}), 'opportunites': (Opportunite, {}),
+                       'ressources': (Ressource, {}), 'impact': (Indicateur, {})}.get(nom, (None, None))
+    if modele is None:
+        return None
+    objet = modele.objects.filter(publish=True, **filtres).order_by('-update_at').first()
+    return objet.update_at if objet else None
+
+
 def _page(request, nom, page, url, type_page='WebPage'):
     base = base_url(request)
-    return {'@context': 'https://schema.org', '@type': type_page, '@id': url + '#page', 'url': url,
-            'name': page['titre'], 'description': page['description'], 'inLanguage': 'fr',
-            'isPartOf': {'@id': base + '/#site'}, 'about': {'@id': base + '/#organisation'}}
+    donnees = {'@context': 'https://schema.org', '@type': type_page, '@id': url + '#page', 'url': url,
+              'name': page['titre'], 'description': page['description'], 'inLanguage': 'fr',
+              'isPartOf': {'@id': base + '/#site'}, 'about': {'@id': base + '/#organisation'}}
+    modifie = _derniere_modification(nom)
+    if modifie:
+        donnees['dateModified'] = modifie.isoformat()
+    return donnees
 
 
 def _blocs_specifiques(request, nom, page, url):
@@ -115,6 +129,18 @@ def _blocs_specifiques(request, nom, page, url):
             'description': page['description'], 'url': url, 'inLanguage': 'fr',
             'provider': organisation(request, complet=False),
             'audience': {'@type': 'Audience', 'audienceType': page['cours']['public']},
+        })
+    elif nom == 'equipe':
+        membres = [('Marshall Kouamé', 'Président et fondateur')]
+        membres += [(m['nom'], m['role']) for m in content.EQUIPE['bureau']]
+        membres += [(m['nom'], m['role']) for m in content.EQUIPE['medias']]
+        blocs.append({
+            '@context': 'https://schema.org', '@type': 'ItemList', 'name': "Équipe d'UCIV",
+            'itemListElement': [
+                {'@type': 'ListItem', 'position': n,
+                 'item': {'@type': 'Person', 'name': nom_membre, 'jobTitle': role,
+                          'worksFor': {'@id': base + '/#organisation'}}}
+                for n, (nom_membre, role) in enumerate(membres, start=1)],
         })
     elif page['type'] == 'programmes':
         programmes = [('Les Go du Digital', 'go_du_digital'), ('UCIV Leadership', 'uciv_leadership'),
@@ -196,35 +222,55 @@ def seo(request):
     """Processeur de contexte : `seo` pour les gabarits (la vue d'un article le remplace par `pour_article`)."""
     correspondance = getattr(request, 'resolver_match', None)
     nom = correspondance.url_name if correspondance and correspondance.namespace == 'app' else ''
-    return {'seo': construire(request, nom)}
+    return {'seo': construire(request, nom), 'faq': content.FAQ.get(nom), 'faq_titre': content.FAQ_TITRE}
 
 
 # --- robots.txt, llms.txt ------------------------------------------------------------------------------------
 
+# Robots des moteurs de recherche et de réponse IA, autorisés pour être cités par ChatGPT, Claude, Perplexity…
+ROBOTS_IA = ['GPTBot', 'OAI-SearchBot', 'ChatGPT-User', 'ClaudeBot', 'PerplexityBot']
+
 
 def texte_robots(request):
-    return '\n'.join([
-        'User-agent: *',
-        'Allow: /',
-        'Disallow: /admin/',
-        '',
-        f'Sitemap: {base_url(request)}/sitemap.xml',
-        '',
-    ])
+    """robots.txt : tout est exploré sauf l'administration ; les robots IA sont nommés et autorisés."""
+    lignes = ['User-agent: *', 'Allow: /', 'Disallow: /admin/', '',
+              '# Robots des moteurs de réponse IA : autorisés (le site doit pouvoir y être cité).',
+              '# Un groupe nommé remplace le groupe « * » : la règle sur /admin/ est donc répétée.']
+    lignes += [f'User-agent: {robot}' for robot in ROBOTS_IA]
+    lignes += ['Allow: /', 'Disallow: /admin/', '', f'Sitemap: {base_url(request)}/sitemap.xml', '']
+    return '\n'.join(lignes)
 
 
 def texte_llms(request):
-    """llms.txt : présentation du site pour les moteurs de réponse (IA)."""
+    """llms.txt : présentation du site, faits clés, pages et dernières actualités pour les moteurs de réponse IA."""
     base = base_url(request)
+    lancement = content.LANCEMENT_LEADERSHIP
+    telephones = ' ou '.join(t['label'] for t in content.CONTACT['telephones'])
     lignes = [f'# {NOM_SITE} (UCIV)', '', f'> {SLOGAN}', '',
-              "Initiative citoyenne ivoirienne basée à Abidjan. Le site présente ses programmes (Les Go du Digital, "
-              "UCIV Leadership, Experience Lab), ses opportunités, ses actualités et ses ressources.", '',
+              "UCIV est une initiative citoyenne ivoirienne, basée à Abidjan, qui mobilise la jeunesse autour du "
+              "volontariat, du bénévolat et de l'engagement citoyen. Le site est en français.", '',
+              '## Faits clés', '',
+              f'- Nom : {NOM_SITE} (UCIV)',
+              '- Fondateur et président : Marshall Kouamé',
+              f"- Siège : Abidjan, Côte d'Ivoire ({content.COORDONNEES['adresse']})",
+              f"- Contact : {content.COORDONNEES['email']} ; téléphone {telephones}",
+              "- Programmes : Les Go du Digital (6 samedis, jeunes femmes, pratique à 90 %) ; UCIV Leadership "
+              "(réseau sélectif de 30 à 50 membres) ; Experience Lab (personal branding et pitch)",
+              f"- Lancement d'UCIV Leadership : 24 octobre 2026, {lancement['lieu']}, {lancement['ville']} "
+              "(conférence au format TEDx, heure à confirmer)",
+              "- Partenaires : BonixUp, PAIPRO-JEUNES, ONG Light for All CI", '',
               '## Pages principales', '']
     for nom in content.PAGES_INDEXABLES:
         page = content.SEO_PAGES[nom]
         lignes.append(f"- [{page['titre']}]({base}{reverse('app:' + nom)}): {page['description']}")
-    lignes += ['', '## Contact', '', f"- E-mail : {content.COORDONNEES['email']}",
-               f"- Adresse : {content.COORDONNEES['adresse']}", '']
+    articles = Article.objects.filter(publish=True, histoire=False)[:5]
+    if articles:
+        lignes += ['', '## Dernières actualités', '']
+        lignes += [f"- [{a.titre}]({base}{a.get_absolute_url()}): {a.date_publication.isoformat()}"
+                   + (f' — {Truncator(strip_tags(a.chapo)).chars(140)}' if a.chapo else '') for a in articles]
+    lignes += ['', '## Réseaux et profils', '']
+    lignes += [f"- {r['label']} : {r['url']}" for r in content.RESEAUX]
+    lignes.append('')
     return '\n'.join(lignes)
 
 

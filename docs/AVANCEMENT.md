@@ -68,6 +68,21 @@ Documents liés : [PLAN.md](PLAN.md) (ce qu'il faut construire),
 - Les liens « Experience Lab » (navigation, pied de page, accueil, page Nos programmes) pointent vers la page.
 - 3 tests ajoutés (17 au total). Valeurs lues dans la maquette (positions, tailles, interlignes, espacements et rotations relevés à 1440 px, appliqués en `vw` en dessous) ; rendu à valider dans un navigateur.
 
+### GEO : être cité par les moteurs de réponse IA (ChatGPT, Claude, Perplexity, Google AI)
+- **Section « Questions fréquentes »** visible sur chacune des 14 pages (`app/includes/_faq.html`, contenu dans `content.FAQ`) : titres en forme de question, réponses autonomes avec chiffres et noms exacts, sans information inventée (dates et tarifs inconnus annoncés « à confirmer »). Pas de balisage `FAQPage` (réservé par Google aux sites publics et de santé).
+- **`/robots.txt`** : `GPTBot`, `OAI-SearchBot`, `ChatGPT-User`, `ClaudeBot` et `PerplexityBot` nommés et autorisés ; **`/llms.txt`** enrichi (faits clés, pages, 5 dernières actualités, réseaux).
+- **Données structurées** : les 9 membres de l'équipe déclarés en `Person` sur la page Équipe ; `dateModified` sur les pages alimentées par la base ; dates d'article dans des balises `<time>`.
+- Score GEO estimé : 51 → 71 sur 100 (à refaire sur le site publié). Rapport, règles de rédaction et actions hors du site (YouTube, LinkedIn, Wikidata, Search Console) : [GEO.md](GEO.md).
+- 8 tests ajoutés (90 au total).
+
+### Images allégées (WebP)
+- Les 10 photos et le logo UCIV Leadership sont servis en **WebP**, tous sous 200 Ko (de 2,2 Mo à 195 Ko pour la plus lourde) : 7,9 Mo avant, 1,4 Mo après pour l'ensemble des images du site. `logo-uciv.png` (24 Ko) reste en PNG (icône du navigateur, logo des données structurées).
+- Les **originaux** sont conservés dans `sources/images/` (hors du dossier servi au public). L'outil `outils/convertir_images.py` (Pillow) reconstruit les WebP : déposer l'original dans `sources/images/`, puis `python outils/convertir_images.py`.
+- **Images de partage** (Open Graph) : 5 JPEG de 1200 × 630 (`og-*.jpg`, moins de 150 Ko) pour l'accueil, UCIV Leadership, Experience Lab, Je veux m'engager et Partenaires, en JPEG car LinkedIn et d'autres réseaux n'affichent pas toujours le WebP.
+- Migration `0007_images_webp` : met à jour les chemins des articles déjà en base (`.jpg`/`.png` vers `.webp`).
+- 3 tests ajoutés (82 au total) : chaque image référencée existe et pèse moins de 200 Ko, les pages servent les WebP, aucun article ne pointe vers un ancien fichier.
+- À faire : `python manage.py migrate` (migration `0007`) ; pour un article avec image téléversée depuis l'administration, privilégier un fichier déjà allégé (WebP, moins de 200 Ko).
+
 ### Référencement (SEO) de chaque page
 - **Balises par page** (`content.SEO_PAGES`, rendues par `app/seo.py`) : titre de 47 à 58 caractères, description de 138 à 159 caractères, uniques ; balise `canonical`, `robots`, Open Graph (`og:*`) et Twitter Card ; `og:image` propre à la page quand elle en a une. Le titre et la description d'un article viennent de l'article (titre, résumé, image, dates `article:*`).
 - **Données structurées JSON-LD** : accueil = `NGO` (organisation, fondateur, réseaux, contact) + `WebSite` ; pages intérieures = `WebPage`/`AboutPage`/`CollectionPage`/`ContactPage` + `BreadcrumbList` ; UCIV Leadership = `Event` (lancement le 24 octobre 2026, American Corner) ; Go du Digital et Experience Lab = `Course` ; Nos programmes = `ItemList` ; articles = `Article` (éditeur, image, dates). Aucun `FAQPage` ni `HowTo` (restreint / abandonné par Google).
@@ -75,7 +90,7 @@ Documents liés : [PLAN.md](PLAN.md) (ce qu'il faut construire),
 - **Doublons évités** : les pages filtrées (`?categorie=`, `?type=`, `?theme=`, `?choix=`, `?objet=`) sont en `noindex, follow` avec une adresse canonique propre ; chaque page de la pagination des actualités a sa propre adresse canonique.
 - **`SITE_URL`** (ex. `https://uciv.org`) fixe l'adresse publique utilisée par les adresses canoniques, le sitemap et les données structurées : à renseigner en production (déjà dans `deploy/deployer.sh`).
 - 17 tests ajoutés (79 au total) : longueur des titres et descriptions, unicité, un seul `h1`, texte alternatif sur chaque image, JSON-LD valide, fil d'Ariane, événement, article, `noindex` des variantes, `robots.txt`, sitemap, `llms.txt`, 404.
-- **Recommandations restantes** : (1) alléger les images lourdes, `groupe-couleur.png` 2,2 Mo, `groupe-nb.png` 2,0 Mo, `volontaires-terrain.jpg` 0,9 Mo, `go-du-digital.jpg` 0,8 Mo, `experience-lab.jpg` 0,7 Mo (cible : moins de 200 Ko, format WebP ; Pillow est maintenant disponible pour les convertir) ; (2) après la mise en ligne, déclarer le site dans Google Search Console et lui soumettre `sitemap.xml` ; (3) remplacer le lien Facebook de partage par l'adresse réelle de la page ; (4) créer l'image de partage dédiée (1200 × 630) ; (5) rédiger les pages légales.
+- **Recommandations restantes** : (1) après la mise en ligne, déclarer le site dans Google Search Console et lui soumettre `sitemap.xml` ; (2) remplacer le lien Facebook de partage par l'adresse réelle de la page ; (3) rédiger les pages légales.
 
 ### Passage sur MySQL (préparé, pas encore appliqué au site)
 - Serveur : MySQL 8.4 et phpMyAdmin (https://bd.uciv.org, double authentification, HTTPS) installés ; base `uciv` et utilisateur `uciv_user` créés ; script `deploy/phpmyadmin.sh`.

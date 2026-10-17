@@ -17,6 +17,7 @@ Depuis `src/` :
 - **Contenu éditorial** : textes, navigation, programmes et articles vivent dans `src/app/content.py`, pas dans les gabarits.
 - **Gabarits** : héritent de `app/base/base.html`. Les fragments réutilisables vont dans `templates/app/includes/`.
 - **Statiques** : `src/static/app/assets/{css,js,img}`. Référence-les avec `{% static 'app/assets/...' %}`.
+- **Images** : dépose l'original dans `sources/images/` puis lance `python outils/convertir_images.py` (WebP de moins de 200 Ko servis depuis `src/static/app/assets/img/`). Ne mets jamais un original lourd dans `static/`.
 - **Modèles publiables** : héritent de `Convention` (`app/models.py`).
 - **Langue** : code, commentaires, messages de commit et textes du site en français.
 

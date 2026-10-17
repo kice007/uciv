@@ -289,9 +289,9 @@ class ContenuModelsTests(TestCase):
     def test_article_image_url_prefers_static_path(self):
         article = Article.objects.create(
             titre='Un article', slug='un-article', categorie='activites',
-            date_publication='2026-10-01', image='app/assets/img/groupe-nb.png',
+            date_publication='2026-10-01', image='app/assets/img/groupe-nb.webp',
         )
-        self.assertTrue(article.image_url.endswith('app/assets/img/groupe-nb.png'))
+        self.assertTrue(article.image_url.endswith('app/assets/img/groupe-nb.webp'))
         self.assertEqual(str(article), 'Un article')
 
     def test_article_without_image_has_empty_url(self):
@@ -616,3 +616,101 @@ class ReferencementTests(TestCase):
         html = reponse.content.decode()
         self.assertIn('noindex, nofollow', html)
         self.assertIn('Page <em>introuvable.</em>', html)
+
+
+class ImagesDuSiteTests(TestCase):
+    def test_every_image_referenced_exists_and_is_light(self):
+        import re
+        from pathlib import Path
+        from django.conf import settings
+        dossier = Path(settings.BASE_DIR) / 'static'
+        fichiers = list((Path(settings.BASE_DIR) / 'app').glob('*.py')) + list((Path(settings.BASE_DIR) / 'templates').rglob('*.html'))
+        references = set()
+        for fichier in fichiers:
+            if fichier.name == 'tests.py':
+                continue
+            references |= set(re.findall(r"app/assets/img/[\w.-]+\.(?:webp|jpg|png)", fichier.read_text(encoding='utf-8')))
+        self.assertTrue(references)
+        for chemin in sorted(references):
+            fichier = dossier / chemin
+            self.assertTrue(fichier.exists(), f'image absente : {chemin}')
+            self.assertLessEqual(fichier.stat().st_size / 1024, 200, f'image trop lourde : {chemin}')
+
+    def test_site_serves_webp_photos(self):
+        html = self.client.get(reverse('app:go_du_digital')).content.decode()
+        self.assertIn('/static/app/assets/img/go-du-digital.webp', html)
+        self.assertNotIn('.jpg"', html.split('</head>')[1].replace('og-', ''))
+
+    def test_article_images_in_database_use_webp(self):
+        for article in Article.objects.filter(image__startswith='app/assets/img/'):
+            self.assertTrue(article.image.endswith(('.webp', '.jpg')), article.image)
+            self.assertFalse(article.image.endswith('.png'), article.image)
+
+class GeoTests(TestCase):
+    def html(self, nom):
+        return self.client.get(reverse('app:' + nom)).content.decode()
+
+    def test_every_page_has_a_visible_faq_with_question_headings(self):
+        import re
+        for nom in content.PAGES_INDEXABLES:
+            html = self.html(nom)
+            self.assertIn('class="faq"', html, nom)
+            self.assertIn('Questions fréquentes', html, nom)
+            questions = re.findall(r'<div class="faq__item"[^>]*>\s*<h3>(.*?)</h3>\s*<p>(.*?)</p>', html, re.S)
+            self.assertGreaterEqual(len(questions), 2, nom)
+            for question, reponse in questions:
+                self.assertTrue(question.strip().endswith('?'), f'{nom} : {question}')
+                self.assertGreaterEqual(len(reponse.split()), 12, f'{nom} : réponse trop courte à « {question} »')
+
+    def test_faq_questions_are_unique_and_have_no_faqpage_markup(self):
+        questions = [q for faq in content.FAQ.values() for q, _ in faq]
+        self.assertEqual(len(questions), len(set(questions)))
+        for nom in content.PAGES_INDEXABLES:
+            self.assertNotIn('FAQPage', self.html(nom))
+
+    def test_faq_facts_match_site_data(self):
+        faq_lead = dict(content.FAQ['uciv_leadership'])
+        self.assertIn('24 octobre 2026', faq_lead["Quand a lieu le lancement d'UCIV Leadership ?"])
+        self.assertIn('30 et 50', faq_lead['Combien de membres compte la cohorte pionnière ?'])
+        faq_contact = ' '.join(dict(content.FAQ['contact']).values())
+        for coordonnee in ('+225 07 87 56 17 66', '+225 07 07 722 078', 'organisationuciv@gmail.com', '04 BP 2087'):
+            self.assertIn(coordonnee, faq_contact)
+
+    def test_robots_names_and_allows_ai_crawlers(self):
+        texte = self.client.get('/robots.txt').content.decode()
+        for robot in ('GPTBot', 'OAI-SearchBot', 'ChatGPT-User', 'ClaudeBot', 'PerplexityBot'):
+            self.assertIn(f'User-agent: {robot}', texte)
+        groupes = texte.split('\n\n')
+        self.assertTrue(all('Disallow: /admin/' in g for g in groupes if g.startswith(('User-agent', '# Robots'))))
+        self.assertIn('Sitemap:', texte)
+
+    def test_llms_txt_has_key_facts_and_latest_news(self):
+        texte = self.client.get('/llms.txt').content.decode()
+        self.assertIn('## Faits clés', texte)
+        self.assertIn('Marshall Kouamé', texte)
+        self.assertIn('24 octobre 2026', texte)
+        self.assertIn('## Dernières actualités', texte)
+        self.assertIn('/actualites/', texte)
+        self.assertIn('## Réseaux et profils', texte)
+
+    def test_team_page_declares_people(self):
+        import json
+        import re
+        html = self.html('equipe')
+        liste = next(json.loads(b) for b in re.findall(r'<script type="application/ld\+json">(.*?)</script>', html, re.S)
+                     if '"Person"' in b)
+        noms = [e['item']['name'] for e in liste['itemListElement']]
+        self.assertIn('Marshall Kouamé', noms)
+        self.assertIn('Martine Boa', noms)
+        self.assertEqual(len(noms), 9)
+        self.assertTrue(all(e['item']['worksFor']['@id'].endswith('/#organisation') for e in liste['itemListElement']))
+
+    def test_collection_pages_declare_date_modified(self):
+        import re
+        html = self.html('actualites')
+        self.assertRegex(html, r'"dateModified": "\d{4}-\d{2}-\d{2}')
+
+    def test_article_dates_use_time_elements(self):
+        article = Article.objects.get(slug='uciv-et-paipro-jeunes-s-associent-pour-l-insertion-des-jeunes')
+        html = self.client.get(reverse('app:article', args=[article.slug])).content.decode()
+        self.assertRegex(html, r'<time datetime="\d{4}-\d{2}-\d{2}">')

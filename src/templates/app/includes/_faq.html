@@ -1,0 +1,19 @@
+{# Questions fréquentes : réponses directes et autonomes, visibles (lisibles par les moteurs de réponse IA). #}
+{% if faq %}
+<section class="faq" aria-labelledby="faq-titre">
+  <div class="conteneur faq__cadre">
+    <div class="faq__tete" data-reveal>
+      <p class="surtitre">En bref</p>
+      <h2 class="faq__titre" id="faq-titre">{{ faq_titre }}</h2>
+    </div>
+    <div class="faq__liste">
+      {% for question, reponse in faq %}
+        <div class="faq__item" data-reveal style="--i: {{ forloop.counter0 }}">
+          <h3>{{ question }}</h3>
+          <p>{{ reponse }}</p>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}

@@ -10,6 +10,8 @@ sans dépendance tierce : `requirements.txt` ne contient que Django.
 ├── requirements.txt      # Django et Pillow
 ├── requirements-mysql.txt  # + mysqlclient (production)
 ├── deploy/               # scripts serveur (phpMyAdmin)
+├── outils/               # convertir_images.py : originaux vers WebP (Pillow)
+├── sources/images/       # images originales (non servies)
 ├── README.md · CLAUDE.md · CONTRIBUTING.md
 ├── docs/             # ARCHITECTURE.md, PLAN.md, AVANCEMENT.md
 ├── maquette/         # design_uciv.pen (maquette Pencil)
@@ -28,7 +30,7 @@ sans dépendance tierce : `requirements.txt` ne contient que Django.
     │   ├── forms.py              # formulaires (Engagement, Partenariat, Contact)
     │   ├── migrations/           # migrations de la base
     │   ├── admin.py              # administration Django
-    │   ├── seo.py                # SEO : balises, JSON-LD, robots.txt, sitemap, llms.txt
+    │   ├── seo.py                # SEO et GEO : balises, JSON-LD, robots.txt, sitemap, llms.txt
     │   ├── views.py / urls.py    # page d'accueil, namespace « app »
     │   ├── templatetags/custom_tags.py  # filtre corps_article (texte des articles)
     │   └── tests.py

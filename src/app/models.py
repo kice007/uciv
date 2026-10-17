@@ -110,7 +110,7 @@ class Article(Convention):
     a_la_une = models.BooleanField('à la une', default=False)
     histoire = models.BooleanField('afficher dans « Nos histoires » (Notre impact)', default=False)
     image = models.CharField('image (chemin statique)', max_length=300, blank=True,
-                             help_text="Ex. app/assets/img/groupe-nb.png ; ignoré si une image est téléversée.")
+                             help_text="Ex. app/assets/img/groupe-nb.webp ; ignoré si une image est téléversée.")
     image_televersee = models.FileField('image téléversée', upload_to='articles/', blank=True)
     image_alt = models.CharField('texte alternatif de l\'image', max_length=200, blank=True)
     image_legende = models.CharField('légende de l\'image', max_length=200, blank=True)

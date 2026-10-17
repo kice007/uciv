@@ -18,7 +18,7 @@
     <p class="lst-tag lst-tag--jaune art-hero__tag hero__entree" style="--i: 0">{{ article.etiquette_affichee }}</p>
     <h1 class="art-hero__titre hero__entree" style="--i: 1">{{ article.titre }}</h1>
     <ul class="art-hero__infos hero__entree" style="--i: 2">
-      <li>{% include "app/includes/_icon.html" with name="calendar" %}{{ article.date_publication|date:"d/m/Y" }}</li>
+      <li>{% include "app/includes/_icon.html" with name="calendar" %}<time datetime="{{ article.date_publication|date:"Y-m-d" }}">{{ article.date_publication|date:"d/m/Y" }}</time></li>
       <li>{% include "app/includes/_icon.html" with name="user" %}Par {{ article.auteur }}</li>
       <li>{% include "app/includes/_icon.html" with name="clock" %}{{ article.temps_lecture }} min de lecture</li>
     </ul>
