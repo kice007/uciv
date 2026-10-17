@@ -12,7 +12,7 @@
         </ol>
       </nav>
       <p class="surtitre surtitre--blanc hero__entree" style="--i: 0">{{ hero.surtitre }}</p>
-      <h1 class="ph-titre hero__entree" style="--i: 1; --fs: {{ hero.taille }}">{{ hero.titre }} <em>{{ hero.suite }}</em></h1>
+      <h1 class="ph-titre hero__entree" style="--i: 1; --fs: {{ hero.taille }}; --fsm: {{ hero.taille_mobile|default:40 }}">{{ hero.titre }} <em>{{ hero.suite }}</em></h1>
       <p class="ph-chapo hero__entree" style="--i: 2; --cw: {{ hero.largeur_chapo }}">{{ hero.chapo }}</p>
     </div>
   </div>

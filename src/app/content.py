@@ -719,7 +719,7 @@ _CREME, _BLANC_8 = 'var(--creme)', 'rgba(255, 255, 255, .08)'
 
 OPPORTUNITES_PAGE = {
     'hero': {
-        'fond': 'vert-profond', 'hauteur': 580, 'taille': 62, 'largeur_texte': 760, 'largeur_chapo': 560,
+        'fond': 'vert-profond', 'hauteur': 580, 'taille': 62, 'taille_mobile': 40, 'largeur_texte': 760, 'largeur_chapo': 560,
         'fil': [_ACCUEIL, {'label': 'Opportunités'}],
         'surtitre': 'Opportunités',
         'titre': 'Les opportunités qui peuvent', 'suite': 'faire grandir votre parcours.',
@@ -746,7 +746,7 @@ OPPORTUNITES_PAGE = {
 
 ACTUALITES_PAGE = {
     'hero': {
-        'fond': 'vert-profond', 'hauteur': 500, 'taille': 88, 'largeur_texte': 700, 'largeur_chapo': 560,
+        'fond': 'vert-profond', 'hauteur': 500, 'taille': 88, 'taille_mobile': 48, 'largeur_texte': 700, 'largeur_chapo': 560,
         'fil': [_ACCUEIL, {'label': 'Actualités'}],
         'surtitre': 'Actualités',
         'titre': "L'actualité", 'suite': "d'UCIV.",
@@ -763,7 +763,7 @@ ACTUALITES_PAGE = {
 
 IMPACT_PAGE = {
     'hero': {
-        'fond': 'vert', 'hauteur': 520, 'taille': 66, 'largeur_texte': 760, 'largeur_chapo': 560,
+        'fond': 'vert', 'hauteur': 520, 'taille': 66, 'taille_mobile': 40, 'largeur_texte': 760, 'largeur_chapo': 560,
         'fil': [_ACCUEIL, {'label': 'Notre impact'}],
         'surtitre': 'Notre impact',
         'titre': 'Des actions. Des expériences.', 'suite': "De l'impact.",
@@ -788,7 +788,7 @@ IMPACT_PAGE = {
 
 RESSOURCES_PAGE = {
     'hero': {
-        'fond': 'orange', 'hauteur': 500, 'taille': 76, 'largeur_texte': 760, 'largeur_chapo': 600,
+        'fond': 'orange', 'hauteur': 500, 'taille': 76, 'taille_mobile': 44, 'largeur_texte': 760, 'largeur_chapo': 600,
         'fil': [_ACCUEIL, {'label': 'Ressources'}],
         'surtitre': 'Ressources',
         'titre': "Apprendre. S'informer.", 'suite': 'Progresser.',
