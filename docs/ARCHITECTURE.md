@@ -22,8 +22,8 @@ sans dépendance tierce : `requirements.txt` ne contient que Django.
     ├── app/              # contenu éditorial du site
     │   ├── content.py            # textes, navigation, programmes, articles
     │   ├── context_processors.py # variables communes (navigation, pied de page)
-    │   ├── models.py             # Convention (abstrait), 3 modèles de formulaires, Article, Opportunite, Ressource, Indicateur
-    │   ├── forms.py              # formulaires (Engagement, Partenariat, Contact)
+    │   ├── models.py             # Convention (abstrait), 3 modèles de formulaires, Article, Opportunite, Ressource, Indicateur, Abonne (lettre d'information)
+    │   ├── forms.py              # formulaires (Engagement, Partenariat, Contact, Newsletter)
     │   ├── migrations/           # migrations de la base
     │   ├── admin.py              # administration Django
     │   ├── views.py / urls.py    # toutes les pages, namespace « app » ; page_legale et page_introuvable (404)
@@ -31,7 +31,7 @@ sans dépendance tierce : `requirements.txt` ne contient que Django.
     │   └── tests.py
     ├── templates/
     │   ├── app/base/base.html     # gabarit de base
-    │   ├── app/layout/            # une page par gabarit ; legal.html (3 pages légales) et 404.html
+    │   ├── app/layout/            # une page par gabarit ; legal.html (3 pages légales), 404.html, desinscription.html
     │   ├── app/includes/          # en-tête, pied de page, icônes
     │   └── emails/                # gabarits d'e-mails
     ├── static/app/assets/{css,js,img}

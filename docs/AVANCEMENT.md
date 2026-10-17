@@ -17,7 +17,7 @@ Documents liés : [PLAN.md](PLAN.md) (ce qu'il faut construire),
 | Pages intérieures (14) | **14 faites** : les 9 précédentes + Opportunités, Actualités, Article, Notre impact, Ressources |
 | Pages légales et 404 | **Faites** (desktop et mobile) : mentions légales, politique de confidentialité, conditions d'utilisation, page introuvable |
 | Modèles de données et administration | 7 modèles administrables : 3 de formulaires (`SoumissionEngagement`, `SoumissionPartenariat`, `SoumissionContact`) et 4 de contenu (`Article`, `Opportunite`, `Ressource`, `Indicateur`) ; `MembreEquipe`, `Programme` et `Partenaire` restent dans `content.py` |
-| Formulaires | 3 faits (engagement, partenariat, contact) ; newsletter à faire |
+| Formulaires | 4 faits : engagement, partenariat, contact, lettre d'information (pied de page) |
 | Responsive mobile (390 px) | **Fait pour les 15 pages**, aligné sur les écrans « … — Mobile » de la maquette ; tablette déduite (720–1099 px) |
 | Documentation | Faite (voir ci-dessus) |
 | Mise en ligne | Non commencée |
@@ -142,6 +142,18 @@ Documents liés : [PLAN.md](PLAN.md) (ce qu'il faut construire),
 - **Formes concentriques** : dans les bandeaux, chaque forme est désormais placée par son centre (`.ph-forme`), si bien qu'un disque reste au centre de son anneau à toutes les largeurs d'écran ; anneaux orange des pages légales aux dimensions exactes de la maquette (légèrement ovales, `h` dans `content.py`), disque orange de la 404 centré dans l'anneau jaune (desktop et mobile).
 - 5 tests ajoutés (61 au total).
 
+### Lettre d'information (16 octobre 2026)
+- **Maquette** : écrans « Lettre d'information — états du formulaire » (desktop, mobile), « Désinscription » et « Désinscription confirmée » (desktop, mobile), validés avant l'implémentation.
+- **Choix** : inscription directe (pas de double confirmation) ; le site collecte les adresses, l'équipe envoie la lettre avec son propre outil (Brevo, Mailchimp…) à partir d'un export CSV.
+- **Modèle** `Abonne` (migration `0006`) : e-mail unique, actif, jeton de désinscription, dates d'inscription et de désinscription. **Administration** : filtre actifs / désinscrits, action « Exporter en CSV les abonnés actifs sélectionnés » (séparateur `;`, compatible Excel).
+- **Pied de page** : le formulaire envoie vers `/newsletter/inscription/` (champ piège anti-robots) puis revient sur la même page, au niveau de la carte (`#lettre`), qui affiche l'état : inscription réussie, déjà inscrit·e, adresse invalide (l'adresse saisie est conservée). Réinscription possible après une désinscription.
+- **Désinscription** : lien personnel `/newsletter/desinscription/<jeton>/`, page en deux étapes (confirmer en un clic, puis « C'est noté ») ; la désinscription se fait en POST pour qu'une messagerie qui ouvre les liens ne désinscrive personne. Jeton inconnu : 404. Page non indexée.
+- **E-mail de bienvenue** avec le lien de désinscription, envoyé si `EMAIL_HOST` est configuré (`emails/newsletter_bienvenue.html`).
+- **Disques** : sur la page de désinscription, anneau, disque et pictogramme ont le même centre (vérifié : 1083 ; 433 en desktop, 208 ; 241 en mobile).
+- **Fichiers** : `models.py`, `forms.py`, `views.py`, `urls.py`, `admin.py`, `content.py` (`NEWSLETTER`, `DESINSCRIPTION`), `context_processors.py`, `templatetags/custom_tags.py` (`get_item`), `includes/_footer.html`, `includes/_icons.html`, `layout/desinscription.html`, `emails/newsletter_bienvenue.html`, `main.css` (section 25), `main.js` (suppression du formulaire provisoire).
+- 10 tests ajoutés (71 au total).
+- À faire en production : `python manage.py migrate` (migration `0006`).
+
 ### Maquette
 - `maquette/design_uciv.pen` : 16 écrans desktop et 15 écrans mobiles ; le plan de réalisation en est tiré.
 
@@ -161,7 +173,7 @@ Le travail du 16 octobre est sur `feature/responsive-mobile` (demande de fusion)
 
 1. **Valider le mobile dans un vrai téléphone** (menu, formulaires, défilement des cartes) et décider de la tablette (720–1099 px, déduite du desktop, pas d'écran dans la maquette).
 2. **Écarts de contenu restants en mobile** : 2ᵉ photo d'article (non gérée par le modèle), pagination des actualités (s'affichera avec plus d'articles), images des « histoires » de Notre impact (articles sans image en base), une seule affiche pour le lancement de Leadership (la maquette en montre deux).
-3. **Newsletter** : brancher le formulaire du pied de page (enregistrement des adresses, désinscription).
+3. **Bouton de recherche de l'en-tête** : décider (page de recherche ou retrait), c'est le dernier lien `#`.
 4. **Textes légaux** : faire compléter et relire les passages entre crochets par UCIV.
 5. **Images à fournir** : portraits HD du bureau exécutif, photos générées de la maquette, 2ᵉ image d'article.
 6. **Contenus à remplacer** : fiches d'exemple (opportunités, ressources), chiffres d'impact, bios, dates et tarifs des programmes, textes des articles.
@@ -173,7 +185,6 @@ Le détail de chaque page, composant, modèle et formulaire est dans [PLAN.md](P
 ## Décisions en attente
 
 - Tablette : garder la mise en page déduite du desktop ou produire des écrans dédiés ?
-- Newsletter : service d'envoi externe ou simple collecte d'adresses ?
 - Pillow pour les images téléversées, ou chemins statiques ?
 - Pages à rédiger : politique de confidentialité, mentions légales, conditions d'utilisation.
 - Contenus à recevoir : dates, tarifs et modalités des programmes, chiffres d'impact, bios de l'équipe, photos, URLs des réseaux sociaux.
