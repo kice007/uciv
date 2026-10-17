@@ -598,17 +598,18 @@ EQUIPE = {
     'president_role': "Président et fondateur d'Une Côte d'Ivoire Volontaire.",
     'president_bio': "[Courte biographie à transmettre : parcours, engagement et "
                      "vision pour la jeunesse ivoirienne.]",
-    # `photo` : chemin statique du portrait (bureau-executif.jpg dans la maquette,
-    # pas encore fourni). Sans photo, la carte affiche les initiales.
+    # `photo` : chemin statique du portrait, découpé dans l'affiche bureau-executif.jpg
+    # comme dans la maquette (basse résolution : à remplacer par des photos HD).
+    # Sans photo, la carte affiche les initiales.
     'bureau': [
         {'nom': 'Aïssata Ouattara', 'initiales': 'AO', 'couleur': 'orange',
-         'role': 'Secrétaire Générale', 'photo': None},
+         'role': 'Secrétaire Générale', 'photo': 'app/assets/img/bureau-aissata-ouattara.jpg'},
         {'nom': 'Dr Angèle Zang', 'initiales': 'AZ', 'couleur': 'vert',
-         'role': 'Trésorière Générale', 'photo': None},
+         'role': 'Trésorière Générale', 'photo': 'app/assets/img/bureau-angele-zang.jpg'},
         {'nom': 'Roxane Atchia', 'initiales': 'RA', 'couleur': 'jaune',
-         'role': 'Commissaire aux comptes', 'photo': None},
+         'role': 'Commissaire aux comptes', 'photo': 'app/assets/img/bureau-roxane-atchia.jpg'},
         {'nom': 'Martine Boa', 'initiales': 'MB', 'couleur': 'profond',
-         'role': 'Responsable Générale des projets', 'photo': None},
+         'role': 'Responsable Générale des projets', 'photo': 'app/assets/img/bureau-martine-boa.jpg'},
     ],
     'medias_intro': "Les biographies, photos et domaines d'expertise de chaque "
                     "responsable seront ajoutés dès leur transmission.",
