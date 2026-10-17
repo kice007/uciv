@@ -396,3 +396,39 @@ class PagesDeContenuTests(TestCase):
         response = self.client.get(reverse('app:home'))
         for nom in ('opportunites', 'actualites', 'impact', 'ressources'):
             self.assertContains(response, reverse('app:' + nom))
+
+
+class PagesLegalesTests(TestCase):
+    """Mentions légales, politique de confidentialité, conditions d'utilisation."""
+
+    def test_les_trois_pages_repondent(self):
+        for nom, titre in [('app:mentions_legales', 'Mentions'),
+                           ('app:confidentialite', 'Politique de'),
+                           ('app:conditions', 'Conditions')]:
+            response = self.client.get(reverse(nom))
+            self.assertEqual(response.status_code, 200)
+            self.assertContains(response, titre)
+            self.assertContains(response, 'Sur cette page')
+            self.assertContains(response, 'Les autres')
+
+    def test_texte_a_completer_signale(self):
+        response = self.client.get(reverse('app:mentions_legales'))
+        self.assertContains(response, '<span class="a-completer">[Nom de l&#x27;hébergeur]</span>', html=False)
+
+    def test_pied_de_page_relie_les_pages_legales(self):
+        response = self.client.get(reverse('app:home'))
+        for nom in ['app:mentions_legales', 'app:confidentialite', 'app:conditions']:
+            self.assertContains(response, f'href="{reverse(nom)}"')
+
+    def test_formulaires_relient_la_politique(self):
+        url = reverse('app:confidentialite')
+        for nom in ['app:engagement', 'app:contact']:
+            self.assertContains(self.client.get(reverse(nom)), f'href="{url}"')
+
+
+class PageIntrouvableTests(TestCase):
+    def test_page_404_du_site(self):
+        response = self.client.get('/cette-page-n-existe-pas/')
+        self.assertEqual(response.status_code, 404)
+        self.assertContains(response, "s&#x27;est égarée.", status_code=404)
+        self.assertContains(response, f'href="{reverse("app:contact")}"', status_code=404)

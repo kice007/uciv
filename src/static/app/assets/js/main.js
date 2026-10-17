@@ -164,4 +164,20 @@
     liste.addEventListener('change', synchroniser);
     synchroniser();
   });
+
+  /* 7. Sommaire des pages légales : met en évidence la section en cours de lecture. */
+  var liensSommaire = document.querySelectorAll('.leg-sommaire a');
+  if (liensSommaire.length && 'IntersectionObserver' in window) {
+    var activer = function (id) {
+      liensSommaire.forEach(function (lien) {
+        lien.classList.toggle('est-actif', lien.getAttribute('href') === '#' + id);
+      });
+    };
+    var observateur = new IntersectionObserver(function (entrees) {
+      entrees.forEach(function (entree) {
+        if (entree.isIntersecting) activer(entree.target.id);
+      });
+    }, { rootMargin: '-20% 0px -70% 0px' });
+    document.querySelectorAll('.leg-section').forEach(function (section) { observateur.observe(section); });
+  }
 })();

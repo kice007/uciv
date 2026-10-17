@@ -38,3 +38,14 @@ def corps_article(texte):
         else:
             html.append(format_html('<p>{}</p>', ' '.join(lignes)))
     return mark_safe('\n'.join(html))
+
+
+@register.filter
+def crochets(texte):
+    """Échappe le texte et signale les passages [entre crochets] à compléter (pages légales)."""
+    morceaux = re.split(r'(\[[^\]]+\])', texte or '')
+    return mark_safe(''.join(
+        format_html('<span class="a-completer">{}</span>', m) if m.startswith('[') and m.endswith(']')
+        else format_html('{}', m)
+        for m in morceaux if m
+    ))

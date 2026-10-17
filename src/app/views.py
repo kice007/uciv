@@ -274,3 +274,15 @@ def ressources(request):
         'chips_theme': _pastilles(request, 'theme', Ressource.THEMES, theme, conserver=('type',)),
         'modele': any(f.modele for f in fiches),
     })
+
+
+def page_legale(request, cle):
+    """Pages légales : mentions légales, politique de confidentialité, conditions d'utilisation."""
+    page = content.LEGAL[cle]
+    documents = [dict(doc, actuel=doc['cle'] == cle) for doc in content.LEGAL_DOCUMENTS]
+    return render(request, 'app/layout/legal.html', {'page': page, 'documents': documents})
+
+
+def page_introuvable(request, exception=None):
+    """Page d'erreur 404 (branchée par `handler404` dans core/urls.py)."""
+    return render(request, 'app/layout/404.html', {'page': content.PAGE_404}, status=404)

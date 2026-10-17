@@ -1,0 +1,42 @@
+{% extends "app/base/base.html" %}
+
+{% block title %}Page introuvable — Une Côte d'Ivoire Volontaire{% endblock %}
+{% block description %}Cette page n'existe pas ou a été déplacée.{% endblock %}
+
+{% block content %}
+
+<section class="err">
+  <span class="forme err__anneau" aria-hidden="true"></span>
+  <div class="conteneur err__grille">
+    <div class="err__visuel" aria-hidden="true">
+      <span class="forme err__jaune"></span>
+      <span class="err__chiffre err__chiffre--g">4</span>
+      <span class="forme err__disque"></span>
+      <span class="err__chiffre err__chiffre--d">4</span>
+      <p class="manuscrit err__note">{{ page.note }}</p>
+    </div>
+
+    <div class="err__texte">
+      <p class="surtitre hero__entree" style="--i: 0">Erreur 404</p>
+      <h1 class="err__titre hero__entree" style="--i: 1">{{ page.titre }} <em>{{ page.suite }}</em></h1>
+      <p class="err__chapo hero__entree" style="--i: 2">{{ page.texte }}</p>
+      <div class="err__boutons hero__entree" style="--i: 3">
+        <a class="btn btn--vert" href="{% url 'app:home' %}">
+          <span>Retour à l'accueil</span>
+          <span class="btn__rond">{% include "app/includes/_icon.html" with name="arrow-right" %}</span>
+        </a>
+        <a class="btn btn--contour" href="{% url 'app:contact' %}">Nous contacter</a>
+      </div>
+      <nav class="err__liens hero__entree" style="--i: 4" aria-label="Pages utiles">
+        <p>Ou reprenez par ici</p>
+        <ul>
+          {% for lien in page.liens %}
+            <li><a href="{{ lien.url }}">{{ lien.label }}</a></li>
+          {% endfor %}
+        </ul>
+      </nav>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
