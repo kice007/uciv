@@ -1,7 +1,7 @@
 # Avancement du projet UCIV
 
 Point de reprise : ce qui est fait, ce qui ne l'est pas, et par où continuer.
-Dernière mise à jour : 16 octobre 2026.
+Dernière mise à jour : 17 octobre 2026.
 
 Documents liés : [PLAN.md](PLAN.md) (ce qu'il faut construire),
 [ARCHITECTURE.md](ARCHITECTURE.md) (structure), [CLAUDE.md](../CLAUDE.md) (règles agents),
@@ -16,9 +16,10 @@ Documents liés : [PLAN.md](PLAN.md) (ce qu'il faut construire),
 | Page d'accueil | Faite, alignée sur la maquette |
 | Pages intérieures (14) | **14 faites** : les 9 précédentes + Opportunités, Actualités, Article, Notre impact, Ressources |
 | Pages légales et 404 | **Faites** (desktop et mobile) : mentions légales, politique de confidentialité, conditions d'utilisation, page introuvable |
-| Modèles de données et administration | 7 modèles administrables : 3 de formulaires (`SoumissionEngagement`, `SoumissionPartenariat`, `SoumissionContact`) et 4 de contenu (`Article`, `Opportunite`, `Ressource`, `Indicateur`) ; `MembreEquipe`, `Programme` et `Partenaire` restent dans `content.py` |
+| Modèles de données et administration | 8 modèles administrables : `Abonne` (lettre d'information), 3 de formulaires (`SoumissionEngagement`, `SoumissionPartenariat`, `SoumissionContact`) et 4 de contenu (`Article`, `Opportunite`, `Ressource`, `Indicateur`) ; `MembreEquipe`, `Programme` et `Partenaire` restent dans `content.py` |
 | Formulaires | 4 faits : engagement, partenariat, contact, lettre d'information (pied de page) |
 | Responsive mobile (390 px) | **Fait pour les 15 pages**, aligné sur les écrans « … — Mobile » de la maquette ; tablette déduite (720–1099 px) |
+| Dashboard de l'équipe | **Maquette faite et validée** (desktop et mobile, branche `feature/dashboard`) ; implémentation pas commencée |
 | Documentation | Faite (voir ci-dessus) |
 | Mise en ligne | Non commencée |
 
@@ -154,8 +155,18 @@ Documents liés : [PLAN.md](PLAN.md) (ce qu'il faut construire),
 - 10 tests ajoutés (71 au total).
 - À faire en production : `python manage.py migrate` (migration `0006`).
 
+### Maquette du dashboard de l'équipe (16-17 octobre 2026)
+- **Objectif** : un espace privé, distinct de l'admin Django, pour gérer et alimenter le contenu des pages Opportunités, Actualités, Article, Notre impact et Ressources.
+- **Choix validés** : le dashboard couvre le contenu **et** le suivi (messages reçus des formulaires, abonnés avec export CSV) ; un seul type de compte (toute l'équipe a les mêmes droits) ; l'admin Django reste pour le technique.
+- **Écrans** (27 cadres dans la maquette, desktop sur la ligne y = 22 400, mobile sur y = 24 400, composants sur y = 21 200) :
+  - Planche de composants : barre latérale (Pilotage / Contenu du site / Suivi, compteur de messages, « Voir le site », utilisateur et déconnexion), barre mobile, pastilles de statut (Publié, Brouillon, Fiche d'exemple, Nouveau, Lu).
+  - Connexion (et état d'erreur) ; Tableau de bord (chiffres clés, « À faire », raccourcis, derniers contenus, messages récents).
+  - Listes Articles, Opportunités, Ressources (recherche, filtres, tableau en desktop, cartes en mobile) et formulaires Modifier l'article, Nouvelle opportunité, Modifier la ressource (contenu à gauche, publication et image ou fichier à droite ; barre d'actions fixe en mobile).
+  - Chiffres d'impact (6 indicateurs, ordre, « À venir » si vide), Messages reçus (liste + détail, « Répondre par e-mail », « Marquer comme traité »), Abonnés (chiffres, liste, export CSV), menu mobile ouvert.
+- Les champs des formulaires reprennent ceux des modèles existants (`Article`, `Opportunite`, `Ressource`, `Indicateur`, `Abonne`). Implémentation à faire sur une nouvelle branche partie de `feature/dashboard`.
+
 ### Maquette
-- `maquette/design_uciv.pen` : 16 écrans desktop et 15 écrans mobiles ; le plan de réalisation en est tiré.
+- `maquette/design_uciv.pen` : 20 écrans desktop et 19 écrans mobiles pour le site public, 6 écrans de la lettre d'information, 27 cadres pour le dashboard. Le fichier de travail est `UCIV/design_uciv.pen` (ouvert dans Pencil) ; il est recopié dans `maquette/` avant chaque commit.
 
 ## Écarts connus avec la maquette (volontaires ou à trancher)
 
@@ -165,20 +176,29 @@ Documents liés : [PLAN.md](PLAN.md) (ce qu'il faut construire),
 | Bouton de recherche en-tête | absent | présent, sans destination | À valider ou retirer |
 | Sous-menus (Programmes, S'engager) | non dessinés | présents | À valider |
 
-## Non commité
+## Branches en attente de fusion
 
-Le travail du 16 octobre est sur `feature/responsive-mobile` (demande de fusion). Les pages légales et la 404 sont sur `feature/pages-legales`, partie de cette branche.
+Tout est commité et poussé. Quatre branches empilées, chacune partie de la précédente, à fusionner dans `main` dans cet ordre (ou à relire en prenant la branche précédente comme base) :
+
+| Branche | Contenu |
+|---|---|
+| `feature/responsive-mobile` | Responsive mobile des 15 pages, maquette mise à jour, `.gitattributes`, portraits du bureau, citation de Notre impact, logo du menu mobile |
+| `feature/pages-legales` | Mentions légales, politique de confidentialité, conditions d'utilisation, page 404 (maquette + code) |
+| `feature/newsletter` | Lettre d'information : modèle `Abonne` (migration `0006`), inscription, désinscription, export CSV (maquette + code) |
+| `feature/dashboard` | Maquette du dashboard de l'équipe (pas de code) |
 
 ## Prochaines étapes (par ordre)
 
-1. **Valider le mobile dans un vrai téléphone** (menu, formulaires, défilement des cartes) et décider de la tablette (720–1099 px, déduite du desktop, pas d'écran dans la maquette).
-2. **Écarts de contenu restants en mobile** : 2ᵉ photo d'article (non gérée par le modèle), pagination des actualités (s'affichera avec plus d'articles), images des « histoires » de Notre impact (articles sans image en base), une seule affiche pour le lancement de Leadership (la maquette en montre deux).
-3. **Bouton de recherche de l'en-tête** : décider (page de recherche ou retrait), c'est le dernier lien `#`.
-4. **Textes légaux** : faire compléter et relire les passages entre crochets par UCIV.
-5. **Images à fournir** : portraits HD du bureau exécutif, photos générées de la maquette, 2ᵉ image d'article.
-6. **Contenus à remplacer** : fiches d'exemple (opportunités, ressources), chiffres d'impact, bios, dates et tarifs des programmes, textes des articles.
-7. **Finitions** : accessibilité, SEO (métadonnées, `sitemap.xml`), optimisation des images.
-8. **Mise en ligne** : réglages de production, `collectstatic`, hébergement.
+1. **Faire relire et fusionner les 4 branches** (voir ci-dessus), puis `python manage.py migrate` en production.
+2. **Implémenter le dashboard de l'équipe** à partir de la maquette validée (nouvelle branche partie de `feature/dashboard`) : connexion, tableau de bord, gestion des articles, opportunités, ressources et chiffres d'impact, messages reçus, abonnés.
+3. **Valider le mobile dans un vrai téléphone** (menu, formulaires, défilement des cartes) et décider de la tablette (720–1099 px, déduite du desktop, pas d'écran dans la maquette).
+4. **Écarts de contenu restants en mobile** : 2ᵉ photo d'article (non gérée par le modèle), pagination des actualités (s'affichera avec plus d'articles), images des « histoires » de Notre impact (articles sans image en base), une seule affiche pour le lancement de Leadership (la maquette en montre deux).
+5. **Bouton de recherche de l'en-tête** : décider (page de recherche ou retrait), c'est le dernier lien `#`.
+6. **Textes légaux** : faire compléter et relire les passages entre crochets par UCIV.
+7. **Images à fournir** : portraits HD du bureau exécutif, photos générées de la maquette, 2ᵉ image d'article.
+8. **Contenus à remplacer** : fiches d'exemple (opportunités, ressources), chiffres d'impact, bios, dates et tarifs des programmes, textes des articles.
+9. **Finitions** : accessibilité, SEO (métadonnées, `sitemap.xml`), optimisation des images.
+10. **Mise en ligne** : réglages de production, `collectstatic`, hébergement.
 
 Le détail de chaque page, composant, modèle et formulaire est dans [PLAN.md](PLAN.md).
 
@@ -186,7 +206,8 @@ Le détail de chaque page, composant, modèle et formulaire est dans [PLAN.md](P
 
 - Tablette : garder la mise en page déduite du desktop ou produire des écrans dédiés ?
 - Pillow pour les images téléversées, ou chemins statiques ?
-- Pages à rédiger : politique de confidentialité, mentions légales, conditions d'utilisation.
+- Textes légaux : compléter les passages entre crochets (forme juridique, récépissé, hébergeur, prestataire, adresse du site, durées de conservation) et faire relire.
+- Bouton de recherche de l'en-tête : page de recherche ou retrait ?
 - Contenus à recevoir : dates, tarifs et modalités des programmes, chiffres d'impact, bios de l'équipe, photos, URLs des réseaux sociaux.
 
 ## Reprendre le travail
