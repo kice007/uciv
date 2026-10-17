@@ -15,6 +15,7 @@ Documents liés : [PLAN.md](PLAN.md) (ce qu'il faut construire),
 | Dépendances | Fait : Django 6.1.2 uniquement |
 | Page d'accueil | Faite, alignée sur la maquette |
 | Pages intérieures (14) | **14 faites** : les 9 précédentes + Opportunités, Actualités, Article, Notre impact, Ressources |
+| Pages légales et 404 | **Faites** (desktop et mobile) : mentions légales, politique de confidentialité, conditions d'utilisation, page introuvable |
 | Modèles de données et administration | 7 modèles administrables : 3 de formulaires (`SoumissionEngagement`, `SoumissionPartenariat`, `SoumissionContact`) et 4 de contenu (`Article`, `Opportunite`, `Ressource`, `Indicateur`) ; `MembreEquipe`, `Programme` et `Partenaire` restent dans `content.py` |
 | Formulaires | 3 faits (engagement, partenariat, contact) ; newsletter à faire |
 | Responsive mobile (390 px) | **Fait pour les 15 pages**, aligné sur les écrans « … — Mobile » de la maquette ; tablette déduite (720–1099 px) |
@@ -131,6 +132,16 @@ Documents liés : [PLAN.md](PLAN.md) (ce qu'il faut construire),
 - **Notre impact** : la citation n'a plus de bouton « Je veux m'engager » (modification de la maquette desktop et mobile) ; `templates/app/layout/impact.html`.
 - **Équipe** : les 4 portraits du bureau exécutif sont découpés dans l'affiche `bureau-executif.jpg` avec les cadrages de la maquette (`static/app/assets/img/bureau-*.jpg`, chemins dans `content.EQUIPE['bureau']`). L'affiche est en basse résolution : des photos HD restent à fournir.
 
+### Pages légales et page 404 (16 octobre 2026)
+- **Maquette** : 4 nouveaux écrans desktop + mobile dans `maquette/design_uciv.pen` (Mentions légales, Politique de confidentialité, Conditions d'utilisation, Page introuvable (404)), validés avant l'implémentation.
+- **Pages** : `/mentions-legales/`, `/politique-de-confidentialite/`, `/conditions-d-utilisation/` ; une seule vue `page_legale` et un seul gabarit `layout/legal.html` (bandeau, sommaire, sections numérotées, encart « Une question ? », « Les autres documents »). Textes dans `content.LEGAL` ; blocs `p`, `fiche`, `liste`, `encadre`.
+- **Textes à compléter** : tout passage `[entre crochets]` s'affiche en orange (filtre `crochets`) : forme juridique, récépissé, hébergeur, prestataire, adresse du site, durées de conservation, date de mise à jour (`LEGAL_MAJ`). À faire relire par UCIV avant la mise en ligne.
+- **404** : `layout/404.html` (visuel « 4 ● 4 », retour à l'accueil, contact, 4 liens utiles), branchée par `handler404` (active quand `DEBUG=False`). En local, aperçu sur `/404/`.
+- **Liens connectés** : pied de page (3 documents, toutes les pages), « Voir la politique de confidentialité » des formulaires Engagement et Contact, cartes « Les autres documents », sommaire (ancres + mise en évidence de la section lue, `main.js` bloc 7).
+- **Fichiers** : `app/content.py`, `app/views.py`, `app/urls.py`, `core/urls.py`, `app/templatetags/custom_tags.py`, `templates/app/layout/legal.html` et `404.html`, `includes/_hero_page.html` (pastille « Dernière mise à jour »), `includes/_icons.html` (4 icônes), `contact.html`, `engagement.html`, `main.css` (section 24), `main.js`.
+- **Formes concentriques** : dans les bandeaux, chaque forme est désormais placée par son centre (`.ph-forme`), si bien qu'un disque reste au centre de son anneau à toutes les largeurs d'écran ; anneaux orange des pages légales aux dimensions exactes de la maquette (légèrement ovales, `h` dans `content.py`), disque orange de la 404 centré dans l'anneau jaune (desktop et mobile).
+- 5 tests ajoutés (61 au total).
+
 ### Maquette
 - `maquette/design_uciv.pen` : 16 écrans desktop et 15 écrans mobiles ; le plan de réalisation en est tiré.
 
@@ -144,14 +155,14 @@ Documents liés : [PLAN.md](PLAN.md) (ce qu'il faut construire),
 
 ## Non commité
 
-Rien. Le travail du 16 octobre est sur la branche `feature/responsive-mobile`, en attente de relecture avant fusion dans `main`.
+Le travail du 16 octobre est sur `feature/responsive-mobile` (demande de fusion). Les pages légales et la 404 sont sur `feature/pages-legales`, partie de cette branche.
 
 ## Prochaines étapes (par ordre)
 
 1. **Valider le mobile dans un vrai téléphone** (menu, formulaires, défilement des cartes) et décider de la tablette (720–1099 px, déduite du desktop, pas d'écran dans la maquette).
 2. **Écarts de contenu restants en mobile** : 2ᵉ photo d'article (non gérée par le modèle), pagination des actualités (s'affichera avec plus d'articles), images des « histoires » de Notre impact (articles sans image en base), une seule affiche pour le lancement de Leadership (la maquette en montre deux).
 3. **Newsletter** : brancher le formulaire du pied de page (enregistrement des adresses, désinscription).
-4. **Pages légales et 404** : mentions légales, politique de confidentialité, conditions d'utilisation, page d'erreur.
+4. **Textes légaux** : faire compléter et relire les passages entre crochets par UCIV.
 5. **Images à fournir** : portraits HD du bureau exécutif, photos générées de la maquette, 2ᵉ image d'article.
 6. **Contenus à remplacer** : fiches d'exemple (opportunités, ressources), chiffres d'impact, bios, dates et tarifs des programmes, textes des articles.
 7. **Finitions** : accessibilité, SEO (métadonnées, `sitemap.xml`), optimisation des images.

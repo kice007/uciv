@@ -15,7 +15,7 @@ sans dépendance tierce : `requirements.txt` ne contient que Django.
     ├── manage.py
     ├── core/             # configuration du projet
     │   ├── settings.py   # réglages ; config() lit os.environ
-    │   ├── urls.py       # admin + app.urls + médias/statiques
+    │   ├── urls.py       # admin + app.urls + médias/statiques, handler404 (aperçu /404/ en DEBUG)
     │   ├── wsgi.py / asgi.py
     │   ├── constants.py  # constantes (chemins d'upload…)
     │   └── utils.py      # envoi d'e-mails, get_ip()
@@ -26,12 +26,12 @@ sans dépendance tierce : `requirements.txt` ne contient que Django.
     │   ├── forms.py              # formulaires (Engagement, Partenariat, Contact)
     │   ├── migrations/           # migrations de la base
     │   ├── admin.py              # administration Django
-    │   ├── views.py / urls.py    # page d'accueil, namespace « app »
-    │   ├── templatetags/custom_tags.py  # filtre corps_article (texte des articles)
+    │   ├── views.py / urls.py    # toutes les pages, namespace « app » ; page_legale et page_introuvable (404)
+    │   ├── templatetags/custom_tags.py  # filtres corps_article (articles) et crochets (pages légales)
     │   └── tests.py
     ├── templates/
     │   ├── app/base/base.html     # gabarit de base
-    │   ├── app/layout/index.html  # page d'accueil
+    │   ├── app/layout/            # une page par gabarit ; legal.html (3 pages légales) et 404.html
     │   ├── app/includes/          # en-tête, pied de page, icônes
     │   └── emails/                # gabarits d'e-mails
     ├── static/app/assets/{css,js,img}
