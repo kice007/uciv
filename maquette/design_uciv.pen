@@ -29777,8 +29777,8 @@
             {
               "type": "ellipse",
               "id": "v9Plyx",
-              "x": 930,
-              "y": 250,
+              "x": 1150,
+              "y": -70,
               "name": "forme",
               "fill": "$orange",
               "width": 380,
@@ -29932,6 +29932,16 @@
                   "fontWeight": "normal"
                 }
               ]
+            },
+            {
+              "type": "ellipse",
+              "id": "D2QIQk",
+              "x": 1265,
+              "y": 390,
+              "name": "forme",
+              "fill": "$orange",
+              "width": 190,
+              "height": 180
             }
           ]
         },
@@ -57581,23 +57591,6 @@
             20
           ],
           "children": [
-            {
-              "type": "frame",
-              "id": "XYqaY",
-              "name": "logo Leadership",
-              "width": "fill_container",
-              "height": 75,
-              "fill": [
-                "$blanc",
-                {
-                  "type": "image",
-                  "enabled": true,
-                  "url": "images/logo-leadership.png",
-                  "mode": "contain"
-                }
-              ],
-              "cornerRadius": 20
-            },
             {
               "type": "frame",
               "id": "Z2HdlM",
@@ -86192,6 +86185,25 @@
       "name": "logo Leadership",
       "width": 300,
       "height": 118,
+      "fill": [
+        "$blanc",
+        {
+          "type": "image",
+          "enabled": true,
+          "url": "images/logo-leadership.png",
+          "mode": "contain"
+        }
+      ],
+      "cornerRadius": 20
+    },
+    {
+      "type": "frame",
+      "id": "XYqaY",
+      "x": 8200,
+      "y": 8750,
+      "name": "logo Leadership",
+      "width": "fill_container(350)",
+      "height": 75,
       "fill": [
         "$blanc",
         {
