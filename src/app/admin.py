@@ -1,6 +1,11 @@
+import csv
+
 from django.contrib import admin
+from django.http import HttpResponse
+from django.utils import timezone
+
 from .models import (
-    Article, Indicateur, Opportunite, Ressource, SoumissionContact, SoumissionEngagement,
+    Abonne, Article, Indicateur, Opportunite, Ressource, SoumissionContact, SoumissionEngagement,
     SoumissionPartenariat,
 )
 
@@ -62,3 +67,25 @@ class IndicateurAdmin(admin.ModelAdmin):
     list_display = ('libelle', 'valeur', 'ordre', 'publish')
     list_editable = ('valeur', 'ordre', 'publish')
     readonly_fields = ('created_at', 'update_at')
+
+
+@admin.register(Abonne)
+class AbonneAdmin(admin.ModelAdmin):
+    list_display = ('email', 'actif', 'inscrit_le', 'desinscrit_le')
+    list_filter = ('actif', 'inscrit_le')
+    search_fields = ('email',)
+    readonly_fields = ('inscrit_le', 'desinscrit_le')
+    actions = ['exporter_csv']
+
+    @admin.action(description='Exporter en CSV les abonnés actifs sélectionnés')
+    def exporter_csv(self, request, queryset):
+        """Liste à importer dans l'outil d'envoi de la lettre (Brevo, Mailchimp…)."""
+        reponse = HttpResponse(content_type='text/csv; charset=utf-8')
+        reponse['Content-Disposition'] = (
+            f'attachment; filename="abonnes-uciv-{timezone.localdate():%Y-%m-%d}.csv"')
+        reponse.write('\ufeff')  # BOM : Excel ouvre correctement les accents
+        ecrivain = csv.writer(reponse, delimiter=';')
+        ecrivain.writerow(['email', 'inscrit_le'])
+        for abonne in queryset.filter(actif=True):
+            ecrivain.writerow([abonne.email, timezone.localtime(abonne.inscrit_le).strftime('%d/%m/%Y')])
+        return reponse

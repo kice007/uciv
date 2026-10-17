@@ -1075,3 +1075,31 @@ PAGE_404 = {
         {'label': 'Actualités', 'url': URL_ACTUALITES},
     ],
 }
+
+
+# --- Lettre d'information ----------------------------------------------------
+# Messages de la carte du pied de page après l'envoi du formulaire, et page de
+# désinscription (deux étapes : confirmer, puis « C'est noté »).
+
+NEWSLETTER = {
+    'reussie': {'titre': "Merci, c'est noté !",
+                'texte': 'Vous recevrez nos prochaines actualités à cette adresse.'},
+    'deja': {'titre': 'Vous êtes déjà inscrit·e.',
+             'texte': 'Merci de votre fidélité : rien à faire de plus.'},
+    'invalide': 'Saisissez une adresse e-mail valide.',
+}
+
+DESINSCRIPTION = {
+    'confirmer': {
+        'titre': 'Vous nous', 'suite': 'quittez ?', 'note': 'on vous regrettera !', 'icone': 'mail-minus',
+        'texte': "Vous êtes sur le point de désinscrire l'adresse {email} de la lettre d'information "
+                 "d'UCIV. Vous ne recevrez plus nos actualités.",
+        'bas': 'Vous pourrez vous réinscrire à tout moment depuis le pied de page.',
+    },
+    'fait': {
+        'titre': "C'est noté.", 'suite': 'À bientôt !', 'note': "merci d'avoir été là !", 'icone': 'check',
+        'texte': "L'adresse {email} ne recevra plus la lettre d'information d'UCIV. Merci d'avoir "
+                 "suivi nos actualités.",
+        'bas': "Vous avez changé d'avis ? Réinscrivez-vous depuis le pied de page.",
+    },
+}

@@ -25,4 +25,7 @@ urlpatterns = [
     path('politique-de-confidentialite/', views.page_legale, {'cle': 'confidentialite'},
          name='confidentialite'),
     path('conditions-d-utilisation/', views.page_legale, {'cle': 'conditions'}, name='conditions'),
+    path('newsletter/inscription/', views.newsletter_inscription, name='newsletter_inscription'),
+    path('newsletter/desinscription/<str:jeton>/', views.newsletter_desinscription,
+         name='newsletter_desinscription'),
 ]

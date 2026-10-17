@@ -49,3 +49,9 @@ def crochets(texte):
         else format_html('{}', m)
         for m in morceaux if m
     ))
+
+
+@register.filter
+def get_item(dictionnaire, cle):
+    """Valeur d'un dictionnaire pour une clé variable : {{ d|get_item:cle }}."""
+    return dictionnaire.get(cle) if dictionnaire else None

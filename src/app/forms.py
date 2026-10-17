@@ -79,3 +79,14 @@ class ContactForm(forms.Form):
         if self.cleaned_data.get('site_web'):
             raise forms.ValidationError('Envoi refusé.')
         return ''
+
+
+class NewsletterForm(forms.Form):
+    email = forms.EmailField(label='Votre adresse e-mail', max_length=254)
+    # Champ piège : invisible pour les personnes, rempli par les robots.
+    site_web = forms.CharField(required=False)
+
+    def clean_site_web(self):
+        if self.cleaned_data.get('site_web'):
+            raise forms.ValidationError('Envoi refusé.')
+        return ''

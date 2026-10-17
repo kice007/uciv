@@ -2747,3 +2747,37 @@ button { font: inherit; color: inherit; cursor: pointer; }
 @media (hover: hover) and (pointer: fine) {
   .err__liens a:hover { background: var(--encre); color: var(--blanc); }
 }
+
+/* 25. Lettre d'information ------------------------------------------------------------------
+   États de la carte du pied de page et page de désinscription (écrans « Lettre d'information —
+   états du formulaire » et « Désinscription » de la maquette). */
+
+/* Carte du pied de page : message après l'envoi, erreur */
+.lettre__message { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 16px; background: rgba(255, 255, 255, .12); }
+.lettre__message > div { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.lettre__message strong { color: var(--blanc); font-size: 15px; font-weight: 700; line-height: 1.35; }
+.lettre__message span:not(.lettre__picto) { color: rgba(255, 255, 255, .7); font-size: 13px; line-height: 1.45; }
+.lettre__picto { display: grid; place-items: center; flex: none; width: 36px; height: 36px; border-radius: 50%; }
+.lettre__picto .icon { width: 18px; height: 18px; }
+.lettre__picto--reussie { background: var(--jaune); color: var(--vert-profond); }
+.lettre__picto--reussie .icon { stroke-width: 3; }
+.lettre__picto--deja { background: rgba(255, 255, 255, .15); color: var(--jaune); }
+.lettre__form--erreur { box-shadow: inset 0 0 0 1.5px #FF9B6B; }
+.lettre .lettre__erreur { display: flex; align-items: center; gap: 8px; color: #FFB894; font-size: 13.5px; font-weight: 600; line-height: 1.3; }
+.lettre__erreur .icon { width: 15px; height: 15px; color: #FF9B6B; }
+
+/* Page de désinscription : mise en page de la page 404 (section 24), pictogramme au centre
+   du disque (même centre que l'anneau et le disque), couleurs propres à chaque étape. */
+.err__picto { display: grid; place-items: center; left: 160px; top: 69px; width: 56px; height: 56px; color: var(--blanc); }
+.err__picto .icon { width: 100%; height: 100%; stroke-width: 1.75; }
+.err--desinscription .err__note { left: 96px; }
+.err--fait .err__anneau { background: radial-gradient(circle closest-side, transparent 74%, var(--orange) 74.6%); }
+.err--fait .err__disque { background: var(--vert); }
+.err--fait .err__note { color: var(--orange-fonce); }
+.err__info { display: flex; align-items: center; gap: 10px; padding-top: 16px; color: var(--texte); font-size: 14px; line-height: 1.5; }
+.err__info .icon { flex: none; width: 16px; height: 16px; }
+@media (min-width: 900px) {
+  .err__picto { left: 300px; top: 150px; width: 110px; height: 110px; }
+  .err--desinscription .err__note { left: 200px; }
+  .err__info { padding-top: 20px; }
+}

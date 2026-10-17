@@ -139,14 +139,6 @@
     }, { passive: true });
   });
 
-  /* 5. Formulaires provisoires -------------------------------------------- */
-  document.querySelectorAll('[data-form-provisoire]').forEach(function (formulaire) {
-    formulaire.addEventListener('submit', function (evenement) {
-      evenement.preventDefault();
-      var note = formulaire.parentElement.querySelector('p');
-      if (note) note.textContent = "L'inscription à la lettre d'information sera bientôt disponible.";
-    });
-  });
   /* 6. Pastilles « Objet » : elles pilotent la liste déroulante du formulaire de contact. */
   document.querySelectorAll('[data-objet]').forEach(function (liste) {
     var pastilles = document.querySelectorAll('[data-objet-valeur]');

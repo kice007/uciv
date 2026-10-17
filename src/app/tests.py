@@ -2,8 +2,10 @@ from django.core import mail
 from django.test import TestCase, override_settings
 from django.urls import reverse
 
+from django.contrib.auth.models import User
+
 from .models import (
-    Article, Indicateur, Opportunite, Ressource, SoumissionContact, SoumissionEngagement,
+    Abonne, Article, Indicateur, Opportunite, Ressource, SoumissionContact, SoumissionEngagement,
     SoumissionPartenariat,
 )
 
@@ -432,3 +434,85 @@ class PageIntrouvableTests(TestCase):
         self.assertEqual(response.status_code, 404)
         self.assertContains(response, "s&#x27;est égarée.", status_code=404)
         self.assertContains(response, f'href="{reverse("app:contact")}"', status_code=404)
+
+
+class NewsletterTests(TestCase):
+    """Lettre d'information : inscription depuis le pied de page, désinscription, export."""
+
+    def inscrire(self, email, depuis='/programmes/', **extra):
+        donnees = {'email': email, 'suivant': depuis, **extra}
+        return self.client.post(reverse('app:newsletter_inscription'), donnees)
+
+    def test_inscription_puis_message_dans_la_carte(self):
+        reponse = self.inscrire('Aya.Konan@Example.com')
+        self.assertRedirects(reponse, '/programmes/#lettre', fetch_redirect_response=False)
+        self.assertTrue(Abonne.objects.filter(email='aya.konan@example.com', actif=True).exists())
+        page = self.client.get('/programmes/')
+        self.assertContains(page, 'Merci, c&#x27;est noté !')
+        # Le message ne s'affiche qu'une fois.
+        self.assertNotContains(self.client.get('/programmes/'), 'Merci, c&#x27;est noté !')
+
+    def test_adresse_deja_inscrite(self):
+        Abonne.objects.create(email='aya@example.com')
+        self.inscrire('aya@example.com')
+        self.assertContains(self.client.get('/programmes/'), 'Vous êtes déjà inscrit·e.')
+        self.assertEqual(Abonne.objects.count(), 1)
+
+    def test_adresse_invalide(self):
+        self.inscrire('aya.konan@gmail')
+        page = self.client.get('/programmes/')
+        self.assertContains(page, 'Saisissez une adresse e-mail valide.')
+        self.assertContains(page, 'value="aya.konan@gmail"')
+        self.assertFalse(Abonne.objects.exists())
+
+    def test_champ_piege_rien_enregistre(self):
+        self.inscrire('robot@example.com', site_web='spam')
+        self.assertFalse(Abonne.objects.exists())
+
+    def test_retour_externe_refuse(self):
+        reponse = self.inscrire('aya@example.com', depuis='https://exemple.org/')
+        self.assertRedirects(reponse, '/#lettre', fetch_redirect_response=False)
+
+    def test_reinscription_apres_desinscription(self):
+        Abonne.objects.create(email='aya@example.com', actif=False)
+        self.inscrire('aya@example.com')
+        self.assertTrue(Abonne.objects.get(email='aya@example.com').actif)
+
+    @override_settings(EMAIL_HOST='smtp.example.com')
+    def test_email_de_bienvenue_avec_lien_de_desinscription(self):
+        self.inscrire('aya@example.com')
+        abonne = Abonne.objects.get()
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn(reverse('app:newsletter_desinscription', args=[abonne.jeton]),
+                      mail.outbox[0].alternatives[0][0])
+
+    def test_desinscription_en_deux_etapes(self):
+        abonne = Abonne.objects.create(email='aya@example.com')
+        url = reverse('app:newsletter_desinscription', args=[abonne.jeton])
+        page = self.client.get(url)
+        self.assertContains(page, 'Confirmer la désinscription')
+        self.assertContains(page, 'a••••@example.com')
+        abonne.refresh_from_db()
+        self.assertTrue(abonne.actif)  # ouvrir le lien ne suffit pas
+        page = self.client.post(url)
+        self.assertContains(page, 'C&#x27;est noté.')
+        abonne.refresh_from_db()
+        self.assertFalse(abonne.actif)
+        self.assertIsNotNone(abonne.desinscrit_le)
+
+    def test_jeton_inconnu(self):
+        reponse = self.client.get(reverse('app:newsletter_desinscription', args=['inconnu']))
+        self.assertEqual(reponse.status_code, 404)
+
+    def test_export_csv_des_abonnes_actifs(self):
+        Abonne.objects.create(email='actif@example.com')
+        Abonne.objects.create(email='parti@example.com', actif=False)
+        admin = User.objects.create_superuser('admin', 'admin@example.com', 'motdepasse')
+        self.client.force_login(admin)
+        reponse = self.client.post(reverse('admin:app_abonne_changelist'), {
+            'action': 'exporter_csv',
+            '_selected_action': list(Abonne.objects.values_list('pk', flat=True)),
+        })
+        contenu = reponse.content.decode('utf-8-sig')
+        self.assertIn('actif@example.com', contenu)
+        self.assertNotIn('parti@example.com', contenu)
