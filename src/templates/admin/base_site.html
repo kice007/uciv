@@ -1,0 +1,27 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}{% if subtitle %}{{ subtitle }} | {% endif %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="icon" href="{% static 'app/assets/img/logo-uciv.png' %}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Instrument+Serif:ital@1&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'app/assets/css/admin.css' %}">
+{% endblock %}
+
+{% block branding %}
+<a class="uciv-marque" href="{% url 'admin:index' %}">
+  <img src="{% static 'app/assets/img/logo-uciv.png' %}" alt="" width="40" height="42">
+  <span class="uciv-marque__nom">Une Côte d'Ivoire <em>Volontaire</em></span>
+  <span class="uciv-marque__badge">Administration</span>
+</a>
+{% endblock %}
+
+{% block nav-global %}{% endblock %}

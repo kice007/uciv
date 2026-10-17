@@ -8,6 +8,8 @@ sans dépendance tierce : `requirements.txt` ne contient que Django.
 ├── .gitignore
 ├── .env.example          # variables d'environnement (lues via os.environ)
 ├── requirements.txt      # Django uniquement
+├── requirements-mysql.txt  # + mysqlclient (production)
+├── deploy/               # scripts serveur (phpMyAdmin)
 ├── README.md · CLAUDE.md · CONTRIBUTING.md
 ├── docs/             # ARCHITECTURE.md, PLAN.md, AVANCEMENT.md
 ├── maquette/         # design_uciv.pen (maquette Pencil)
@@ -33,6 +35,7 @@ sans dépendance tierce : `requirements.txt` ne contient que Django.
     │   ├── app/base/base.html     # gabarit de base
     │   ├── app/layout/index.html  # page d'accueil
     │   ├── app/includes/          # en-tête, pied de page, icônes
+    │   ├── admin/base_site.html   # habillage UCIV de l'administration
     │   └── emails/                # gabarits d'e-mails
     ├── static/app/assets/{css,js,img}
     ├── static_cdn/       # collectstatic (non versionné)

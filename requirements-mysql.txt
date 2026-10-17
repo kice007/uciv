@@ -1,0 +1,4 @@
+# Dépendances pour faire tourner le site sur MySQL (serveur de production).
+# Prérequis système (Ubuntu) : sudo apt install python3-dev default-libmysqlclient-dev build-essential pkg-config
+-r requirements.txt
+mysqlclient>=2.2,<3

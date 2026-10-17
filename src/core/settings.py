@@ -63,8 +63,16 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'core.wsgi.application'
 
-# Base de données — switcher via .env
+# Base de données — SQLite par défaut ; MySQL avec USE_MYSQL=True (voir docs/DEPLOIEMENT.md).
 if config('USE_MYSQL', default=False, cast=bool):
+    _options_mysql = {
+        'charset': 'utf8mb4',
+        'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+    }
+    # SSL seulement si la base est sur une autre machine (ex. MYSQL_SSL_MODE=REQUIRED) ;
+    # sur le même serveur (localhost), la connexion ne sort pas de la machine.
+    if config('MYSQL_SSL_MODE'):
+        _options_mysql['ssl_mode'] = config('MYSQL_SSL_MODE')
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
@@ -73,7 +81,8 @@ if config('USE_MYSQL', default=False, cast=bool):
             'PASSWORD': config('MYSQL_PASSWORD'),
             'HOST': config('MYSQL_HOST', default='localhost'),
             'PORT': config('MYSQL_PORT', default='3306'),
-            'OPTIONS': {'ssl': {'ssl-mode': 'REQUIRED'}},
+            'CONN_MAX_AGE': config('MYSQL_CONN_MAX_AGE', default=60, cast=int),
+            'OPTIONS': _options_mysql,
         }
     }
 else:
@@ -115,7 +124,10 @@ EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=True, cast=bool)
 CONTACT_EMAIL = config('CONTACT_EMAIL', default='organisationuciv@gmail.com')
 
 # Sécurité production
+CSRF_TRUSTED_ORIGINS = [o for o in config('CSRF_TRUSTED_ORIGINS', default='').split(',') if o]
 if not DEBUG:
+    # Nginx termine le HTTPS et transmet le schéma : sans cet en-tête, la redirection HTTPS boucle.
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True

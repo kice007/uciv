@@ -37,7 +37,7 @@ URL_EXPERIENCE = reverse_lazy('app:experience_lab')
 # --- Éléments communs à toutes les pages ----------------------------------
 
 ANNONCE = {
-    'date': 'Octobre 2026',
+    'date': '24 octobre 2026',
     'texte': "Lancement d'UCIV Leadership : conférence au format TEDx à l'American Corner.",
     'texte_court': "Lancement d'UCIV Leadership",
     'lien_label': 'Rejoindre UCIV Leadership',
@@ -261,7 +261,7 @@ AUTRES_ARTICLES = [
     {
         'categorie': 'Leadership',
         'theme': 'jaune',
-        'meta': 'Octobre 2026',
+        'meta': '24 octobre 2026',
         'titre': 'UCIV Leadership : la conférence de lancement au format TEDx',
         'image': 'app/assets/img/affiche-leadership-jaune.jpg',
         'image_alt': "Affiche d'UCIV Leadership : une jeune femme lève les poings.",
@@ -309,7 +309,7 @@ LEADERSHIP = {
     'reperes': [
         {'label': 'Cohorte pionnière', 'valeur': '30 à 50 membres'},
         {'label': 'Sélection', 'valeur': 'Pitch vidéo, puis entretien collectif'},
-        {'label': 'Lancement', 'valeur': 'Octobre 2026 · American Corner'},
+        {'label': 'Lancement', 'valeur': '24 octobre 2026 · American Corner'},
     ],
     'vision': "Faire émerger une génération de jeunes capables de prendre des "
               "initiatives, d'assumer des responsabilités",
@@ -361,7 +361,7 @@ LEADERSHIP = {
     ],
     'theme': "« S'engager aujourd'hui",
     'theme_suite': 'pour transformer demain. »',
-    'lancement_infos': ['Octobre 2026', 'American Corner', 'Date et heure à confirmer'],
+    'lancement_infos': ['24 octobre 2026', 'American Corner', 'Heure à confirmer'],
 }
 
 # --- Page Qui sommes-nous ? -------------------------------------------------

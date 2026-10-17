@@ -1,7 +1,7 @@
 # Avancement du projet UCIV
 
 Point de reprise : ce qui est fait, ce qui ne l'est pas, et par où continuer.
-Dernière mise à jour : 14 octobre 2026.
+Dernière mise à jour : 16 octobre 2026.
 
 Documents liés : [PLAN.md](PLAN.md) (ce qu'il faut construire),
 [ARCHITECTURE.md](ARCHITECTURE.md) (structure), [CLAUDE.md](../CLAUDE.md) (règles agents),
@@ -38,6 +38,7 @@ Documents liés : [PLAN.md](PLAN.md) (ce qu'il faut construire),
 - 8 sections : hero (fil d'Ariane, logo, photo), repères, vision et mission, intégrer le réseau (4 étapes), pourquoi rejoindre, principes (5), thème, lancement.
 - Contenu dans `content.LEADERSHIP` ; vue `uciv_leadership` ; gabarit `layout/uciv_leadership.html` ; styles `lead-*` dans `main.css` (section 12).
 - Les liens « UCIV Leadership » (bandeau, navigation, pied de page, carte programme de l'accueil) pointent vers la page.
+- Lancement d'UCIV Leadership : **24 octobre 2026**, à l'American Corner ; l'heure reste à confirmer (bandeau d'annonce, repères, section « Lancement » et article TEDx). L'affiche du lancement indique encore « octobre 2026 » (image).
 - 3 tests ajoutés (5 au total).
 - Écart : la maquette montre 2 affiches dans « Lancement », une seule est disponible (`affiche-leadership-jaune.jpg`). Rendu à valider visuellement dans un navigateur.
 
@@ -66,6 +67,18 @@ Documents liés : [PLAN.md](PLAN.md) (ce qu'il faut construire),
 - Contenu dans `content.EXPERIENCE_LAB` ; vue `experience_lab` ; gabarit `layout/experience_lab.html` ; styles `el-*` dans `main.css` (section 16), hero et inscriptions réutilisent les classes `gd-*`.
 - Les liens « Experience Lab » (navigation, pied de page, accueil, page Nos programmes) pointent vers la page.
 - 3 tests ajoutés (17 au total). Valeurs lues dans la maquette (positions, tailles, interlignes, espacements et rotations relevés à 1440 px, appliqués en `vw` en dessous) ; rendu à valider dans un navigateur.
+
+### Passage sur MySQL (préparé, pas encore appliqué au site)
+- Serveur : MySQL 8.4 et phpMyAdmin (https://bd.uciv.org, double authentification, HTTPS) installés ; base `uciv` et utilisateur `uciv_user` créés ; script `deploy/phpmyadmin.sh`.
+- Code : réglages MySQL corrigés (utf8mb4, SSL facultatif via `MYSQL_SSL_MODE`, connexions persistantes), en-tête proxy HTTPS et `CSRF_TRUSTED_ORIGINS` pour la production, `requirements-mysql.txt` (ajoute `mysqlclient`, `requirements.txt` reste Django seul), `.env.example` complété.
+- Procédure complète : [DEPLOIEMENT.md](DEPLOIEMENT.md). 3 tests ajoutés (62 au total).
+- À faire : installer `requirements-mysql.txt` sur le serveur, fournir les variables d'environnement, `migrate`, `createsuperuser`, `collectstatic`. Servir le site (Gunicorn + Nginx) reste à préparer.
+
+### Administration aux couleurs d'UCIV (`/admin/`)
+- Habillage sans dépendance : gabarit `templates/admin/base_site.html` (logo, « Une Côte d'Ivoire *Volontaire* », badge « Administration ») et feuille `static/app/assets/css/admin.css`.
+- Palette et typographies du site (vert profond, orange, jaune, crème ; Bricolage Grotesque, Instrument Serif, Plus Jakarta Sans), cartes arrondies, boutons en pastille, page de connexion sur fond vert profond. Thème clair fixe (le sélecteur clair/sombre est masqué).
+- Titres : « Administration UCIV », « Gestion du site » ; l'application s'affiche sous le nom « Site UCIV ».
+- 2 tests ajoutés (59 au total). Rendu à valider dans un navigateur.
 
 ### Pages de contenu : Opportunités, Actualités, Article, Notre impact, Ressources
 - **Modèles administrables** (`Article`, `Opportunite`, `Ressource`, `Indicateur`, migration `0004`) : tout nouveau contenu est non publié par défaut ; la case « publié » (`publish`) le met en ligne.

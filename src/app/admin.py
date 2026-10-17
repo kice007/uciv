@@ -4,6 +4,10 @@ from .models import (
     SoumissionPartenariat,
 )
 
+admin.site.site_header = "Une Côte d'Ivoire Volontaire"
+admin.site.site_title = "Administration UCIV"
+admin.site.index_title = "Gestion du site"
+
 
 @admin.register(SoumissionEngagement)
 class SoumissionEngagementAdmin(admin.ModelAdmin):

@@ -1,0 +1,230 @@
+/*
+ * UCIV — habillage de l'administration Django.
+ * Reprend la direction artistique du site (maquette « Fondations ») : vert profond, orange, jaune, crème,
+ * Bricolage Grotesque pour les titres, Plus Jakarta Sans pour le texte, boutons en pastille.
+ * L'administration reste en thème clair, quel que soit le réglage du système.
+ */
+
+:root,
+html[data-theme="light"],
+html[data-theme="dark"] {
+  --uciv-orange: #E17F1C;
+  --uciv-orange-fonce: #B45F0D;
+  --uciv-jaune: #F7C548;
+  --uciv-vert: #1B7A43;
+  --uciv-vert-profond: #0C3322;
+  --uciv-creme: #FBF5EA;
+  --uciv-sable: #F1E6D3;
+  --uciv-encre: #17120C;
+  --uciv-texte: #5C5247;
+
+  --primary: var(--uciv-vert);
+  --secondary: var(--uciv-vert-profond);
+  --accent: var(--uciv-jaune);
+  --primary-fg: #fff;
+
+  --body-fg: var(--uciv-encre);
+  --body-bg: var(--uciv-creme);
+  --body-quiet-color: var(--uciv-texte);
+  --body-medium-color: var(--uciv-texte);
+  --body-loud-color: var(--uciv-encre);
+
+  --header-color: rgba(255, 255, 255, .8);
+  --header-branding-color: var(--uciv-jaune);
+  --header-bg: var(--uciv-vert-profond);
+  --header-link-color: #fff;
+
+  --breadcrumbs-fg: rgba(255, 255, 255, .7);
+  --breadcrumbs-link-fg: #fff;
+  --breadcrumbs-bg: var(--uciv-vert);
+
+  --link-fg: var(--uciv-vert);
+  --link-hover-color: var(--uciv-orange-fonce);
+  --link-selected-fg: var(--uciv-orange-fonce);
+
+  --hairline-color: rgba(23, 18, 12, .1);
+  --border-color: rgba(23, 18, 12, .18);
+  --error-fg: #b3261e;
+
+  --message-success-bg: #dff1e4;
+  --message-warning-bg: #fdf0cf;
+  --message-error-bg: #fbe3e0;
+
+  --darkest-bg: var(--uciv-vert-profond);
+  --darker-bg: var(--uciv-vert);
+  --selected-bg: var(--uciv-sable);
+  --selected-row: #fdf0cf;
+
+  --button-fg: #fff;
+  --button-bg: var(--uciv-vert);
+  --button-hover-bg: var(--uciv-vert-profond);
+  --default-button-bg: var(--uciv-orange);
+  --default-button-hover-bg: var(--uciv-orange-fonce);
+  --close-button-bg: var(--uciv-texte);
+  --close-button-hover-bg: var(--uciv-encre);
+  --delete-button-bg: #b3261e;
+  --delete-button-hover-bg: #8f1d17;
+
+  --object-tools-fg: #fff;
+  --object-tools-bg: var(--uciv-vert);
+  --object-tools-hover-bg: var(--uciv-vert-profond);
+
+  --font-family-primary: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme: light;
+}
+
+body {
+  font-family: var(--font-family-primary);
+  background: var(--uciv-creme);
+  color: var(--uciv-encre);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Le thème est fixe : le sélecteur clair / sombre n'a plus d'effet. */
+.theme-toggle { display: none !important; }
+
+/* En-tête ---------------------------------------------------------------------------------------------- */
+#header {
+  padding: 14px 32px;
+  background: var(--uciv-vert-profond);
+  border-bottom: 4px solid var(--uciv-orange);
+}
+#header a:link, #header a:visited { color: #fff; }
+#branding h1 { margin: 0; padding: 0; font-size: inherit; line-height: 1; }
+.uciv-marque { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; }
+.uciv-marque img { display: block; height: 40px; width: auto; }
+.uciv-marque__nom {
+  font-family: "Bricolage Grotesque", var(--font-family-primary);
+  font-weight: 800; font-size: 20px; line-height: 1.05; letter-spacing: -.02em; color: #fff;
+}
+.uciv-marque__nom em {
+  display: block; font-family: "Instrument Serif", Georgia, serif; font-style: italic; font-weight: 400;
+  font-size: 22px; letter-spacing: 0; color: var(--uciv-jaune);
+}
+.uciv-marque__badge {
+  margin-left: 6px; padding: 5px 12px; border-radius: 999px; background: var(--uciv-jaune); color: var(--uciv-encre);
+  font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+}
+#user-tools { font-size: 13px; color: rgba(255, 255, 255, .8); letter-spacing: 0; }
+#user-tools a { border-bottom-color: rgba(255, 255, 255, .35); }
+#user-tools a:hover, #user-tools a:focus { color: var(--uciv-jaune); border-bottom-color: var(--uciv-jaune); }
+
+/* Fil d'Ariane ----------------------------------------------------------------------------------------- */
+div.breadcrumbs { padding: 12px 32px; background: var(--uciv-vert); font-size: 13px; }
+div.breadcrumbs a:focus, div.breadcrumbs a:hover { color: var(--uciv-jaune); }
+
+/* Titres ----------------------------------------------------------------------------------------------- */
+h1, h2, h3, #content h1 { font-family: "Bricolage Grotesque", var(--font-family-primary); letter-spacing: -.02em; }
+#content h1 { margin-bottom: 24px; font-size: 32px; font-weight: 800; color: var(--uciv-encre); }
+#content > h2, .dashboard #content h2 { font-size: 22px; font-weight: 800; color: var(--uciv-encre); }
+#content { padding: 28px 32px 48px; }
+
+/* Modules (cartes) -------------------------------------------------------------------------------------- */
+.module, .inline-group, fieldset.module, .dashboard .module {
+  overflow: hidden; border: 1px solid rgba(23, 18, 12, .1); border-radius: 20px; background: #fff;
+}
+.module h2, .module caption, .inline-group h2 {
+  padding: 12px 18px; background: var(--uciv-vert-profond); color: #fff;
+  font-family: "Bricolage Grotesque", var(--font-family-primary); font-size: 14px; font-weight: 800; letter-spacing: .02em;
+}
+.module h2 a, .module caption a { color: #fff; }
+.module h2 a:hover, .module caption a:hover { color: var(--uciv-jaune); }
+.module table { border-collapse: collapse; }
+.module td, .module th { padding: 11px 18px; border-bottom: 1px solid rgba(23, 18, 12, .08); }
+.module tr:last-child td, .module tr:last-child th { border-bottom: 0; }
+.module th a:link, .module th a:visited { font-weight: 700; color: var(--uciv-encre); }
+.module th a:hover { color: var(--uciv-orange-fonce); }
+.module td a.addlink, .module td a.changelink, .addlink, .changelink { font-weight: 600; }
+.addlink { background-position: right 2px center; }
+#recent-actions-module { border-radius: 20px; }
+
+/* Barre latérale ---------------------------------------------------------------------------------------- */
+#nav-sidebar { background: #fff; border-right: 1px solid rgba(23, 18, 12, .1); }
+#nav-sidebar .module { border: 0; border-radius: 0; }
+#nav-sidebar .current-app .section:link, #nav-sidebar .current-app .section:visited { color: var(--uciv-orange-fonce); }
+#nav-sidebar .current-model { background: var(--uciv-sable); }
+.toggle-nav-sidebar { background: #fff; border-right: 1px solid rgba(23, 18, 12, .1); color: var(--uciv-texte); }
+.toggle-nav-sidebar:hover, .toggle-nav-sidebar:focus { background: var(--uciv-sable); }
+
+/* Listes (changelist) ------------------------------------------------------------------------------------ */
+#changelist .paginator, .paginator { padding: 12px 18px; border-radius: 0 0 20px 20px; background: #fff; color: var(--uciv-texte); }
+.paginator a:link, .paginator a:visited { background: var(--uciv-vert); border-radius: 999px; color: #fff; }
+.paginator a:hover { background: var(--uciv-vert-profond); }
+.paginator .this-page { padding: 2px 8px; border-radius: 999px; background: var(--uciv-orange); color: #fff; font-weight: 700; }
+#changelist-filter { border: 1px solid rgba(23, 18, 12, .1); border-radius: 20px; background: #fff; }
+#changelist-filter h2 { background: var(--uciv-vert-profond); color: #fff; font-size: 14px; }
+#changelist-filter a { color: var(--uciv-encre); }
+#changelist-filter li.selected a { color: var(--uciv-orange-fonce); font-weight: 700; }
+#changelist table thead th { border-bottom: 2px solid var(--uciv-vert-profond); background: var(--uciv-sable); }
+#changelist table thead th a, #changelist table thead th { color: var(--uciv-encre); }
+#changelist table thead th.sorted { background: var(--uciv-jaune); }
+.change-list .actions { background: var(--uciv-sable); }
+tr.selected, .row1, .row2 { background: transparent; }
+tbody tr:hover, #result_list tr:hover { background: rgba(247, 197, 72, .12); }
+#toolbar { border-radius: 20px 20px 0 0; background: #fff; }
+
+/* Formulaires -------------------------------------------------------------------------------------------- */
+fieldset { border-radius: 20px; }
+.form-row { padding: 14px 18px; border-bottom: 1px solid rgba(23, 18, 12, .08); }
+label, .aligned label { font-weight: 700; color: var(--uciv-encre); }
+.help, .help-tooltip, form .aligned p.help, form .aligned div.help { color: var(--uciv-texte); }
+input[type=text], input[type=password], input[type=email], input[type=url], input[type=number],
+input[type=tel], input[type=date], input[type=time], textarea, select, .vTextField {
+  padding: 9px 14px; border: 1px solid rgba(23, 18, 12, .2); border-radius: 12px; background: #fff; color: var(--uciv-encre);
+  font-family: var(--font-family-primary); font-size: 14px;
+}
+textarea { border-radius: 14px; }
+input[type=text]:focus, input[type=password]:focus, input[type=email]:focus, input[type=url]:focus, input[type=number]:focus,
+input[type=tel]:focus, input[type=date]:focus, textarea:focus, select:focus {
+  outline: 3px solid rgba(247, 197, 72, .7); outline-offset: 0; border-color: var(--uciv-orange);
+}
+input[type=checkbox], input[type=radio] { accent-color: var(--uciv-vert); }
+.errornote, ul.errorlist { border-radius: 14px; }
+.errornote { background: var(--message-error-bg); color: #8f1d17; border: 0; }
+
+/* Boutons ------------------------------------------------------------------------------------------------- */
+.button, input[type=submit], input[type=button], .submit-row input, a.button, .object-tools a:link, .object-tools a:visited {
+  border-radius: 999px; font-family: var(--font-family-primary); font-weight: 700; letter-spacing: 0;
+}
+.button, input[type=submit], input[type=button] { padding: 10px 20px; background: var(--uciv-vert); color: #fff; }
+.button:hover, input[type=submit]:hover, input[type=button]:hover { background: var(--uciv-vert-profond); }
+.button.default, input[type=submit].default, .submit-row input.default { background: var(--uciv-orange); color: #fff; }
+.button.default:hover, input[type=submit].default:hover { background: var(--uciv-orange-fonce); }
+.submit-row { padding: 14px 18px; border: 0; border-radius: 20px; background: var(--uciv-sable); }
+.submit-row a.deletelink:link, .submit-row a.deletelink:visited { border-radius: 999px; background: var(--delete-button-bg); }
+.object-tools { margin-top: 0; }
+.object-tools a:link, .object-tools a:visited { padding: 8px 18px; background: var(--uciv-vert); color: #fff; }
+.object-tools a:hover, .object-tools a:focus { background: var(--uciv-vert-profond); }
+.object-tools a.addlink { background-image: none; }
+
+/* Messages ------------------------------------------------------------------------------------------------ */
+ul.messagelist li { margin: 0 0 8px; padding: 12px 18px; border-radius: 14px; font-weight: 600; }
+ul.messagelist li.success { background: var(--message-success-bg); color: #0f4d2a; }
+
+/* Page de connexion ---------------------------------------------------------------------------------------- */
+body.login { background: var(--uciv-vert-profond); }
+.login #header { justify-content: center; border-bottom: 0; background: transparent; padding-top: 40px; }
+.login #container {
+  width: min(92vw, 420px); margin: 0 auto 64px; padding: 0; overflow: hidden;
+  border: 0; border-radius: 28px; background: #fff; box-shadow: 0 24px 60px rgba(0, 0, 0, .35);
+}
+.login #content { padding: 32px 32px 36px; }
+.login #content-main { width: 100%; }
+.login .form-row { padding: 0 0 18px; border: 0; }
+.login .form-row label { display: block; width: auto; padding: 0 0 8px; font-size: 14px; }
+.login .form-row input { width: 100%; }
+.login .submit-row { padding: 8px 0 0; background: transparent; }
+.login .submit-row input { width: 100%; }
+.login #content h1 { font-size: 26px; }
+.login .password-reset-link a { color: var(--uciv-vert); }
+.login #site-name a { color: #fff; }
+
+/* Petits écrans ---------------------------------------------------------------------------------------------- */
+@media (max-width: 767px) {
+  #header { padding: 12px 16px; }
+  .uciv-marque__nom { font-size: 16px; }
+  .uciv-marque__nom em { font-size: 18px; }
+  .uciv-marque__badge { display: none; }
+  div.breadcrumbs { padding: 10px 16px; }
+  #content { padding: 20px 16px 40px; }
+}

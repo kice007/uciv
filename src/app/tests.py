@@ -36,6 +36,12 @@ class UcivLeadershipPageTests(TestCase):
         self.assertContains(response, 'cinq engagements')
         self.assertContains(response, 'Conférence de lancement')
 
+    def test_launch_date_is_24_october(self):
+        response = self.client.get(reverse('app:uciv_leadership'))
+        self.assertContains(response, '24 octobre 2026 · American Corner')
+        self.assertContains(response, 'Heure à confirmer')
+        self.assertContains(self.client.get(reverse('app:home')), '24 octobre 2026')
+
     def test_home_links_to_leadership(self):
         response = self.client.get(reverse('app:home'))
         self.assertContains(response, reverse('app:uciv_leadership'))
@@ -396,3 +402,57 @@ class PagesDeContenuTests(TestCase):
         response = self.client.get(reverse('app:home'))
         for nom in ('opportunites', 'actualites', 'impact', 'ressources'):
             self.assertContains(response, reverse('app:' + nom))
+
+
+class AdministrationTests(TestCase):
+    def test_login_page_wears_uciv_branding(self):
+        response = self.client.get('/admin/login/')
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'app/assets/css/admin.css')
+        self.assertContains(response, 'uciv-marque')
+        self.assertContains(response, 'Administration UCIV')
+
+    def test_dashboard_shows_site_models(self):
+        from django.contrib.auth import get_user_model
+        get_user_model().objects.create_superuser('equipe', 'equipe@exemple.ci', 'mot-de-passe-solide')
+        self.client.login(username='equipe', password='mot-de-passe-solide')
+        response = self.client.get('/admin/')
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Site UCIV')
+        self.assertContains(response, 'Gestion du site')
+        self.assertContains(response, 'Articles')
+        self.assertContains(response, 'Opportunités')
+        self.assertEqual(self.client.get('/admin/app/article/').status_code, 200)
+
+
+class ReglagesBaseDeDonneesTests(TestCase):
+    """Les réglages MySQL se vérifient dans un sous-processus : aucune connexion n'est ouverte."""
+
+    def base(self, **env):
+        import json
+        import os
+        import subprocess
+        import sys
+        from django.conf import settings
+        code = "import json; from core import settings as s; print(json.dumps(s.DATABASES['default'], default=str))"
+        environ = {k: v for k, v in os.environ.items() if not k.startswith('MYSQL_') and k != 'USE_MYSQL'}
+        environ.update(env)
+        resultat = subprocess.run([sys.executable, '-c', code], cwd=settings.BASE_DIR, env=environ,
+                                  capture_output=True, text=True, check=True)
+        return json.loads(resultat.stdout)
+
+    def test_sqlite_by_default(self):
+        self.assertTrue(self.base()['ENGINE'].endswith('sqlite3'))
+
+    def test_mysql_settings_use_utf8mb4_without_forced_ssl(self):
+        base = self.base(USE_MYSQL='True', MYSQL_DB='uciv', MYSQL_USER='uciv_user', MYSQL_PASSWORD='secret')
+        self.assertEqual(base['ENGINE'], 'django.db.backends.mysql')
+        self.assertEqual((base['NAME'], base['USER'], base['HOST'], base['PORT']), ('uciv', 'uciv_user', 'localhost', '3306'))
+        self.assertEqual(base['OPTIONS']['charset'], 'utf8mb4')
+        self.assertNotIn('ssl_mode', base['OPTIONS'])
+        self.assertNotIn('ssl', base['OPTIONS'])
+        self.assertEqual(base['CONN_MAX_AGE'], 60)
+
+    def test_mysql_ssl_is_opt_in(self):
+        base = self.base(USE_MYSQL='True', MYSQL_DB='uciv', MYSQL_USER='u', MYSQL_PASSWORD='p', MYSQL_SSL_MODE='REQUIRED')
+        self.assertEqual(base['OPTIONS']['ssl_mode'], 'REQUIRED')
