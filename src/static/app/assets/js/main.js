@@ -139,14 +139,6 @@
     }, { passive: true });
   });
 
-  /* 5. Formulaires provisoires -------------------------------------------- */
-  document.querySelectorAll('[data-form-provisoire]').forEach(function (formulaire) {
-    formulaire.addEventListener('submit', function (evenement) {
-      evenement.preventDefault();
-      var note = formulaire.parentElement.querySelector('p');
-      if (note) note.textContent = "L'inscription à la lettre d'information sera bientôt disponible.";
-    });
-  });
   /* 6. Pastilles « Objet » : elles pilotent la liste déroulante du formulaire de contact. */
   document.querySelectorAll('[data-objet]').forEach(function (liste) {
     var pastilles = document.querySelectorAll('[data-objet-valeur]');
@@ -164,4 +156,20 @@
     liste.addEventListener('change', synchroniser);
     synchroniser();
   });
+
+  /* 7. Sommaire des pages légales : met en évidence la section en cours de lecture. */
+  var liensSommaire = document.querySelectorAll('.leg-sommaire a');
+  if (liensSommaire.length && 'IntersectionObserver' in window) {
+    var activer = function (id) {
+      liensSommaire.forEach(function (lien) {
+        lien.classList.toggle('est-actif', lien.getAttribute('href') === '#' + id);
+      });
+    };
+    var observateur = new IntersectionObserver(function (entrees) {
+      entrees.forEach(function (entree) {
+        if (entree.isIntersecting) activer(entree.target.id);
+      });
+    }, { rootMargin: '-20% 0px -70% 0px' });
+    document.querySelectorAll('.leg-section').forEach(function (section) { observateur.observe(section); });
+  }
 })();

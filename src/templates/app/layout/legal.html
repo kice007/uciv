@@ -1,0 +1,96 @@
+{% extends "app/base/base.html" %}
+{% load custom_tags %}
+
+{% block title %}{{ page.titre_page }} — Une Côte d'Ivoire Volontaire{% endblock %}
+{% block description %}{{ page.description }}{% endblock %}
+
+{% block content %}
+
+{% include "app/includes/_hero_page.html" with hero=page.hero %}
+
+{# ------------------------------------------------------ Sommaire et texte #}
+<section class="leg-corps">
+  <div class="conteneur leg-grille">
+    <aside class="leg-cote">
+      <details class="leg-sommaire" open>
+        <summary>
+          <span>Sur cette page</span>
+          {% include "app/includes/_icon.html" with name="chevron-down" %}
+        </summary>
+        <ol>
+          {% for section in page.sections %}
+            <li><a href="#{{ section.titre|slugify }}"{% if forloop.first %} class="est-actif"{% endif %}><span class="leg-sommaire__num">{{ forloop.counter|stringformat:"02d" }}</span>{{ section.titre }}</a></li>
+          {% endfor %}
+        </ol>
+      </details>
+      <div class="leg-question">
+        <span class="forme leg-question__anneau" aria-hidden="true"></span>
+        <p class="leg-question__titre">Une question ?</p>
+        <p>L'équipe UCIV vous répond sous quelques jours.</p>
+        <a class="lien-fleche" href="{% url 'app:contact' %}">Écrire à UCIV {% include "app/includes/_icon.html" with name="arrow-right" %}</a>
+      </div>
+    </aside>
+
+    <article class="leg-texte">
+      {% for section in page.sections %}
+        <section class="leg-section" id="{{ section.titre|slugify }}">
+          <h2><span class="leg-section__num">{{ forloop.counter|stringformat:"02d" }}</span> {{ section.titre }}</h2>
+          {% for bloc in section.blocs %}
+            {% if bloc.p %}
+              <p>{{ bloc.p|crochets }}</p>
+            {% elif bloc.fiche %}
+              <dl class="leg-fiche">
+                {% for libelle, valeur in bloc.fiche %}
+                  <div><dt>{{ libelle }}</dt><dd>{{ valeur|crochets }}</dd></div>
+                {% endfor %}
+              </dl>
+            {% elif bloc.liste %}
+              <ul class="leg-liste">
+                {% for point in bloc.liste %}
+                  <li><span class="leg-liste__puce">{% include "app/includes/_icon.html" with name="check" %}</span>{{ point }}</li>
+                {% endfor %}
+              </ul>
+            {% elif bloc.encadre %}
+              <p class="leg-encadre"><span class="leg-encadre__picto">{% include "app/includes/_icon.html" with name="info" %}</span>{{ bloc.encadre }}</p>
+            {% endif %}
+          {% endfor %}
+        </section>
+      {% endfor %}
+    </article>
+  </div>
+</section>
+
+{# ------------------------------------------------------- Autres documents #}
+<section class="section section--blanc leg-documents">
+  <div class="conteneur">
+    <div data-reveal>
+      <p class="surtitre">Informations légales</p>
+      <h2 class="leg-documents__titre">Les autres <em>documents.</em></h2>
+    </div>
+    <ul class="leg-cartes">
+      {% for doc in documents %}
+        <li class="leg-carte{% if doc.actuel %} leg-carte--actuel{% endif %}" data-reveal style="--i: {{ forloop.counter0 }}">
+          {% if doc.actuel %}
+            <div class="leg-carte__haut">
+              <span class="leg-carte__picto">{% include "app/includes/_icon.html" with name=doc.icone %}</span>
+              <span class="leg-carte__tag">Vous êtes ici</span>
+            </div>
+            <h3>{{ doc.label }}</h3>
+            <p>{{ doc.texte }}</p>
+          {% else %}
+            <a class="leg-carte__lien" href="{{ doc.url }}">
+              <div class="leg-carte__haut">
+                <span class="leg-carte__picto">{% include "app/includes/_icon.html" with name=doc.icone %}</span>
+              </div>
+              <h3>{{ doc.label }}</h3>
+              <p>{{ doc.texte }}</p>
+              <span class="lien-fleche lien-fleche--orange">Lire le document {% include "app/includes/_icon.html" with name="arrow-right" %}</span>
+            </a>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+
+{% endblock %}

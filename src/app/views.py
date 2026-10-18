@@ -11,15 +11,17 @@ from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, redirect, render
 from django.templatetags.static import static
 from django.urls import reverse
-from django.utils.http import urlencode
+from django.utils import timezone
+from django.utils.http import url_has_allowed_host_and_scheme, urlencode
+from django.views.decorators.http import require_POST
 
 from core.utils import send_customize_email
 
 from . import content
 from . import seo as referencement
-from .forms import ContactForm, EngagementForm, PartenariatForm
+from .forms import ContactForm, EngagementForm, NewsletterForm, PartenariatForm
 from .models import (
-    Article, Indicateur, Opportunite, Ressource, SoumissionContact, SoumissionEngagement,
+    Abonne, Article, Indicateur, Opportunite, Ressource, SoumissionContact, SoumissionEngagement,
     SoumissionPartenariat,
 )
 
@@ -287,3 +289,72 @@ def robots_txt(request):
 def llms_txt(request):
     """llms.txt : présentation du site pour les moteurs de réponse (IA)."""
     return HttpResponse(referencement.texte_llms(request), content_type='text/plain; charset=utf-8')
+
+
+def page_legale(request, cle):
+    """Pages légales : mentions légales, politique de confidentialité, conditions d'utilisation."""
+    page = content.LEGAL[cle]
+    documents = [dict(doc, actuel=doc['cle'] == cle) for doc in content.LEGAL_DOCUMENTS]
+    return render(request, 'app/layout/legal.html', {'page': page, 'documents': documents})
+
+
+def page_introuvable(request, exception=None):
+    """Page d'erreur 404 (branchée par `handler404` dans core/urls.py)."""
+    return render(request, 'app/layout/404.html', {'page': content.PAGE_404}, status=404)
+
+
+@require_POST
+def newsletter_inscription(request):
+    """Formulaire « Lettre d'information » du pied de page.
+
+    Enregistre l'adresse, puis revient sur la page d'origine, au niveau de la carte
+    (#lettre), qui affiche l'état : inscription réussie, déjà inscrit ou adresse invalide.
+    """
+    retour = request.POST.get('suivant') or request.META.get('HTTP_REFERER') or ''
+    if not url_has_allowed_host_and_scheme(retour, allowed_hosts={request.get_host()},
+                                           require_https=request.is_secure()):
+        retour = reverse('app:home')
+    retour = retour.split('#')[0] + '#lettre'
+
+    form = NewsletterForm(request.POST)
+    if not form.is_valid():
+        if form.has_error('site_web'):
+            # Robot : on fait comme si tout s'était bien passé, sans rien enregistrer.
+            request.session['newsletter'] = {'etat': 'reussie'}
+        else:
+            request.session['newsletter'] = {'etat': 'invalide', 'email': request.POST.get('email', '')[:254]}
+        return redirect(retour)
+
+    email = form.cleaned_data['email'].strip().lower()
+    abonne, cree = Abonne.objects.get_or_create(email=email)
+    if not cree and abonne.actif:
+        request.session['newsletter'] = {'etat': 'deja'}
+        return redirect(retour)
+    if not cree:
+        # Réinscription après une désinscription.
+        abonne.actif, abonne.desinscrit_le = True, None
+        abonne.save(update_fields=['actif', 'desinscrit_le'])
+    if settings.EMAIL_HOST:
+        lien = request.build_absolute_uri(reverse('app:newsletter_desinscription', args=[abonne.jeton]))
+        send_customize_email("Bienvenue dans la lettre d'information d'UCIV", [abonne.email],
+                             'emails/newsletter_bienvenue.html', {'lien_desinscription': lien})
+    request.session['newsletter'] = {'etat': 'reussie'}
+    return redirect(retour)
+
+
+def newsletter_desinscription(request, jeton):
+    """Lien personnel de désinscription : une confirmation en un clic, puis « C'est noté ».
+
+    La désinscription se fait en POST : certaines messageries ouvrent les liens des e-mails
+    automatiquement, ce qui désinscrirait les abonnés sans qu'ils le veuillent.
+    """
+    abonne = get_object_or_404(Abonne, jeton=jeton)
+    if request.method == 'POST' and abonne.actif:
+        abonne.actif, abonne.desinscrit_le = False, timezone.now()
+        abonne.save(update_fields=['actif', 'desinscrit_le'])
+    etape = 'fait' if not abonne.actif else 'confirmer'
+    page = content.DESINSCRIPTION[etape]
+    return render(request, 'app/layout/desinscription.html', {
+        'abonne': abonne, 'etape': etape, 'page': page,
+        'texte': page['texte'].format(email=abonne.email_masque),
+    })

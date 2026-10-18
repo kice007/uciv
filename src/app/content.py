@@ -115,10 +115,14 @@ RESEAUX = [
     {'label': 'LinkedIn', 'url': 'https://www.linkedin.com/company/une-côte-d-ivoire-volontaire'},
 ]
 
+URL_MENTIONS = reverse_lazy('app:mentions_legales')
+URL_CONFIDENTIALITE = reverse_lazy('app:confidentialite')
+URL_CONDITIONS = reverse_lazy('app:conditions')
+
 MENTIONS = [
-    {'label': 'Mentions légales', 'url': '#'},
-    {'label': 'Politique de confidentialité', 'url': '#'},
-    {'label': "Conditions d'utilisation", 'url': '#'},
+    {'label': 'Mentions légales', 'url': URL_MENTIONS},
+    {'label': 'Politique de confidentialité', 'url': URL_CONFIDENTIALITE},
+    {'label': "Conditions d'utilisation", 'url': URL_CONDITIONS},
 ]
 
 # --- Page d'accueil --------------------------------------------------------
@@ -598,17 +602,18 @@ EQUIPE = {
     'president_role': "Président et fondateur d'Une Côte d'Ivoire Volontaire.",
     'president_bio': "[Courte biographie à transmettre : parcours, engagement et "
                      "vision pour la jeunesse ivoirienne.]",
-    # `photo` : chemin statique du portrait (bureau-executif.jpg dans la maquette,
-    # pas encore fourni). Sans photo, la carte affiche les initiales.
+    # `photo` : chemin statique du portrait, découpé dans l'affiche bureau-executif.jpg
+    # comme dans la maquette (basse résolution : à remplacer par des photos HD).
+    # Sans photo, la carte affiche les initiales.
     'bureau': [
         {'nom': 'Aïssata Ouattara', 'initiales': 'AO', 'couleur': 'orange',
-         'role': 'Secrétaire Générale', 'photo': None},
+         'role': 'Secrétaire Générale', 'photo': 'app/assets/img/bureau-aissata-ouattara.jpg'},
         {'nom': 'Dr Angèle Zang', 'initiales': 'AZ', 'couleur': 'vert',
-         'role': 'Trésorière Générale', 'photo': None},
+         'role': 'Trésorière Générale', 'photo': 'app/assets/img/bureau-angele-zang.jpg'},
         {'nom': 'Roxane Atchia', 'initiales': 'RA', 'couleur': 'jaune',
-         'role': 'Commissaire aux comptes', 'photo': None},
+         'role': 'Commissaire aux comptes', 'photo': 'app/assets/img/bureau-roxane-atchia.jpg'},
         {'nom': 'Martine Boa', 'initiales': 'MB', 'couleur': 'profond',
-         'role': 'Responsable Générale des projets', 'photo': None},
+         'role': 'Responsable Générale des projets', 'photo': 'app/assets/img/bureau-martine-boa.jpg'},
     ],
     'medias_intro': "Les biographies, photos et domaines d'expertise de chaque "
                     "responsable seront ajoutés dès leur transmission.",
@@ -719,7 +724,7 @@ _CREME, _BLANC_8 = 'var(--creme)', 'rgba(255, 255, 255, .08)'
 
 OPPORTUNITES_PAGE = {
     'hero': {
-        'fond': 'vert-profond', 'hauteur': 580, 'taille': 62, 'largeur_texte': 760, 'largeur_chapo': 560,
+        'fond': 'vert-profond', 'hauteur': 580, 'taille': 62, 'taille_mobile': 40, 'largeur_texte': 760, 'largeur_chapo': 560,
         'fil': [_ACCUEIL, {'label': 'Opportunités'}],
         'surtitre': 'Opportunités',
         'titre': 'Les opportunités qui peuvent', 'suite': 'faire grandir votre parcours.',
@@ -746,7 +751,7 @@ OPPORTUNITES_PAGE = {
 
 ACTUALITES_PAGE = {
     'hero': {
-        'fond': 'vert-profond', 'hauteur': 500, 'taille': 88, 'largeur_texte': 700, 'largeur_chapo': 560,
+        'fond': 'vert-profond', 'hauteur': 500, 'taille': 88, 'taille_mobile': 48, 'largeur_texte': 700, 'largeur_chapo': 560,
         'fil': [_ACCUEIL, {'label': 'Actualités'}],
         'surtitre': 'Actualités',
         'titre': "L'actualité", 'suite': "d'UCIV.",
@@ -763,7 +768,7 @@ ACTUALITES_PAGE = {
 
 IMPACT_PAGE = {
     'hero': {
-        'fond': 'vert', 'hauteur': 520, 'taille': 66, 'largeur_texte': 760, 'largeur_chapo': 560,
+        'fond': 'vert', 'hauteur': 520, 'taille': 66, 'taille_mobile': 40, 'largeur_texte': 760, 'largeur_chapo': 560,
         'fil': [_ACCUEIL, {'label': 'Notre impact'}],
         'surtitre': 'Notre impact',
         'titre': 'Des actions. Des expériences.', 'suite': "De l'impact.",
@@ -788,7 +793,7 @@ IMPACT_PAGE = {
 
 RESSOURCES_PAGE = {
     'hero': {
-        'fond': 'orange', 'hauteur': 500, 'taille': 76, 'largeur_texte': 760, 'largeur_chapo': 600,
+        'fond': 'orange', 'hauteur': 500, 'taille': 76, 'taille_mobile': 44, 'largeur_texte': 760, 'largeur_chapo': 600,
         'fil': [_ACCUEIL, {'label': 'Ressources'}],
         'surtitre': 'Ressources',
         'titre': "Apprendre. S'informer.", 'suite': 'Progresser.',
@@ -1135,4 +1140,283 @@ FAQ = {
          "Le formulaire de contact couvre le volontariat, les programmes, UCIV Leadership, les partenariats, les "
          "propositions de compétences, la presse et les médias, ainsi que toute autre demande."),
     ],
+}
+
+
+# --- Pages légales ---------------------------------------------------------
+# Une page par document, même gabarit (layout/legal.html). Les textes entre
+# crochets sont à compléter ou valider par UCIV : ils s'affichent en orange.
+# Blocs d'une section : {'p': texte}, {'fiche': [(libellé, valeur), …]},
+# {'liste': [point, …]}, {'encadre': texte}.
+
+LEGAL_MAJ = '[jj/mm/aaaa]'
+
+LEGAL_DOCUMENTS = [
+    {'cle': 'mentions', 'label': 'Mentions légales', 'url': URL_MENTIONS, 'icone': 'scale',
+     'texte': 'Éditeur, hébergeur et propriété intellectuelle.'},
+    {'cle': 'confidentialite', 'label': 'Politique de confidentialité', 'url': URL_CONFIDENTIALITE,
+     'icone': 'shield-check', 'texte': 'Les données que nous collectons et vos droits.'},
+    {'cle': 'conditions', 'label': "Conditions d'utilisation", 'url': URL_CONDITIONS,
+     'icone': 'file-text', 'texte': "Les règles d'usage du site et des formulaires."},
+]
+
+def _legal_formes(x, y, w, h):
+    """Formes du bandeau (maquette 1440 px) : anneau blanc, disque jaune et anneau orange
+    centré sur le disque (même centre : 1265, 325), dont la taille varie selon la page."""
+    return [
+        {'x': 1060, 'y': -170, 'w': 500, 'c': 'rgba(255, 255, 255, .1)', 'creux': 78},
+        {'x': 1190, 'y': 250, 'w': 150, 'c': 'var(--jaune)', 'creux': 0},
+        {'x': x, 'y': y, 'w': w, 'h': h, 'c': 'var(--orange)', 'creux': 70},
+    ]
+
+
+def _legal_hero(label, titre, suite, chapo, anneau):
+    return {
+        'fond': 'vert-profond', 'hauteur': 480, 'taille': 72, 'taille_mobile': 40,
+        'largeur_texte': 760, 'largeur_chapo': 580,
+        'fil': [_ACCUEIL, {'label': label}],
+        'surtitre': 'Informations légales',
+        'titre': titre, 'suite': suite, 'chapo': chapo,
+        'formes': _legal_formes(*anneau), 'maj': LEGAL_MAJ,
+    }
+
+
+LEGAL = {
+    'mentions': {
+        'titre_page': 'Mentions légales',
+        'description': "Éditeur, directeur de la publication, hébergeur et propriété intellectuelle "
+                       "du site d'Une Côte d'Ivoire Volontaire.",
+        'hero': _legal_hero(
+            'Mentions légales', 'Mentions', 'légales.',
+            "Qui édite ce site, qui l'héberge et à qui s'adresser : les informations "
+            "obligatoires, en toute transparence.", (1146, 208, 238, 234)),
+        'sections': [
+            {'titre': 'Éditeur du site', 'blocs': [
+                {'p': "Le site uciv.ci [adresse à confirmer] est édité par Une Côte d'Ivoire "
+                      "Volontaire (UCIV), initiative citoyenne constituée en association de droit "
+                      "ivoirien [forme juridique à confirmer]."},
+                {'fiche': [
+                    ('Dénomination', "Une Côte d'Ivoire Volontaire (UCIV)"),
+                    ('Siège', "04 BP 2087 Abidjan, Côte d'Ivoire"),
+                    ('Déclaration', '[N° de récépissé de déclaration]'),
+                    ('Téléphone', '+225 07 87 56 17 66 / 07 07 722 078'),
+                    ('E-mail', 'organisationuciv@gmail.com'),
+                ]},
+            ]},
+            {'titre': 'Directeur de la publication', 'blocs': [
+                {'p': "Marshall Kouamé, président et fondateur d'Une Côte d'Ivoire Volontaire."},
+            ]},
+            {'titre': 'Hébergement', 'blocs': [
+                {'fiche': [
+                    ('Hébergeur', "[Nom de l'hébergeur]"),
+                    ('Adresse', "[Adresse postale de l'hébergeur]"),
+                    ('Site web', '[www.hebergeur.com]'),
+                ]},
+            ]},
+            {'titre': 'Conception et réalisation', 'blocs': [
+                {'p': "Design et développement du site : [Nom du prestataire]. Le site est "
+                      "construit avec Django, un logiciel libre."},
+            ]},
+            {'titre': 'Propriété intellectuelle', 'blocs': [
+                {'p': "L'ensemble des contenus de ce site (textes, logos, photographies, visuels, "
+                      "mise en page) est la propriété d'UCIV ou de ses partenaires, sauf mention "
+                      "contraire. Toute reproduction, même partielle, est interdite sans "
+                      "autorisation écrite préalable."},
+                {'p': "Le logo UCIV et la marque « UCIV Leadership » ne peuvent être utilisés sans "
+                      "l'accord d'UCIV."},
+            ]},
+            {'titre': 'Crédits photographiques', 'blocs': [
+                {'p': "Photographies : UCIV et ses bénévoles, sauf mention contraire sous l'image. "
+                      "[Autres crédits à compléter]."},
+            ]},
+            {'titre': 'Liens et responsabilité', 'blocs': [
+                {'p': "UCIV s'efforce de publier des informations exactes et à jour, sans pouvoir "
+                      "en garantir l'exhaustivité. Les liens vers des sites externes sont proposés "
+                      "à titre informatif : UCIV n'est pas responsable de leur contenu."},
+            ]},
+            {'titre': 'Nous contacter', 'blocs': [
+                {'p': "Pour toute question sur ces mentions ou pour signaler un contenu, "
+                      "écrivez-nous via la page Contact ou à organisationuciv@gmail.com."},
+            ]},
+        ],
+    },
+    'confidentialite': {
+        'titre_page': 'Politique de confidentialité',
+        'description': "Données collectées par le site d'UCIV, finalités, durée de conservation "
+                       "et exercice de vos droits.",
+        'hero': _legal_hero(
+            'Politique de confidentialité', 'Politique de', 'confidentialité.',
+            "Quelles données nous collectons, pourquoi, combien de temps nous les gardons, et "
+            "comment exercer vos droits.", (1131, 195, 268, 259)),
+        'sections': [
+            {'titre': 'Responsable du traitement', 'blocs': [
+                {'p': "Le responsable du traitement des données collectées sur ce site est Une "
+                      "Côte d'Ivoire Volontaire (UCIV), 04 BP 2087 Abidjan, représentée par son "
+                      "président, Marshall Kouamé. Contact : organisationuciv@gmail.com."},
+                {'p': "UCIV applique la loi n° 2013-450 du 19 juin 2013 relative à la protection "
+                      "des données à caractère personnel en Côte d'Ivoire."},
+            ]},
+            {'titre': 'Données collectées', 'blocs': [
+                {'p': "Nous collectons uniquement les données que vous nous transmettez "
+                      "volontairement via nos formulaires :"},
+                {'fiche': [
+                    ("Je veux m'engager", "Nom, e-mail, téléphone, choix d'engagement, compétences, "
+                                          "message"),
+                    ('Partenariat', "Nom, organisation, e-mail, téléphone, type de collaboration, "
+                                    "présentation"),
+                    ('Contact', 'Nom, e-mail, téléphone, organisation (facultatif), objet, message'),
+                    ("Lettre d'information", 'Adresse e-mail'),
+                ]},
+            ]},
+            {'titre': 'Pourquoi nous les utilisons', 'blocs': [
+                {'liste': [
+                    "Vous recontacter au sujet de votre engagement, de votre proposition ou de "
+                    "votre question",
+                    'Organiser nos programmes, activités et événements',
+                    "Vous envoyer notre lettre d'information, si vous vous y êtes inscrit",
+                    'Établir des statistiques anonymes sur la participation',
+                ]},
+                {'encadre': 'Vos données ne sont jamais vendues ni utilisées à des fins publicitaires.'},
+            ]},
+            {'titre': 'Base légale', 'blocs': [
+                {'p': "Le traitement repose sur votre consentement, exprimé lorsque vous envoyez un "
+                      "formulaire ou vous inscrivez à la lettre d'information. Vous pouvez le "
+                      "retirer à tout moment."},
+            ]},
+            {'titre': 'Destinataires', 'blocs': [
+                {'p': "Seuls les membres de l'équipe UCIV chargés du suivi des demandes accèdent à "
+                      "vos données. Elles peuvent être partagées avec un partenaire d'un programme "
+                      "uniquement avec votre accord préalable. Notre hébergeur [Nom de "
+                      "l'hébergeur] assure leur stockage technique."},
+            ]},
+            {'titre': 'Durée de conservation', 'blocs': [
+                {'fiche': [
+                    ('Demandes et candidatures', '[3 ans] après le dernier échange'),
+                    ("Lettre d'information", "Jusqu'à votre désinscription"),
+                    ('Données de connexion', '[12 mois] au maximum'),
+                ]},
+            ]},
+            {'titre': 'Vos droits', 'blocs': [
+                {'p': "Vous disposez d'un droit d'accès, de rectification, d'opposition et de "
+                      "suppression de vos données. Pour l'exercer, écrivez à "
+                      "organisationuciv@gmail.com en précisant votre demande : nous répondons "
+                      "sous [30 jours]."},
+                {'p': "Si vous estimez que vos droits ne sont pas respectés, vous pouvez saisir "
+                      "l'Autorité de Régulation des Télécommunications/TIC de Côte d'Ivoire "
+                      "(ARTCI)."},
+            ]},
+            {'titre': 'Sécurité', 'blocs': [
+                {'p': "Le site est servi en connexion chiffrée (HTTPS). Les formulaires sont "
+                      "protégés contre les envois automatisés et l'accès à l'espace "
+                      "d'administration est réservé à l'équipe UCIV."},
+            ]},
+            {'titre': 'Cookies', 'blocs': [
+                {'p': "Le site n'utilise aucun cookie publicitaire ni outil de mesure d'audience. "
+                      "Seuls des cookies techniques, indispensables au fonctionnement des "
+                      "formulaires (sécurité et session), sont déposés."},
+            ]},
+            {'titre': 'Modifications', 'blocs': [
+                {'p': "Cette politique peut évoluer. La date de dernière mise à jour figure en haut "
+                      "de la page."},
+            ]},
+        ],
+    },
+    'conditions': {
+        'titre_page': "Conditions d'utilisation",
+        'description': "Règles d'utilisation du site d'Une Côte d'Ivoire Volontaire, de ses "
+                       "contenus et de ses formulaires.",
+        'hero': _legal_hero(
+            "Conditions d'utilisation", 'Conditions', "d'utilisation.",
+            "Les règles qui encadrent l'usage du site, de ses contenus et de ses formulaires.",
+            (1134, 196, 261, 259)),
+        'sections': [
+            {'titre': 'Objet', 'blocs': [
+                {'p': "Les présentes conditions encadrent l'utilisation du site d'Une Côte "
+                      "d'Ivoire Volontaire (UCIV). En naviguant sur le site, vous les acceptez."},
+            ]},
+            {'titre': 'Accès au site', 'blocs': [
+                {'p': "Le site est accessible gratuitement, à tout moment, sauf interruption pour "
+                      "maintenance ou cas de force majeure. UCIV peut faire évoluer ou suspendre "
+                      "tout ou partie du site sans préavis."},
+            ]},
+            {'titre': 'Utilisation des formulaires', 'blocs': [
+                {'p': "En utilisant nos formulaires (engagement, partenariat, contact, lettre "
+                      "d'information), vous vous engagez à :"},
+                {'liste': [
+                    'Fournir des informations exactes et à jour',
+                    "Ne pas usurper l'identité d'une autre personne ou organisation",
+                    'Ne pas envoyer de contenu illicite, injurieux ou publicitaire',
+                    'Ne pas tenter de perturber le fonctionnement du site',
+                ]},
+            ]},
+            {'titre': 'Contenus et propriété intellectuelle', 'blocs': [
+                {'p': "Les textes, photographies, logos et visuels du site appartiennent à UCIV ou "
+                      "à ses partenaires. Vous pouvez partager un article en citant la source et "
+                      "en renvoyant vers le site ; toute autre reproduction nécessite notre "
+                      "accord écrit."},
+            ]},
+            {'titre': 'Opportunités et ressources', 'blocs': [
+                {'p': "Les opportunités et ressources publiées le sont à titre informatif. "
+                      "Lorsqu'elles proviennent d'un partenaire, celui-ci reste seul responsable "
+                      "des conditions de l'offre et de la sélection des candidats."},
+            ]},
+            {'titre': 'Liens externes', 'blocs': [
+                {'p': "Le site peut contenir des liens vers d'autres sites. UCIV n'exerce aucun "
+                      "contrôle sur leur contenu et décline toute responsabilité à leur égard."},
+            ]},
+            {'titre': 'Responsabilité', 'blocs': [
+                {'p': "UCIV met tout en œuvre pour publier des informations fiables, sans pouvoir "
+                      "garantir l'absence d'erreur. UCIV ne saurait être tenue responsable d'un "
+                      "dommage résultant de l'utilisation du site."},
+            ]},
+            {'titre': 'Droit applicable', 'blocs': [
+                {'p': "Les présentes conditions sont soumises au droit ivoirien. En cas de litige, "
+                      "et à défaut d'accord amiable, les tribunaux d'Abidjan sont seuls "
+                      "compétents."},
+            ]},
+        ],
+    },
+}
+
+# --- Page d'erreur 404 -------------------------------------------------------
+
+PAGE_404 = {
+    'titre': 'Cette page', 'suite': "s'est égarée.",
+    'texte': "Le lien que vous avez suivi est peut-être incorrect, ou la page a été déplacée. "
+             "Pas d'inquiétude : il y a toujours une place pour vous chez UCIV.",
+    'note': "on s'est perdus ?",
+    'liens': [
+        {'label': 'Nos programmes', 'url': URL_PROGRAMMES},
+        {'label': "Je veux m'engager", 'url': URL_ENGAGEMENT},
+        {'label': 'Opportunités', 'url': URL_OPPORTUNITES},
+        {'label': 'Actualités', 'url': URL_ACTUALITES},
+    ],
+}
+
+
+# --- Lettre d'information ----------------------------------------------------
+# Messages de la carte du pied de page après l'envoi du formulaire, et page de
+# désinscription (deux étapes : confirmer, puis « C'est noté »).
+
+NEWSLETTER = {
+    'reussie': {'titre': "Merci, c'est noté !",
+                'texte': 'Vous recevrez nos prochaines actualités à cette adresse.'},
+    'deja': {'titre': 'Vous êtes déjà inscrit·e.',
+             'texte': 'Merci de votre fidélité : rien à faire de plus.'},
+    'invalide': 'Saisissez une adresse e-mail valide.',
+}
+
+DESINSCRIPTION = {
+    'confirmer': {
+        'titre': 'Vous nous', 'suite': 'quittez ?', 'note': 'on vous regrettera !', 'icone': 'mail-minus',
+        'texte': "Vous êtes sur le point de désinscrire l'adresse {email} de la lettre d'information "
+                 "d'UCIV. Vous ne recevrez plus nos actualités.",
+        'bas': 'Vous pourrez vous réinscrire à tout moment depuis le pied de page.',
+    },
+    'fait': {
+        'titre': "C'est noté.", 'suite': 'À bientôt !', 'note': "merci d'avoir été là !", 'icone': 'check',
+        'texte': "L'adresse {email} ne recevra plus la lettre d'information d'UCIV. Merci d'avoir "
+                 "suivi nos actualités.",
+        'bas': "Vous avez changé d'avis ? Réinscrivez-vous depuis le pied de page.",
+    },
 }

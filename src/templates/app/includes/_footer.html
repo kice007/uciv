@@ -1,4 +1,4 @@
-{% load static %}
+{% load static custom_tags %}
 <footer class="pied">
   <div class="conteneur">
     <div class="pied__accroche" data-reveal>
@@ -48,14 +48,31 @@
         </nav>
       {% endfor %}
 
-      <div class="lettre">
+      <div class="lettre" id="lettre">
         <h2>Recevez les actualités d'UCIV</h2>
-        {# Formulaire pas encore branché : l'inscription sera traitée par une vue Django plus tard. #}
-        <form class="lettre__form" action="#" method="post" data-form-provisoire>
-          <label class="visuellement-masque" for="lettre-email">Votre adresse e-mail</label>
-          <input id="lettre-email" type="email" name="email" placeholder="Votre adresse e-mail" autocomplete="email" required>
-          <button type="submit">S'inscrire</button>
-        </form>
+        {% if newsletter.etat == 'reussie' or newsletter.etat == 'deja' %}
+          {% with message=newsletter_messages|get_item:newsletter.etat %}
+            <div class="lettre__message" role="status">
+              <span class="lettre__picto lettre__picto--{{ newsletter.etat }}">{% if newsletter.etat == 'reussie' %}{% include "app/includes/_icon.html" with name="check" %}{% else %}{% include "app/includes/_icon.html" with name="info" %}{% endif %}</span>
+              <div><strong>{{ message.titre }}</strong><span>{{ message.texte }}</span></div>
+            </div>
+          {% endwith %}
+        {% else %}
+          <form class="lettre__form{% if newsletter.etat == 'invalide' %} lettre__form--erreur{% endif %}" action="{% url 'app:newsletter_inscription' %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="suivant" value="{{ request.get_full_path }}">
+            <label class="visuellement-masque" for="lettre-email">Votre adresse e-mail</label>
+            <input id="lettre-email" type="email" name="email" placeholder="Votre adresse e-mail" autocomplete="email" required{% if newsletter.etat == 'invalide' %} value="{{ newsletter.email }}" aria-invalid="true" aria-describedby="lettre-erreur"{% endif %}>
+            <div class="eng-piege" aria-hidden="true">
+              <label for="lettre-site-web">Ne pas remplir</label>
+              <input type="text" id="lettre-site-web" name="site_web" tabindex="-1" autocomplete="off">
+            </div>
+            <button type="submit">S'inscrire</button>
+          </form>
+          {% if newsletter.etat == 'invalide' %}
+            <p class="lettre__erreur" id="lettre-erreur" role="alert">{% include "app/includes/_icon.html" with name="circle-alert" %}{{ newsletter_messages.invalide }}</p>
+          {% endif %}
+        {% endif %}
         <p>Désinscription possible à tout moment.</p>
       </div>
     </div>

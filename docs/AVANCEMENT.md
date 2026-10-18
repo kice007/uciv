@@ -1,7 +1,7 @@
 # Avancement du projet UCIV
 
 Point de reprise : ce qui est fait, ce qui ne l'est pas, et par où continuer.
-Dernière mise à jour : 16 octobre 2026.
+Dernière mise à jour : 18 octobre 2026.
 
 Documents liés : [PLAN.md](PLAN.md) (ce qu'il faut construire),
 [ARCHITECTURE.md](ARCHITECTURE.md) (structure), [CLAUDE.md](../CLAUDE.md) (règles agents),
@@ -15,9 +15,11 @@ Documents liés : [PLAN.md](PLAN.md) (ce qu'il faut construire),
 | Dépendances | Fait : Django 6.1.2 et Pillow 13.0.0 (images) |
 | Page d'accueil | Faite, alignée sur la maquette |
 | Pages intérieures (14) | **14 faites** : les 9 précédentes + Opportunités, Actualités, Article, Notre impact, Ressources |
-| Modèles de données et administration | 7 modèles administrables : 3 de formulaires (`SoumissionEngagement`, `SoumissionPartenariat`, `SoumissionContact`) et 4 de contenu (`Article`, `Opportunite`, `Ressource`, `Indicateur`) ; `MembreEquipe`, `Programme` et `Partenaire` restent dans `content.py` |
-| Formulaires | 3 faits (engagement, partenariat, contact) ; newsletter à faire |
-| Responsive mobile/tablette | Fait pour l'accueil seulement |
+| Pages légales et 404 | **Faites** (desktop et mobile) : mentions légales, politique de confidentialité, conditions d'utilisation, page introuvable |
+| Modèles de données et administration | 8 modèles administrables : `Abonne` (lettre d'information), 3 de formulaires (`SoumissionEngagement`, `SoumissionPartenariat`, `SoumissionContact`) et 4 de contenu (`Article`, `Opportunite`, `Ressource`, `Indicateur`) ; `MembreEquipe`, `Programme` et `Partenaire` restent dans `content.py` |
+| Formulaires | 4 faits : engagement, partenariat, contact, lettre d'information (pied de page) |
+| Responsive mobile (390 px) | **Fait pour les 15 pages**, aligné sur les écrans « … — Mobile » de la maquette ; tablette déduite (720–1099 px) |
+| Dashboard de l'équipe | **Maquette faite et validée** (desktop et mobile, branche `feature/dashboard`) ; implémentation pas commencée |
 | Documentation | Faite (voir ci-dessus) |
 | Mise en ligne | Non commencée |
 
@@ -153,8 +155,55 @@ Documents liés : [PLAN.md](PLAN.md) (ce qu'il faut construire),
 - Les ellipses du bandeau et de plusieurs sections sont des anneaux (propriété `innerRadius` de Pencil : 0,7 à 0,8), pas des disques pleins. Ils sont reproduits par un dégradé radial (section 17 de `main.css`) sur les pages Go du Digital, Experience Lab, UCIV Leadership, Qui sommes-nous ?, Nos programmes ; l'anneau de la section « Vision & chiffres » de l'accueil est ajusté (57 px).
 - Les cercles pleins restent pleins là où la maquette n'a pas de rayon intérieur (disques crème, orange, blanc).
 
+### Responsive mobile (16 octobre 2026)
+- **Maquette mise à jour** : `maquette/design_uciv.pen` remplacée par la version de travail (écrans desktop **et** les 15 écrans « … — Mobile » à 390 px).
+- **Méthode** : chaque écran mobile a été exporté de Pencil, puis comparé au site à 390 px (tailles, interlignes, graisses de chaque texte, puis hauteur de chaque section). Toutes les sections sont alignées à quelques pixels près, sauf les écarts de contenu listés plus bas.
+- **Fichiers modifiés** :
+  - `static/app/assets/css/main.css` : nouvelle **section 23** « Mobile : valeurs de la maquette 390 px », un seul bloc `@media (max-width: 719px)`. Rien ne change au-dessus de 720 px (tablette et ordinateur).
+  - `templates/app/includes/_hero_page.html` et `app/content.py` : taille mobile du titre des bandeaux (`taille_mobile` : 40, 48, 40, 44 px selon la page).
+- **Ce qui change en mobile** : échelle typographique de la maquette (titres 32 à 44 px, textes 16/26 px), sections à 56 px de marge, bandeaux à un seul anneau avec la note manuscrite sous le texte, photos des bandeaux en rectangle arrondi (engagement, partenaires, programmes), bureau exécutif en grille 2 × 2, valeurs avec le numéro à gauche, indicateurs d'impact en 2 colonnes, programmes avec numéro et étiquette sur une ligne, portrait du fondateur au-dessus du texte, pied de page resserré.
+- **Débordements horizontaux corrigés** : Nos programmes (disque jaune) et Je veux m'engager (cartes).
+- **Menu mobile** : le panneau affiche maintenant le logo complet (image + nom), lien vers l'accueil (`includes/_header.html`).
+- **UCIV Leadership** : le logo posé sur la photo du hero est masqué en mobile, comme dans la maquette.
+
+### Autres changements du 16 octobre 2026
+- **Notre impact** : la citation n'a plus de bouton « Je veux m'engager » (modification de la maquette desktop et mobile) ; `templates/app/layout/impact.html`.
+- **Équipe** : les 4 portraits du bureau exécutif sont découpés dans l'affiche `bureau-executif.jpg` avec les cadrages de la maquette (`static/app/assets/img/bureau-*.jpg`, chemins dans `content.EQUIPE['bureau']`). L'affiche est en basse résolution : des photos HD restent à fournir.
+
+### Pages légales et page 404 (16 octobre 2026)
+- **Maquette** : 4 nouveaux écrans desktop + mobile dans `maquette/design_uciv.pen` (Mentions légales, Politique de confidentialité, Conditions d'utilisation, Page introuvable (404)), validés avant l'implémentation.
+- **Pages** : `/mentions-legales/`, `/politique-de-confidentialite/`, `/conditions-d-utilisation/` ; une seule vue `page_legale` et un seul gabarit `layout/legal.html` (bandeau, sommaire, sections numérotées, encart « Une question ? », « Les autres documents »). Textes dans `content.LEGAL` ; blocs `p`, `fiche`, `liste`, `encadre`.
+- **Textes à compléter** : tout passage `[entre crochets]` s'affiche en orange (filtre `crochets`) : forme juridique, récépissé, hébergeur, prestataire, adresse du site, durées de conservation, date de mise à jour (`LEGAL_MAJ`). À faire relire par UCIV avant la mise en ligne.
+- **404** : `layout/404.html` (visuel « 4 ● 4 », retour à l'accueil, contact, 4 liens utiles), branchée par `handler404` (active quand `DEBUG=False`). En local, aperçu sur `/404/`.
+- **Liens connectés** : pied de page (3 documents, toutes les pages), « Voir la politique de confidentialité » des formulaires Engagement et Contact, cartes « Les autres documents », sommaire (ancres + mise en évidence de la section lue, `main.js` bloc 7).
+- **Fichiers** : `app/content.py`, `app/views.py`, `app/urls.py`, `core/urls.py`, `app/templatetags/custom_tags.py`, `templates/app/layout/legal.html` et `404.html`, `includes/_hero_page.html` (pastille « Dernière mise à jour »), `includes/_icons.html` (4 icônes), `contact.html`, `engagement.html`, `main.css` (section 24), `main.js`.
+- **Formes concentriques** : dans les bandeaux, chaque forme est désormais placée par son centre (`.ph-forme`), si bien qu'un disque reste au centre de son anneau à toutes les largeurs d'écran ; anneaux orange des pages légales aux dimensions exactes de la maquette (légèrement ovales, `h` dans `content.py`), disque orange de la 404 centré dans l'anneau jaune (desktop et mobile).
+- 5 tests ajoutés (61 au total).
+
+### Lettre d'information (16 octobre 2026)
+- **Maquette** : écrans « Lettre d'information — états du formulaire » (desktop, mobile), « Désinscription » et « Désinscription confirmée » (desktop, mobile), validés avant l'implémentation.
+- **Choix** : inscription directe (pas de double confirmation) ; le site collecte les adresses, l'équipe envoie la lettre avec son propre outil (Brevo, Mailchimp…) à partir d'un export CSV.
+- **Modèle** `Abonne` (migration `0006`) : e-mail unique, actif, jeton de désinscription, dates d'inscription et de désinscription. **Administration** : filtre actifs / désinscrits, action « Exporter en CSV les abonnés actifs sélectionnés » (séparateur `;`, compatible Excel).
+- **Pied de page** : le formulaire envoie vers `/newsletter/inscription/` (champ piège anti-robots) puis revient sur la même page, au niveau de la carte (`#lettre`), qui affiche l'état : inscription réussie, déjà inscrit·e, adresse invalide (l'adresse saisie est conservée). Réinscription possible après une désinscription.
+- **Désinscription** : lien personnel `/newsletter/desinscription/<jeton>/`, page en deux étapes (confirmer en un clic, puis « C'est noté ») ; la désinscription se fait en POST pour qu'une messagerie qui ouvre les liens ne désinscrive personne. Jeton inconnu : 404. Page non indexée.
+- **E-mail de bienvenue** avec le lien de désinscription, envoyé si `EMAIL_HOST` est configuré (`emails/newsletter_bienvenue.html`).
+- **Disques** : sur la page de désinscription, anneau, disque et pictogramme ont le même centre (vérifié : 1083 ; 433 en desktop, 208 ; 241 en mobile).
+- **Fichiers** : `models.py`, `forms.py`, `views.py`, `urls.py`, `admin.py`, `content.py` (`NEWSLETTER`, `DESINSCRIPTION`), `context_processors.py`, `templatetags/custom_tags.py` (`get_item`), `includes/_footer.html`, `includes/_icons.html`, `layout/desinscription.html`, `emails/newsletter_bienvenue.html`, `main.css` (section 25), `main.js` (suppression du formulaire provisoire).
+- 10 tests ajoutés (71 au total).
+- À faire en production : `python manage.py migrate` (migration `0006`).
+
+### Maquette du dashboard de l'équipe (16-17 octobre 2026)
+- **Objectif** : un espace privé, distinct de l'admin Django, pour gérer et alimenter le contenu des pages Opportunités, Actualités, Article, Notre impact et Ressources.
+- **Choix validés** : le dashboard couvre le contenu **et** le suivi (messages reçus des formulaires, abonnés avec export CSV) ; un seul type de compte (toute l'équipe a les mêmes droits) ; l'admin Django reste pour le technique.
+- **Écrans** (27 cadres dans la maquette, desktop sur la ligne y = 22 400, mobile sur y = 24 400, composants sur y = 21 200) :
+  - Planche de composants : barre latérale (Pilotage / Contenu du site / Suivi, compteur de messages, « Voir le site », utilisateur et déconnexion), barre mobile, pastilles de statut (Publié, Brouillon, Fiche d'exemple, Nouveau, Lu).
+  - Connexion (et état d'erreur) ; Tableau de bord (chiffres clés, « À faire », raccourcis, derniers contenus, messages récents).
+  - Listes Articles, Opportunités, Ressources (recherche, filtres, tableau en desktop, cartes en mobile) et formulaires Modifier l'article, Nouvelle opportunité, Modifier la ressource (contenu à gauche, publication et image ou fichier à droite ; barre d'actions fixe en mobile).
+  - Chiffres d'impact (6 indicateurs, ordre, « À venir » si vide), Messages reçus (liste + détail, « Répondre par e-mail », « Marquer comme traité »), Abonnés (chiffres, liste, export CSV), menu mobile ouvert.
+- Les champs des formulaires reprennent ceux des modèles existants (`Article`, `Opportunite`, `Ressource`, `Indicateur`, `Abonne`). Implémentation à faire sur une nouvelle branche partie de `feature/dashboard`.
+
 ### Maquette
-- `maquette/design_uciv.pen` : 16 écrans desktop analysés ; le plan de réalisation en est tiré.
+- `maquette/design_uciv.pen` : 20 écrans desktop et 19 écrans mobiles pour le site public, 6 écrans de la lettre d'information, 27 cadres pour le dashboard. Le fichier de travail est `UCIV/design_uciv.pen` (ouvert dans Pencil) ; il est recopié dans `maquette/` avant chaque commit.
 
 ## Écarts connus avec la maquette (volontaires ou à trancher)
 
@@ -164,31 +213,38 @@ Documents liés : [PLAN.md](PLAN.md) (ce qu'il faut construire),
 | Bouton de recherche en-tête | absent | présent, sans destination | À valider ou retirer |
 | Sous-menus (Programmes, S'engager) | non dessinés | présents | À valider |
 
-## Non commité
+## Branches fusionnées dans `main` (18 octobre 2026)
 
-Les fichiers suivants sont dans le dossier de travail mais pas dans git :
-`README.md`, `CLAUDE.md`, `CONTRIBUTING.md`, le dossier `docs/` (`PLAN.md`, `AVANCEMENT.md`), le dossier `maquette/`
-(le `.pen` pèse 1,6 Mo), et les modifications des titres dans `main.css` et `index.html`.
+Quatre branches empilées, chacune partie de la précédente, fusionnées en une seule fois depuis `feature/dashboard`. Conflits résolus : `content.py`, `views.py`, `tests.py`, `main.css` (les deux côtés gardés), l'ancienne page 404 de `main` remplacée par celle de la branche, migration `Abonne` renumérotée `0008` :
+
+| Branche | Contenu |
+|---|---|
+| `feature/responsive-mobile` | Responsive mobile des 15 pages, maquette mise à jour, `.gitattributes`, portraits du bureau, citation de Notre impact, logo du menu mobile |
+| `feature/pages-legales` | Mentions légales, politique de confidentialité, conditions d'utilisation, page 404 (maquette + code) |
+| `feature/newsletter` | Lettre d'information : modèle `Abonne` (migration `0008`), inscription, désinscription, export CSV (maquette + code) |
+| `feature/dashboard` | Maquette du dashboard de l'équipe (pas de code) |
 
 ## Prochaines étapes (par ordre)
 
-1. **Appliquer les migrations** (`python manage.py migrate`) puis créer un compte administrateur (`createsuperuser`) pour gérer le contenu.
-2. **Vérifier visuellement** chaque page à 1440 px à côté de la maquette, puis en tablette et mobile (aucun rendu n'a pu être contrôlé dans un navigateur depuis l'assistant).
-3. **Newsletter** : brancher le formulaire du pied de page (enregistrement des adresses, désinscription).
-4. **Pages légales** : mentions légales, politique de confidentialité, conditions d'utilisation (la page 404 est faite).
-5. **Images manquantes** : portraits du bureau exécutif, photos générées de la maquette, 2e image d'article.
-6. **Contenus à remplacer** : fiches d'exemple (opportunités, ressources), chiffres d'impact, bios, dates et tarifs des programmes, textes des articles.
-7. **Finitions** : alléger les images (SEO et vitesse), accessibilité, Google Search Console.
-8. **Mise en ligne** : réglages de production, `collectstatic`, hébergement.
+1. **Appliquer les migrations** (`python manage.py migrate`) puis créer un compte administrateur (`createsuperuser`) ; les 4 branches sont fusionnées dans `main`.
+2. **Implémenter le dashboard de l'équipe** à partir de la maquette validée (nouvelle branche partie de `feature/dashboard`) : connexion, tableau de bord, gestion des articles, opportunités, ressources et chiffres d'impact, messages reçus, abonnés.
+3. **Valider le mobile dans un vrai téléphone** (menu, formulaires, défilement des cartes) et décider de la tablette (720–1099 px, déduite du desktop, pas d'écran dans la maquette).
+4. **Écarts de contenu restants en mobile** : 2ᵉ photo d'article (non gérée par le modèle), pagination des actualités (s'affichera avec plus d'articles), images des « histoires » de Notre impact (articles sans image en base), une seule affiche pour le lancement de Leadership (la maquette en montre deux).
+5. **Bouton de recherche de l'en-tête** : décider (page de recherche ou retrait), c'est le dernier lien `#`.
+6. **Textes légaux** : faire compléter et relire les passages entre crochets par UCIV.
+7. **Images à fournir** : portraits HD du bureau exécutif, photos générées de la maquette, 2ᵉ image d'article.
+8. **Contenus à remplacer** : fiches d'exemple (opportunités, ressources), chiffres d'impact, bios, dates et tarifs des programmes, textes des articles.
+9. **Finitions** : accessibilité, Google Search Console (SEO, GEO et images WebP faits).
+10. **Mise en ligne** : lancer `deploy/deployer.sh` sur le VPS, puis durcir le serveur (SSH par mot de passe, mot de passe root, `ufw`).
 
 Le détail de chaque page, composant, modèle et formulaire est dans [PLAN.md](PLAN.md).
 
 ## Décisions en attente
 
-- Responsive : produire des écrans mobile/tablette ou déduire du desktop ?
-- Newsletter : service d'envoi externe ou simple collecte d'adresses ?
+- Tablette : garder la mise en page déduite du desktop ou produire des écrans dédiés ?
 - Pillow pour les images téléversées, ou chemins statiques ?
-- Pages à rédiger : politique de confidentialité, mentions légales, conditions d'utilisation.
+- Textes légaux : compléter les passages entre crochets (forme juridique, récépissé, hébergeur, prestataire, adresse du site, durées de conservation) et faire relire.
+- Bouton de recherche de l'en-tête : page de recherche ou retrait ?
 - Contenus à recevoir : dates, tarifs et modalités des programmes, chiffres d'impact, bios de l'équipe, photos, URLs des réseaux sociaux.
 
 ## Reprendre le travail

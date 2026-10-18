@@ -25,4 +25,11 @@ urlpatterns = [
     path('programmes/go-du-digital/', views.go_du_digital, name='go_du_digital'),
     path('programmes/experience-lab/', views.experience_lab, name='experience_lab'),
     path('programmes/uciv-leadership/', views.uciv_leadership, name='uciv_leadership'),
+    path('mentions-legales/', views.page_legale, {'cle': 'mentions'}, name='mentions_legales'),
+    path('politique-de-confidentialite/', views.page_legale, {'cle': 'confidentialite'},
+         name='confidentialite'),
+    path('conditions-d-utilisation/', views.page_legale, {'cle': 'conditions'}, name='conditions'),
+    path('newsletter/inscription/', views.newsletter_inscription, name='newsletter_inscription'),
+    path('newsletter/desinscription/<str:jeton>/', views.newsletter_desinscription,
+         name='newsletter_desinscription'),
 ]

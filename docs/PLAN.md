@@ -1,6 +1,6 @@
 # Plan de réalisation du site UCIV
 
-Source : `maquette/design_uciv.pen` (16 écrans desktop, 1440 px). Ce plan liste ce
+Source : `maquette/design_uciv.pen` (16 écrans desktop à 1440 px et 15 écrans mobiles à 390 px). Ce plan liste ce
 qu'il faut construire pour passer de la page d'accueil actuelle au site complet.
 
 ## 1. Résumé
@@ -12,7 +12,7 @@ qu'il faut construire pour passer de la page d'accueil actuelle au site complet.
 | Composants partagés | En-tête, pied de page, bandeau : faits ; fil d'Ariane, hero de page, formulaires : à faire |
 | Données | Tout est en dur dans `app/content.py` ; modèles Django à créer pour le contenu modifiable |
 | Formulaires | 4 à créer (engagement, partenariat, contact, newsletter) |
-| Responsive | La maquette ne contient que le desktop : mobile et tablette à définir |
+| Responsive | Mobile : écrans « … — Mobile » de la maquette (fait, section 23 de `main.css`) ; tablette à définir |
 
 ## 2. Direction artistique (écran « Fondations »)
 
@@ -122,7 +122,7 @@ mention « Tes données servent uniquement à te recontacter » et lien vers une
 ## 8. Points à clarifier
 
 - **Textes provisoires** dans la maquette : dates, tarifs, modalités et lieux « à confirmer » ; chiffres d'impact `000` ; bios de l'équipe « à transmettre » ; crédits photo ; modèle d'article avec crochets `[...]`.
-- **Responsive** : aucun écran mobile n'est dessiné ; faut-il en produire ou déduire du desktop ?
+- **Responsive** : les écrans mobiles existent (390 px) ; la tablette n'est pas dessinée.
 - **Pages manquantes** : politique de confidentialité, mentions légales, 404, détail d'une opportunité / d'une ressource.
 - **Newsletter** : service d'envoi (le projet est limité à Django) ou simple collecte d'adresses ?
 - **Images** : photos à fournir pour chaque hero (Qui sommes-nous, programmes, article…) ; le site actuel en a 10.

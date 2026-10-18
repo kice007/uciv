@@ -1,6 +1,6 @@
 {# Bandeau de page à formes décoratives. Reçoit `hero` (voir content.py : OPPORTUNITES_PAGE, ACTUALITES_PAGE…). #}
-<section class="ph ph--{{ hero.fond }}" style="--h: {{ hero.hauteur }}">
-  {% for f in hero.formes %}<span class="forme ph-forme" style="--x: {{ f.x }}; --y: {{ f.y }}; --w: {{ f.w }}; --c: {{ f.c }}; --in: {{ f.creux }}" aria-hidden="true"></span>{% endfor %}
+<section class="ph ph--{{ hero.fond }}{% if hero.maj %} ph--legal{% endif %}" style="--h: {{ hero.hauteur }}">
+  {% for f in hero.formes %}<span class="forme ph-forme" style="--x: {{ f.x }}; --y: {{ f.y }}; --w: {{ f.w }};{% if f.h %} --h-forme: {{ f.h }};{% endif %} --c: {{ f.c }}; --in: {{ f.creux }}" aria-hidden="true"></span>{% endfor %}
   {% if hero.note %}<p class="manuscrit ph-note" style="--x: {{ hero.note.x }}; --y: {{ hero.note.y }}; --fs: {{ hero.note.taille }}; --rot: {{ hero.note.rot }}; --c: {{ hero.note.c }}" aria-hidden="true">{{ hero.note.texte }}</p>{% endif %}
   <div class="conteneur ph-grille">
     <div class="ph-texte" style="--tw: {{ hero.largeur_texte }}">
@@ -12,8 +12,9 @@
         </ol>
       </nav>
       <p class="surtitre surtitre--blanc hero__entree" style="--i: 0">{{ hero.surtitre }}</p>
-      <h1 class="ph-titre hero__entree" style="--i: 1; --fs: {{ hero.taille }}">{{ hero.titre }} <em>{{ hero.suite }}</em></h1>
+      <h1 class="ph-titre hero__entree" style="--i: 1; --fs: {{ hero.taille }}; --fsm: {{ hero.taille_mobile|default:40 }}">{{ hero.titre }} <em>{{ hero.suite }}</em></h1>
       <p class="ph-chapo hero__entree" style="--i: 2; --cw: {{ hero.largeur_chapo }}">{{ hero.chapo }}</p>
+      {% if hero.maj %}<p class="ph-maj hero__entree" style="--i: 3">{% include "app/includes/_icon.html" with name="calendar" %}<span><span class="ph-maj__long">Dernière mise à jour</span><span class="ph-maj__court">Mise à jour</span> : {{ hero.maj }}</span></p>{% endif %}
     </div>
   </div>
 </section>

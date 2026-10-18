@@ -1,0 +1,2 @@
+# La maquette Pencil est un fichier binaire pour Git : ne jamais convertir ses fins de ligne.
+*.pen -text

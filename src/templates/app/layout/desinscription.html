@@ -1,0 +1,47 @@
+{% extends "app/base/base.html" %}
+
+{% block title %}Désinscription de la lettre d'information — Une Côte d'Ivoire Volontaire{% endblock %}
+{% block description %}Gérer votre abonnement à la lettre d'information d'UCIV.{% endblock %}
+{% block head %}<meta name="robots" content="noindex">{% endblock %}
+
+{% block content %}
+
+{# Même mise en page que la page 404 (classes err__*), avec ses couleurs et un pictogramme dans le disque. #}
+<section class="err err--desinscription{% if etape == 'fait' %} err--fait{% endif %}">
+  <span class="forme err__anneau" aria-hidden="true"></span>
+  <div class="conteneur err__grille">
+    <div class="err__visuel" aria-hidden="true">
+      <span class="forme err__jaune"></span>
+      <span class="forme err__disque"></span>
+      <span class="err__picto">{% include "app/includes/_icon.html" with name=page.icone %}</span>
+      <p class="manuscrit err__note">{{ page.note }}</p>
+    </div>
+
+    <div class="err__texte">
+      <p class="surtitre hero__entree" style="--i: 0">Lettre d'information</p>
+      <h1 class="err__titre hero__entree" style="--i: 1">{{ page.titre }} <em>{{ page.suite }}</em></h1>
+      <p class="err__chapo hero__entree" style="--i: 2">{{ texte }}</p>
+      {% if etape == 'confirmer' %}
+        <form class="err__boutons hero__entree" style="--i: 3" method="post">
+          {% csrf_token %}
+          <button class="btn btn--vert" type="submit">
+            <span>Confirmer la désinscription</span>
+            <span class="btn__rond">{% include "app/includes/_icon.html" with name="arrow-right" %}</span>
+          </button>
+          <a class="btn btn--contour" href="{% url 'app:home' %}">Garder mon abonnement</a>
+        </form>
+      {% else %}
+        <div class="err__boutons hero__entree" style="--i: 3">
+          <a class="btn btn--vert" href="{% url 'app:home' %}">
+            <span>Retour à l'accueil</span>
+            <span class="btn__rond">{% include "app/includes/_icon.html" with name="arrow-right" %}</span>
+          </a>
+          <a class="btn btn--contour" href="{% url 'app:actualites' %}">Voir nos actualités</a>
+        </div>
+      {% endif %}
+      <p class="err__info hero__entree" style="--i: 4">{% include "app/includes/_icon.html" with name="info" %}<span>{{ page.bas }}</span></p>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

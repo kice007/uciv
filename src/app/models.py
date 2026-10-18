@@ -1,3 +1,5 @@
+import secrets
+
 from django.db import models
 from django.templatetags.static import static
 from django.urls import reverse
@@ -222,3 +224,35 @@ class Indicateur(Convention):
 
     def __str__(self):
         return self.libelle
+
+
+def _nouveau_jeton():
+    return secrets.token_urlsafe(24)
+
+
+class Abonne(models.Model):
+    """Abonné à la lettre d'information (formulaire du pied de page).
+
+    Le site ne fait que collecter les adresses : l'équipe exporte la liste des abonnés
+    actifs depuis l'administration (action « Exporter en CSV ») et envoie la lettre avec
+    son outil d'envoi. Le jeton sert au lien de désinscription personnel.
+    """
+    email = models.EmailField('adresse e-mail', unique=True)
+    actif = models.BooleanField('abonné', default=True)
+    jeton = models.CharField(max_length=40, unique=True, default=_nouveau_jeton, editable=False)
+    inscrit_le = models.DateTimeField('inscription', auto_now_add=True)
+    desinscrit_le = models.DateTimeField('désinscription', null=True, blank=True)
+
+    class Meta:
+        verbose_name = "abonné à la lettre d'information"
+        verbose_name_plural = "abonnés à la lettre d'information"
+        ordering = ('-inscrit_le',)
+
+    def __str__(self):
+        return self.email
+
+    @property
+    def email_masque(self):
+        """Adresse affichée sur la page de désinscription : « a••••@gmail.com »."""
+        nom, _, domaine = self.email.partition('@')
+        return f'{nom[:1]}••••@{domaine}'

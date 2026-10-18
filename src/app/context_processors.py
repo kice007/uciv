@@ -17,4 +17,8 @@ def site(request):
         'coordonnees': content.COORDONNEES,
         'reseaux': content.RESEAUX,
         'mentions': content.MENTIONS,
+        # État de la carte « Lettre d'information » juste après l'envoi du formulaire
+        # (lu une seule fois : il disparaît au rechargement suivant).
+        'newsletter': request.session.pop('newsletter', None) if hasattr(request, 'session') else None,
+        'newsletter_messages': content.NEWSLETTER,
     }

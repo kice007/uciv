@@ -19,24 +19,24 @@ sans dépendance tierce : `requirements.txt` ne contient que Django.
     ├── manage.py
     ├── core/             # configuration du projet
     │   ├── settings.py   # réglages ; config() lit os.environ
-    │   ├── urls.py       # admin + app.urls + médias/statiques
+    │   ├── urls.py       # admin + app.urls + médias/statiques, handler404 (aperçu /404/ en DEBUG)
     │   ├── wsgi.py / asgi.py
     │   ├── constants.py  # constantes (chemins d'upload…)
     │   └── utils.py      # envoi d'e-mails, get_ip()
     ├── app/              # contenu éditorial du site
     │   ├── content.py            # textes, navigation, programmes, articles
     │   ├── context_processors.py # variables communes (navigation, pied de page)
-    │   ├── models.py             # Convention (abstrait), 3 modèles de formulaires, Article, Opportunite, Ressource, Indicateur
-    │   ├── forms.py              # formulaires (Engagement, Partenariat, Contact)
+    │   ├── models.py             # Convention (abstrait), 3 modèles de formulaires, Article, Opportunite, Ressource, Indicateur, Abonne (lettre d'information)
+    │   ├── forms.py              # formulaires (Engagement, Partenariat, Contact, Newsletter)
     │   ├── migrations/           # migrations de la base
     │   ├── admin.py              # administration Django
     │   ├── seo.py                # SEO et GEO : balises, JSON-LD, robots.txt, sitemap, llms.txt
-    │   ├── views.py / urls.py    # page d'accueil, namespace « app »
-    │   ├── templatetags/custom_tags.py  # filtre corps_article (texte des articles)
+    │   ├── views.py / urls.py    # toutes les pages, namespace « app » ; page_legale et page_introuvable (404)
+    │   ├── templatetags/custom_tags.py  # filtres corps_article (articles) et crochets (pages légales)
     │   └── tests.py
     ├── templates/
     │   ├── app/base/base.html     # gabarit de base
-    │   ├── app/layout/index.html  # page d'accueil
+    │   ├── app/layout/            # une page par gabarit ; legal.html (3 pages légales), 404.html, desinscription.html
     │   ├── app/includes/          # en-tête, pied de page, icônes
     │   ├── admin/base_site.html   # habillage UCIV de l'administration
     │   └── emails/                # gabarits d'e-mails
