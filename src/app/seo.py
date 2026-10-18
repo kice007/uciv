@@ -33,8 +33,10 @@ def url_statique(request, chemin):
 
 
 def _json(donnees):
-    # « </ » est neutralisé pour qu'une valeur ne puisse jamais refermer la balise <script>.
-    return json.dumps(donnees, ensure_ascii=False).replace('</', '<\\/')
+    # <, > et & sont écrits en \uXXXX (valide en JSON) : une valeur ne peut ni refermer la balise <script>
+    # ni ouvrir un commentaire HTML.
+    texte = json.dumps(donnees, ensure_ascii=False)
+    return texte.replace('<', '\\u003c').replace('>', '\\u003e').replace('&', '\\u0026')
 
 
 def _balisage(blocs):

@@ -41,6 +41,10 @@ MYSQL_PORT=3306
 CONTACT_EMAIL=organisationuciv@gmail.com
 ```
 
+En production (`DEBUG=False`), Django **refuse de démarrer** si `SECRET_KEY` fait moins de 50 caractères (ou garde une valeur
+par défaut) ou si `ALLOWED_HOSTS` est vide ou contient `*`. `HSTS_SECONDS` (1 jour par défaut) règle la durée pendant laquelle
+le navigateur impose le HTTPS : une fois le HTTPS vérifié sur `uciv.org`, mettre `31536000` (1 an) dans `/etc/uciv/uciv.env`.
+
 `MYSQL_SSL_MODE` reste vide : la base est sur la même machine. Si elle devient distante, mettre `REQUIRED`.
 Les variables `EMAIL_*` activent l'envoi des messages des formulaires (voir `.env.example`).
 
@@ -94,6 +98,49 @@ mysqldump -u uciv_user -p --single-transaction uciv > uciv_$(date +%F).sql
 | `Can't connect to MySQL server` | Service arrêté (`systemctl status mysql`) ou mauvais `MYSQL_HOST` |
 | Boucle de redirections HTTPS | `DEBUG=False` sans l'en-tête `X-Forwarded-Proto` transmis par Nginx |
 | Erreur 403 CSRF sur les formulaires | `CSRF_TRUSTED_ORIGINS` absent ou sans le schéma `https://` |
+
+## Connexion au serveur par clé SSH
+
+Le déploiement se fait avec une clé SSH dédiée, sans mot de passe.
+
+| Élément | Valeur |
+|---|---|
+| Clé privée | `~/.ssh/uciv_deploy` sur le poste de déploiement (**ne jamais la copier dans git ni l'envoyer**) |
+| Clé publique | `~/.ssh/uciv_deploy.pub`, installée dans `/root/.ssh/authorized_keys` du serveur |
+| Type | ed25519 (empreinte `SHA256:1+ZzILt34+3B8gWt4yckYTYcACInJO6s6VciDdC2NA4`) |
+| Raccourci | `ssh uciv-vps` (défini dans `~/.ssh/config`) |
+
+Avec le raccourci, les commandes de ce document deviennent par exemple :
+
+```bash
+scp deploy/deployer.sh uciv-vps:/root/
+ssh uciv-vps "bash /root/deployer.sh votre@email.com"
+```
+
+### Autoriser un autre poste ou un autre développeur
+
+Chaque personne crée **sa propre** clé (`ssh-keygen -t ed25519 -C "prenom-uciv"`) et envoie uniquement le fichier `.pub` ;
+un administrateur l'ajoute à `/root/.ssh/authorized_keys`. Ne partagez jamais une clé privée.
+
+### Retirer un accès
+
+Supprimer la ligne correspondante de `/root/.ssh/authorized_keys` (le commentaire en fin de ligne, par exemple
+`deploiement-uciv`, identifie la clé).
+
+### Renforcer le serveur (recommandé, une fois la connexion par clé testée)
+
+1. Garder **une session ouverte** pendant toute l'opération, pour ne pas se retrouver bloqué.
+2. Éditer `/etc/ssh/sshd_config.d/` (ou `/etc/ssh/sshd_config`) : `PasswordAuthentication no` et `PermitRootLogin prohibit-password`.
+3. Vérifier la configuration (`sshd -t`), puis `systemctl reload ssh`.
+4. Dans une **seconde** fenêtre, tester `ssh uciv-vps` avant de fermer la première.
+5. Changer le mot de passe `root` (`passwd`) : il ne sert plus qu'en secours via la console de l'hébergeur.
+6. Facultatif : activer `ufw` en autorisant d'abord `OpenSSH`, puis `Nginx Full`.
+
+### Protéger la clé privée
+
+La clé n'a pas de phrase secrète pour permettre un déploiement automatisé. Elle doit donc rester sur un poste de
+confiance, avec un disque chiffré. Pour ajouter une phrase secrète : `ssh-keygen -p -f ~/.ssh/uciv_deploy`
+(le déploiement demandera alors la phrase, ou un agent SSH la retiendra).
 
 ## Déployer le site sur uciv.org (Gunicorn + Nginx + HTTPS)
 

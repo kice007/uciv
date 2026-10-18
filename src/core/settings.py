@@ -1,6 +1,8 @@
 import os
 from pathlib import Path
 
+from django.core.exceptions import ImproperlyConfigured
+
 
 def config(key, default=None, cast=None):
     """Lit une variable d'environnement (sans dépendance externe)."""
@@ -12,9 +14,18 @@ def config(key, default=None, cast=None):
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = config('SECRET_KEY', default='change-me-in-production')
 DEBUG = config('DEBUG', default=True, cast=bool)
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='*').split(',')
+# En production (DEBUG=False), le site refuse de démarrer sans clé secrète propre ni noms de domaine explicites :
+# mieux vaut une erreur au lancement qu'un site ouvert avec des réglages de développement.
+SECRET_KEY = config('SECRET_KEY', default='')
+ALLOWED_HOSTS = [h.strip() for h in config('ALLOWED_HOSTS', default='*' if DEBUG else '').split(',') if h.strip()]
+if DEBUG:
+    SECRET_KEY = SECRET_KEY or 'cle-de-developpement-uniquement'
+else:
+    if len(SECRET_KEY) < 50 or SECRET_KEY.startswith(('change-me', 'django-insecure', 'your-secret')):
+        raise ImproperlyConfigured('SECRET_KEY doit être définie en production (50 caractères aléatoires au minimum).')
+    if not ALLOWED_HOSTS or '*' in ALLOWED_HOSTS:
+        raise ImproperlyConfigured('ALLOWED_HOSTS doit lister les noms de domaine du site (pas « * ») en production.')
 # Adresse publique du site (ex. https://uciv.org) : fixe les URL canoniques, du sitemap et des données structurées.
 SITE_URL = config('SITE_URL', default='')
 
@@ -137,5 +148,9 @@ if not DEBUG:
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
     X_FRAME_OPTIONS = 'DENY'
-    SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
+    # HSTS : le navigateur n'ouvre plus le site qu'en HTTPS. Durée courte au départ (1 jour) ; une fois le HTTPS
+    # vérifié, passer HSTS_SECONDS à 31536000 (1 an). Irréversible tant que la durée n'est pas écoulée.
+    SECURE_HSTS_SECONDS = config('HSTS_SECONDS', default=86400, cast=int)
+    SESSION_COOKIE_SAMESITE = 'Lax'
+    CSRF_COOKIE_SAMESITE = 'Lax'

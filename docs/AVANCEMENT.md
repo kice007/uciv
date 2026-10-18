@@ -70,6 +70,18 @@ Documents liés : [PLAN.md](PLAN.md) (ce qu'il faut construire),
 - Les liens « Experience Lab » (navigation, pied de page, accueil, page Nos programmes) pointent vers la page.
 - 3 tests ajoutés (17 au total). Valeurs lues dans la maquette (positions, tailles, interlignes, espacements et rotations relevés à 1440 px, appliqués en `vw` en dessous) ; rendu à valider dans un navigateur.
 
+### Sécurité du code (audit du 17 octobre 2026)
+- Audit : aucune injection SQL ni XSS trouvée (ORM seul, aucun `|safe`, `corps_article` échappé, CSRF actif, champ piège anti-robots).
+- **Réglages de production** : le site refuse de démarrer hors `DEBUG` sans `SECRET_KEY` d'au moins 50 caractères ni `ALLOWED_HOSTS` explicites (plus de valeurs de développement par défaut en production). HSTS activé (`HSTS_SECONDS`, 1 jour au départ), cookies `SameSite=Lax`, réglage `SECURE_BROWSER_XSS_FILTER` retiré (sans effet).
+- **Téléversements** (`app/validators.py`) : l'image d'article est un `ImageField` limité à jpg/png/webp/gif ; les fichiers de ressources à des documents ; 10 Mo maximum ; SVG et HTML refusés. Migration `0009`.
+- **Données structurées** : les caractères `<`, `>` et `&` sont écrits en séquences Unicode (u003c, u003e, u0026) dans le JSON-LD.
+- 6 tests ajoutés (96 au total, classe `SecuriteTests`).
+- Reste côté serveur : mot de passe root et SSH par mot de passe, `ufw`, fail2ban, mises à jour automatiques, `limit_req` Nginx (formulaires et `/admin/login/`), en-têtes Nginx (`server_tokens off`, CSP sur `/media/`), phpMyAdmin limité à une IP, sauvegardes. Côté projet : HSTS à 1 an avec `includeSubDomains` une fois le HTTPS vérifié, 2FA de l'administration (nouveau paquet : accord requis), page de confidentialité.
+
+### Clé SSH de déploiement
+- Clé ed25519 dédiée créée sur le poste de déploiement (`~/.ssh/uciv_deploy`, hors du dépôt), installée sur le VPS ; connexion testée sans mot de passe ; raccourci `ssh uciv-vps`. Procédure, ajout d'un développeur, retrait d'accès et durcissement du serveur dans [DEPLOIEMENT.md](DEPLOIEMENT.md).
+- À faire : désactiver la connexion par mot de passe sur le serveur (après un second test de la clé), changer le mot de passe `root`, activer `ufw`.
+
 ### GEO : être cité par les moteurs de réponse IA (ChatGPT, Claude, Perplexity, Google AI)
 - **Section « Questions fréquentes »** visible sur chacune des 14 pages (`app/includes/_faq.html`, contenu dans `content.FAQ`) : titres en forme de question, réponses autonomes avec chiffres et noms exacts, sans information inventée (dates et tarifs inconnus annoncés « à confirmer »). Pas de balisage `FAQPage` (réservé par Google aux sites publics et de santé).
 - **`/robots.txt`** : `GPTBot`, `OAI-SearchBot`, `ChatGPT-User`, `ClaudeBot` et `PerplexityBot` nommés et autorisés ; **`/llms.txt`** enrichi (faits clés, pages, 5 dernières actualités, réseaux).
@@ -235,14 +247,13 @@ Quatre branches empilées, chacune partie de la précédente, fusionnées en une
 7. **Images à fournir** : portraits HD du bureau exécutif, photos générées de la maquette, 2ᵉ image d'article.
 8. **Contenus à remplacer** : fiches d'exemple (opportunités, ressources), chiffres d'impact, bios, dates et tarifs des programmes, textes des articles.
 9. **Finitions** : accessibilité, Google Search Console (SEO, GEO et images WebP faits).
-10. **Mise en ligne** : lancer `deploy/deployer.sh` sur le VPS, puis durcir le serveur (SSH par mot de passe, mot de passe root, `ufw`).
+10. **Mise en ligne** : lancer `deploy/deployer.sh` sur le VPS (migrations, `createsuperuser`), puis durcir le serveur (voir « Sécurité du code » : SSH par mot de passe, mot de passe root, `ufw`, Nginx).
 
 Le détail de chaque page, composant, modèle et formulaire est dans [PLAN.md](PLAN.md).
 
 ## Décisions en attente
 
 - Tablette : garder la mise en page déduite du desktop ou produire des écrans dédiés ?
-- Pillow pour les images téléversées, ou chemins statiques ?
 - Textes légaux : compléter les passages entre crochets (forme juridique, récépissé, hébergeur, prestataire, adresse du site, durées de conservation) et faire relire.
 - Bouton de recherche de l'en-tête : page de recherche ou retrait ?
 - Contenus à recevoir : dates, tarifs et modalités des programmes, chiffres d'impact, bios de l'équipe, photos, URLs des réseaux sociaux.

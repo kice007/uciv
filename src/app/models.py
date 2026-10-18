@@ -4,6 +4,8 @@ from django.db import models
 from django.templatetags.static import static
 from django.urls import reverse
 
+from .validators import valider_document, valider_image
+
 class Convention(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     update_at = models.DateTimeField(auto_now=True)
@@ -113,7 +115,8 @@ class Article(Convention):
     histoire = models.BooleanField('afficher dans « Nos histoires » (Notre impact)', default=False)
     image = models.CharField('image (chemin statique)', max_length=300, blank=True,
                              help_text="Ex. app/assets/img/groupe-nb.webp ; ignoré si une image est téléversée.")
-    image_televersee = models.FileField('image téléversée', upload_to='articles/', blank=True)
+    image_televersee = models.ImageField('image téléversée', upload_to='articles/', blank=True,
+                                         validators=valider_image)
     image_alt = models.CharField('texte alternatif de l\'image', max_length=200, blank=True)
     image_legende = models.CharField('légende de l\'image', max_length=200, blank=True)
 
@@ -192,7 +195,7 @@ class Ressource(Convention):
     theme = models.CharField('thème', max_length=20, choices=THEMES)
     meta = models.CharField('format / durée', max_length=120, blank=True,
                             help_text='Ex. PDF · 24 pages, 12 min de lecture, 38 min…')
-    fichier = models.FileField(upload_to='ressources/', blank=True)
+    fichier = models.FileField(upload_to='ressources/', blank=True, validators=valider_document)
     lien = models.URLField(blank=True, help_text='Utilisé si aucun fichier n\'est téléversé.')
     modele = models.BooleanField('fiche d\'exemple (emplacement à remplacer)', default=False)
 

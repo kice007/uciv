@@ -835,3 +835,66 @@ class NewsletterTests(TestCase):
         contenu = reponse.content.decode('utf-8-sig')
         self.assertIn('actif@example.com', contenu)
         self.assertNotIn('parti@example.com', contenu)
+
+
+class SecuriteTests(TestCase):
+    """Réglages de production, téléversements et données structurées."""
+
+    def reglages(self, expression, **env):
+        import os
+        import subprocess
+        import sys
+        from django.conf import settings
+        code = f"from core import settings as s; print({expression})"
+        environ = {k: v for k, v in os.environ.items()
+                   if k not in ('SECRET_KEY', 'DEBUG', 'ALLOWED_HOSTS', 'HSTS_SECONDS')}
+        environ.update(env)
+        return subprocess.run([sys.executable, '-c', code], cwd=settings.BASE_DIR, env=environ,
+                              capture_output=True, text=True)
+
+    def test_production_refuses_missing_or_default_secret_key(self):
+        for cle in ('', 'change-me-in-production', 'trop-courte'):
+            resultat = self.reglages('s.SECRET_KEY', DEBUG='False', SECRET_KEY=cle, ALLOWED_HOSTS='uciv.org')
+            self.assertNotEqual(resultat.returncode, 0, cle)
+            self.assertIn('SECRET_KEY', resultat.stderr)
+
+    def test_production_refuses_wildcard_or_empty_hosts(self):
+        for hotes in ('*', ''):
+            resultat = self.reglages('s.ALLOWED_HOSTS', DEBUG='False', SECRET_KEY='x' * 64, ALLOWED_HOSTS=hotes)
+            self.assertNotEqual(resultat.returncode, 0, hotes)
+            self.assertIn('ALLOWED_HOSTS', resultat.stderr)
+
+    def test_production_enables_hsts_and_secure_cookies(self):
+        resultat = self.reglages(
+            "(s.SECURE_HSTS_SECONDS, s.SESSION_COOKIE_SECURE, s.CSRF_COOKIE_SECURE, s.SECURE_SSL_REDIRECT)",
+            DEBUG='False', SECRET_KEY='x' * 64, ALLOWED_HOSTS='uciv.org')
+        self.assertEqual(resultat.returncode, 0, resultat.stderr)
+        self.assertEqual(resultat.stdout.strip(), '(86400, True, True, True)')
+
+    def test_development_keeps_working_without_variables(self):
+        resultat = self.reglages('s.DEBUG', DEBUG='True')
+        self.assertEqual(resultat.returncode, 0, resultat.stderr)
+
+    def test_uploads_reject_scripts_and_oversized_files(self):
+        from django.core.exceptions import ValidationError
+        from django.core.files.uploadedfile import SimpleUploadedFile
+        from .models import Article, Ressource
+        champ_image = Article._meta.get_field('image_televersee')
+        champ_fichier = Ressource._meta.get_field('fichier')
+        for nom in ('piege.svg', 'page.html', 'script.js', 'image.php.txt'):
+            with self.assertRaises(ValidationError, msg=nom):
+                champ_image.run_validators(SimpleUploadedFile(nom, b'x'))
+            with self.assertRaises(ValidationError, msg=nom):
+                champ_fichier.run_validators(SimpleUploadedFile(nom, b'x'))
+        champ_image.run_validators(SimpleUploadedFile('photo.webp', b'x'))
+        champ_fichier.run_validators(SimpleUploadedFile('guide.pdf', b'x'))
+        with self.assertRaises(ValidationError):
+            champ_fichier.run_validators(SimpleUploadedFile('lourd.pdf', b'x' * (10 * 1024 * 1024 + 1)))
+
+    def test_structured_data_cannot_break_out_of_script_tag(self):
+        from .seo import _json
+        texte = _json({'name': '</script><script>alert(1)</script> <!-- & fin'})
+        for interdit in ('<', '>', '&'):
+            self.assertNotIn(interdit, texte)
+        import json
+        self.assertEqual(json.loads(texte)['name'], '</script><script>alert(1)</script> <!-- & fin')
