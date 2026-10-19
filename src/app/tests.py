@@ -1312,3 +1312,54 @@ class AdresseAdministrationTests(TestCase):
         self.assertEqual(self.client.get(reverse('admin:login')).status_code, 200)
         self.assertEqual(self.client.get('/admin/').status_code, 404)
         self.assertEqual(self.client.get('/admin/login/').status_code, 404)
+
+
+class LoaderTests(TestCase):
+    """Loader UCIV : écran d'attente du site public (CSS et JS dans static/, balisage dans includes/_loader.html)."""
+
+    def html(self, nom):
+        reponse = self.client.get(reverse('app:' + nom))
+        self.assertEqual(reponse.status_code, 200, nom)
+        return reponse.content.decode()
+
+    def test_every_public_page_starts_with_the_loader_once(self):
+        for nom in content.PAGES_INDEXABLES:
+            html = self.html(nom)
+            self.assertEqual(html.count('id="uciv-loader"'), 1, nom)
+            self.assertLess(html.index('id="uciv-loader"'), html.index('class="skip-link"'), nom)
+            self.assertGreater(html.index('id="uciv-loader"'), html.index('<body>'), nom)
+            self.assertIn('data-once="session"', html, nom)
+            self.assertIn('role="status"', html, nom)
+            self.assertIn('app/assets/css/loader.css', html, nom)
+            self.assertIn('app/assets/js/loader.js', html, nom)
+            self.assertIn('<noscript><style>#uciv-loader', html, nom)
+
+    def test_loader_svg_ids_are_unique_and_do_not_clash_with_the_icon_sprite(self):
+        import re
+        html = self.html('home')
+        identifiants = re.findall(r'\bid="([^"]+)"', html)
+        self.assertEqual(len(identifiants), len(set(identifiants)))
+        self.assertTrue(all(i.startswith(('ul-', 'uciv-loader')) or not i.startswith('ul-') for i in identifiants))
+
+    def test_error_pages_have_the_loader_too(self):
+        reponse = self.client.get('/page-qui-nexiste-pas/')
+        self.assertEqual(reponse.status_code, 404)
+        self.assertContains(reponse, 'id="uciv-loader"', status_code=404)
+
+    def test_admin_does_not_show_the_loader(self):
+        self.assertNotContains(self.client.get('/back-office/login/'), 'uciv-loader')
+
+    def test_loader_files_exist_with_the_expected_api(self):
+        from django.contrib.staticfiles import finders
+        css = open(finders.find('app/assets/css/loader.css'), encoding='utf-8').read()
+        js = open(finders.find('app/assets/js/loader.js'), encoding='utf-8').read()
+        self.assertIn('prefers-reduced-motion', css)
+        self.assertIn('html.uciv-loading', css)
+        for api in ('UCIVLoader', 'uciv:loaded', 'replay', 'done'):
+            self.assertIn(api, js)
+
+    def test_page_animations_wait_for_the_loader(self):
+        from django.contrib.staticfiles import finders
+        main = open(finders.find('app/assets/js/main.js'), encoding='utf-8').read()
+        self.assertIn("contains('uciv-loading')", main)
+        self.assertIn("'uciv:loaded'", main)

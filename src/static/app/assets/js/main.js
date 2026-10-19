@@ -19,6 +19,7 @@
     el.classList.add('est-visible');
   }
 
+  function demarrerRevelation() {
   if (!('IntersectionObserver' in window)) {
     blocs.forEach(reveler);
   } else {
@@ -42,6 +43,13 @@
     }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
 
     blocs.forEach(function (el) { observateur.observe(el); });
+  }
+  }
+  // Pendant le loader (html.uciv-loading), on attend sa sortie : les apparitions ne se joueraient pas sous le rideau.
+  if (document.documentElement.classList.contains('uciv-loading')) {
+    window.addEventListener('uciv:loaded', demarrerRevelation, { once: true });
+  } else {
+    demarrerRevelation();
   }
 
   /* 2. En-tête ------------------------------------------------------------ */

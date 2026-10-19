@@ -28,12 +28,15 @@
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Caveat:wght@700&family=Instrument+Serif:ital@1&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="{% static 'app/assets/css/main.css' %}">
+  <link rel="stylesheet" href="{% static 'app/assets/css/loader.css' %}">
+  <noscript><style>#uciv-loader { display: none !important; }</style></noscript>
   {# Signale au CSS que JavaScript est actif : les animations d'apparition ne masquent le contenu que dans ce cas. #}
   <script>document.documentElement.classList.add('js');</script>
   {{ seo.balisage }}
   {% block head %}{% endblock %}
 </head>
 <body>
+  {% include "app/includes/_loader.html" %}
   <a class="skip-link" href="#contenu">Aller au contenu</a>
 
   {% include "app/includes/_icons.html" %}

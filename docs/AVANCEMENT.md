@@ -78,6 +78,13 @@ Documents liés : [PLAN.md](PLAN.md) (ce qu'il faut construire),
 - 6 tests ajoutés (96 au total, classe `SecuriteTests`).
 - Reste côté serveur : mot de passe root et SSH par mot de passe, `ufw`, fail2ban, mises à jour automatiques, `limit_req` Nginx (formulaires et `/admin/login/`), en-têtes Nginx (`server_tokens off`, CSP sur `/media/`), phpMyAdmin limité à une IP, sauvegardes. Côté projet : HSTS à 1 an avec `includeSubDomains` une fois le HTTPS vérifié, 2FA de l'administration (nouveau paquet : accord requis), page de confidentialité.
 
+### Loader du site (19 octobre 2026)
+- Loader fourni (logo UCIV : trois volontaires qui arrivent en spirale, ronde pendant le chargement, puis deux rideaux qui dévoilent la page), intégré tel quel et découpé selon les règles du projet : `static/app/assets/css/loader.css`, `static/app/assets/js/loader.js`, balisage dans `templates/app/includes/_loader.html`, inclus au début du `<body>` de `base/base.html` (le CSS dans l'en-tête, avec un `<noscript>` qui le masque sans JavaScript).
+- Réglages dans l'attribut des `#uciv-loader` : animation complète **une fois par session** (`data-once="session"` ; « always » pour chaque page), durée minimale (`data-min`), sortie forcée après 15 s (`data-max`), attente manuelle (`data-wait="manual"` puis `UCIVLoader.done()`). Événement `uciv:loaded` à la fin ; respecte `prefers-reduced-motion`.
+- Ajouts pour le site : les animations d'entrée du bandeau (`hero__entree`…) restent en pause tant que le loader est affiché, et l'apparition au défilement (`main.js`) démarre à sa sortie, pour qu'on les voie après le rideau. Le loader n'apparaît pas dans l'administration.
+- Couleurs du loader : orange `#da8121` et fond `#fffaf3`, légèrement différents de la charte (`#E17F1C`, `#FBF5EA`) ; ce sont celles du fichier fourni. Poids : environ 15 Ko de balisage ajoutés à chaque page (retirés du DOM dès la sortie).
+- 6 tests ajoutés (`LoaderTests`, 156 au total). Contrôlé avec Chrome sans interface (logo animé dans la vraie page, page visible après la sortie). **Pas encore déployé ni commité.**
+
 ### Mise en ligne sur le VPS (19 octobre 2026)
 - Déployé avec `deploy/deployer.sh` par SSH (clé `uciv_deploy`) : Gunicorn + Nginx + HTTPS Let's Encrypt (certificat pour `uciv.org` et `www.uciv.org`, valable jusqu'au 16 janvier 2027, renouvelé seul), MySQL, 10 articles et 6 opportunités d'exemple issus des migrations.
 - Contrôlé après déploiement : les 17 pages publiques, `robots.txt`, `sitemap.xml` et `llms.txt` répondent 200 ; `/back-office/login/` 200 ; `/admin/` et les adresses inconnues 404 ; redirection HTTP vers HTTPS ; en-têtes HSTS (1 jour), `X-Frame-Options`, `nosniff` ; limite Nginx des envois active ; cache partagé du limiteur de débit fonctionnel.
