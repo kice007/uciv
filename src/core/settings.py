@@ -138,6 +138,14 @@ MEDIA_ROOT = BASE_DIR / 'media_cdn'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# Journalisation : les erreurs 500 (avec leur trace) vont sur la sortie d'erreur, donc dans « journalctl -u uciv ».
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {'console': {'class': 'logging.StreamHandler'}},
+    'loggers': {'django.request': {'handlers': ['console'], 'level': 'ERROR', 'propagate': False}},
+}
+
 # Cache : mémoire locale en développement ; en production, un dossier partagé entre les processus Gunicorn
 # (le limiteur de débit de app/ratelimit.py y compte les envois de formulaires).
 if DEBUG:

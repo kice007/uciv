@@ -86,9 +86,11 @@ echo "== 5/9 Commande d'administration « uciv-manage »"
 cat > /usr/local/bin/uciv-manage <<'MANAGE'
 #!/bin/bash
 # Lance manage.py avec l'environnement de production : uciv-manage createsuperuser, uciv-manage migrate, ...
-set -a; . /etc/uciv/uciv.env; set +a
+# (à lancer en root : le fichier d'environnement n'est lisible que par root). Les variables sont transmises
+# explicitement avec « env » : « sudo -E » est ignoré par le sudo de ce serveur, et manage.py retomberait sur SQLite.
 cd /srv/uciv/src
-exec sudo -E -u uciv /srv/uciv/venv/bin/python manage.py "$@"
+mapfile -t VARIABLES < <(grep -E '^[A-Za-z_][A-Za-z0-9_]*=' /etc/uciv/uciv.env)
+exec runuser -u uciv -- env "${VARIABLES[@]}" /srv/uciv/venv/bin/python manage.py "$@"
 MANAGE
 chmod 755 /usr/local/bin/uciv-manage
 
