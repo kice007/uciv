@@ -34,6 +34,9 @@ if not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_-]*', ADMIN_URL):
     raise ImproperlyConfigured('ADMIN_URL ne peut contenir que des lettres, chiffres, tirets et tirets bas (pas de « / »).')
 if not DEBUG and ADMIN_URL.lower() == 'admin':
     raise ImproperlyConfigured('ADMIN_URL ne peut pas valoir « admin » en production (adresse la plus attaquée).')
+# Après une connexion sans page d'origine, on arrive sur l'administration (le site n'a pas de page de profil).
+LOGIN_URL = f'/{ADMIN_URL}/login/'
+LOGIN_REDIRECT_URL = f'/{ADMIN_URL}/'
 # Adresse publique du site (ex. https://uciv.org) : fixe les URL canoniques, du sitemap et des données structurées.
 SITE_URL = config('SITE_URL', default='')
 

@@ -1302,6 +1302,11 @@ class AdresseAdministrationTests(TestCase):
         self.assertIn('/gestion-3fa9c1d27b4e/', resultat.stdout)
         self.assertNotIn("'back-office/'", resultat.stdout)
 
+    def test_login_without_next_lands_on_the_admin(self):
+        User.objects.create_superuser('equipe', 'equipe@exemple.ci', 'mot-de-passe-solide')
+        reponse = self.client.post('/back-office/login/', {'username': 'equipe', 'password': 'mot-de-passe-solide'})
+        self.assertRedirects(reponse, '/back-office/', fetch_redirect_response=False)
+
     def test_admin_is_served_at_back_office_and_old_address_is_gone(self):
         self.assertEqual(reverse('admin:index'), '/back-office/')
         self.assertEqual(self.client.get(reverse('admin:login')).status_code, 200)
