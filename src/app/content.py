@@ -24,12 +24,13 @@ URL_PARTENAIRES = reverse_lazy('app:partenaires')
 URL_CONTACT = reverse_lazy('app:contact')
 
 def _engagement(choix=''):
-    return reverse('app:engagement') + (f'?choix={choix}' if choix else '')
+    return reverse('app:engagement') + (f'?choix={choix}#formulaire' if choix else '')
 
 
 URL_ENGAGEMENT = lazy(_engagement, str)()
 URL_VOLONTAIRE = lazy(_engagement, str)('volontaire')
 URL_COMPETENCES = lazy(_engagement, str)('competences')
+URL_REJOINDRE_LEADERSHIP = lazy(_engagement, str)('leadership')
 
 URL_GO = reverse_lazy('app:go_du_digital')
 URL_EXPERIENCE = reverse_lazy('app:experience_lab')
@@ -41,7 +42,7 @@ ANNONCE = {
     'texte': "Lancement d'UCIV Leadership : conférence au format TEDx à l'American Corner.",
     'texte_court': "Lancement d'UCIV Leadership",
     'lien_label': 'Rejoindre UCIV Leadership',
-    'url': URL_LEADERSHIP,
+    'url': URL_REJOINDRE_LEADERSHIP,
 }
 
 NAVIGATION = [
@@ -60,7 +61,7 @@ NAVIGATION = [
         'url': URL_ENGAGEMENT,
         'enfants': [
             {'label': 'Devenir volontaire', 'url': URL_VOLONTAIRE},
-            {'label': 'Rejoindre UCIV Leadership', 'url': URL_LEADERSHIP},
+            {'label': 'Rejoindre UCIV Leadership', 'url': URL_REJOINDRE_LEADERSHIP},
             {'label': 'Proposer mes compétences', 'url': URL_COMPETENCES},
         ],
     },
@@ -195,7 +196,7 @@ PROGRAMMES = [
         'texte': "Formations par des spécialistes, mentorat, conférences et un réseau "
                  "d'opportunités partagées entre membres.",
         'lien_label': 'Rejoindre UCIV Leadership',
-        'url': URL_LEADERSHIP,
+        'url': URL_REJOINDRE_LEADERSHIP,
         'image': 'app/assets/img/groupe-nb.webp',
         'image_alt': 'Quatre jeunes leaders souriants, en tenue professionnelle.',
         'detouree': True,
@@ -236,7 +237,7 @@ FACONS_DE_S_ENGAGER = [
         'couleur': 'jaune',
         'titre': 'Rejoindre UCIV Leadership',
         'texte': 'Intègre un réseau sélectif de jeunes leaders et futurs leaders.',
-        'url': URL_LEADERSHIP,
+        'url': URL_REJOINDRE_LEADERSHIP,
     },
     {
         'couleur': 'vert',
@@ -307,6 +308,7 @@ PARTENAIRES = [
 # --- Page UCIV Leadership ---------------------------------------------------
 
 LEADERSHIP = {
+    'url_rejoindre': URL_REJOINDRE_LEADERSHIP,
     'chapo': "UCIV Leadership est le réseau des leaders et futurs leaders d'Une Côte "
              "d'Ivoire Volontaire : un cadre où des jeunes triés sur le volet se "
              "forment, se connectent et passent à l'action ensemble.",
@@ -469,7 +471,7 @@ NOS_PROGRAMMES = {
                      "personnalités qui ont réussi, et un réseau d'opportunités "
                      "partagées entre membres.",
             'lien_label': 'Rejoindre UCIV Leadership',
-            'url': URL_LEADERSHIP,
+            'url': URL_REJOINDRE_LEADERSHIP,
             'image': 'app/assets/img/groupe-nb.webp',
             'image_alt': 'Quatre jeunes leaders souriants, en tenue professionnelle.',
             'detouree': True,
@@ -646,7 +648,7 @@ ENGAGEMENT = {
         {'couleur': 'jaune', 'bouton': 'encre', 'titre': 'Rejoindre UCIV Leadership',
          'texte': "Intègre un réseau sélectif de jeunes leaders et futurs leaders "
                   "qui souhaitent développer leurs capacités et agir ensemble.",
-         'url': URL_LEADERSHIP},
+         'url': URL_REJOINDRE_LEADERSHIP},
         {'couleur': 'profond', 'bouton': 'blanc', 'titre': 'Proposer mes compétences',
          'texte': "Tu as une compétence ou une expertise à mettre au service d'UCIV ? "
                   "Nous pouvons avoir besoin de profils dans différents domaines :",

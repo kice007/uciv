@@ -1363,3 +1363,51 @@ class LoaderTests(TestCase):
         main = open(finders.find('app/assets/js/main.js'), encoding='utf-8').read()
         self.assertIn("contains('uciv-loading')", main)
         self.assertIn("'uciv:loaded'", main)
+
+
+class RejoindreLeadershipTests(TestCase):
+    """Chaque « Rejoindre UCIV Leadership » ouvre le formulaire d'engagement avec l'option déjà cochée."""
+
+    CIBLE = '/engagement/?choix=leadership#formulaire'
+
+    def test_every_join_link_goes_to_the_form_with_the_option(self):
+        import re
+        total = 0
+        for nom in content.PAGES_INDEXABLES:
+            html = self.client.get(reverse('app:' + nom)).content.decode()
+            liens = re.findall(r'<a\b[^>]*href="([^"]*)"[^>]*>\s*(?:<span>)?\s*Rejoindre UCIV Leadership', html)
+            for lien in liens:
+                self.assertEqual(lien, self.CIBLE, f'{nom} : {lien}')
+            total += len(liens)
+        self.assertGreaterEqual(total, 8)     # bandeau et menu sur 17 pages, cartes, page du programme
+
+    def nombre(self, nom):
+        return self.client.get(reverse('app:' + nom)).content.decode().count(f'href="{self.CIBLE}"')
+
+    def test_announcement_bar_and_menu_use_the_join_link(self):
+        # Sur une page neutre (contact), seuls le bandeau et le menu (ordinateur et mobile) portent le lien.
+        self.assertGreaterEqual(self.nombre('contact'), 3)
+        self.assertGreater(self.nombre('home'), self.nombre('contact'))      # + les cartes de l'accueil
+
+    def test_programme_page_has_no_dead_join_button(self):
+        html = self.client.get(reverse('app:uciv_leadership')).content.decode()
+        self.assertEqual(self.nombre('uciv_leadership'), self.nombre('contact') + 2)   # + les deux boutons de la page
+        self.assertNotIn('href="#lancement"', html)
+
+    def test_form_opens_with_the_leadership_option_checked(self):
+        html = self.client.get(reverse('app:engagement'), {'choix': 'leadership'}).content.decode()
+        self.assertRegex(html, r'value="leadership"\s+checked')
+        self.assertNotRegex(html, r'value="volontaire"\s+checked')
+
+    def test_unknown_option_checks_nothing(self):
+        html = self.client.get(reverse('app:engagement'), {'choix': 'nimporte-quoi'}).content.decode()
+        self.assertNotRegex(html, r'name="choix" value="[a-z]+"\s+checked')
+
+    def test_other_choices_also_land_on_the_form(self):
+        html = self.client.get(reverse('app:home')).content.decode()
+        self.assertIn('/engagement/?choix=volontaire#formulaire', html)
+        self.assertIn('/engagement/?choix=competences#formulaire', html)
+
+    def test_form_section_exists_as_anchor_target(self):
+        html = self.client.get(reverse('app:engagement')).content.decode()
+        self.assertEqual(html.count('id="formulaire"'), 1)

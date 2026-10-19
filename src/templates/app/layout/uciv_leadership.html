@@ -22,7 +22,7 @@
       </h1>
       <p class="lead-hero__chapo hero__entree" style="--i: 2">{{ leadership.chapo }}</p>
       <div class="lead-hero__cta hero__entree" style="--i: 3">
-        <a class="btn btn--encre" href="#lancement">
+        <a class="btn btn--encre" href="{{ leadership.url_rejoindre }}">
           <span>Rejoindre UCIV Leadership</span>
           <span class="btn__rond">{% include "app/includes/_icon.html" with name="arrow-right" %}</span>
         </a>
@@ -160,7 +160,7 @@
           <li{% if forloop.first %} class="lead-infos__principale"{% endif %}>{{ info }}</li>
         {% endfor %}
       </ul>
-      <a class="btn btn--encre" href="#">
+      <a class="btn btn--encre" href="{{ leadership.url_rejoindre }}">
         <span>Rejoindre UCIV Leadership</span>
         <span class="btn__rond">{% include "app/includes/_icon.html" with name="arrow-right" %}</span>
       </a>

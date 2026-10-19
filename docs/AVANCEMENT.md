@@ -78,6 +78,13 @@ Documents liés : [PLAN.md](PLAN.md) (ce qu'il faut construire),
 - 6 tests ajoutés (96 au total, classe `SecuriteTests`).
 - Reste côté serveur : mot de passe root et SSH par mot de passe, `ufw`, fail2ban, mises à jour automatiques, `limit_req` Nginx (formulaires et `/admin/login/`), en-têtes Nginx (`server_tokens off`, CSP sur `/media/`), phpMyAdmin limité à une IP, sauvegardes. Côté projet : HSTS à 1 an avec `includeSubDomains` une fois le HTTPS vérifié, 2FA de l'administration (nouveau paquet : accord requis), page de confidentialité.
 
+### Liens « Rejoindre UCIV Leadership » vers le formulaire (19 octobre 2026)
+- Tous les boutons et liens « Rejoindre UCIV Leadership » (bandeau d'annonce, menu « S'engager » sur ordinateur et mobile, cartes de l'accueil, page Nos programmes, page Je veux m'engager, deux boutons de la page du programme) ouvrent maintenant `/engagement/?choix=leadership#formulaire` : le formulaire d'engagement, déjà positionné sur la section, avec l'option « Rejoindre UCIV Leadership » cochée.
+- Même ancre pour « Devenir volontaire » (`?choix=volontaire`) et « Proposer mes compétences » (`?choix=competences`). Liens définis dans `content.py` (`URL_REJOINDRE_LEADERSHIP`, `LEADERSHIP['url_rejoindre']`) ; une valeur de `choix` inconnue ne coche rien.
+- Le bouton « Rejoindre » de la page du programme, qui pointait vers `#` (lien mort), est corrigé.
+- 7 tests ajoutés (`RejoindreLeadershipTests`, 163 au total). **Pas encore commité ni déployé.**
+- Restent des boutons sans destination : « S'inscrire » (Go du Digital, Experience Lab) et « Découvrir UCIV » (accueil).
+
 ### Loader du site (19 octobre 2026)
 - Loader fourni (logo UCIV : trois volontaires qui arrivent en spirale, ronde pendant le chargement, puis deux rideaux qui dévoilent la page), intégré tel quel et découpé selon les règles du projet : `static/app/assets/css/loader.css`, `static/app/assets/js/loader.js`, balisage dans `templates/app/includes/_loader.html`, inclus au début du `<body>` de `base/base.html` (le CSS dans l'en-tête, avec un `<noscript>` qui le masque sans JavaScript).
 - Réglages dans l'attribut des `#uciv-loader` : animation complète **une fois par session** (`data-once="session"` ; « always » pour chaque page), durée minimale (`data-min`), sortie forcée après 15 s (`data-max`), attente manuelle (`data-wait="manual"` puis `UCIVLoader.done()`). Événement `uciv:loaded` à la fin ; respecte `prefers-reduced-motion`.
