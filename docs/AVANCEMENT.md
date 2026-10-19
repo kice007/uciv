@@ -1,7 +1,7 @@
 ﻿# Avancement du projet UCIV
 
 Point de reprise : ce qui est fait, ce qui ne l'est pas, et par où continuer.
-Dernière mise à jour : 18 octobre 2026.
+Dernière mise à jour : 19 octobre 2026.
 
 Documents liés : [PLAN.md](PLAN.md) (ce qu'il faut construire),
 [ARCHITECTURE.md](ARCHITECTURE.md) (structure), [CLAUDE.md](../CLAUDE.md) (règles agents),
@@ -21,7 +21,7 @@ Documents liés : [PLAN.md](PLAN.md) (ce qu'il faut construire),
 | Responsive mobile (390 px) | **Fait pour les 15 pages**, aligné sur les écrans « … — Mobile » de la maquette ; tablette déduite (720–1099 px) |
 | Dashboard de l'équipe | **Maquette faite et validée** (desktop et mobile, branche `feature/dashboard`) ; implémentation pas commencée |
 | Documentation | Faite (voir ci-dessus) |
-| Mise en ligne | Non commencée |
+| Mise en ligne | **En ligne sur https://uciv.org** (19 octobre 2026) ; compte administrateur et durcissement du serveur à faire |
 
 ## Ce qui est fait
 
@@ -77,6 +77,12 @@ Documents liés : [PLAN.md](PLAN.md) (ce qu'il faut construire),
 - **Données structurées** : les caractères `<`, `>` et `&` sont écrits en séquences Unicode (u003c, u003e, u0026) dans le JSON-LD.
 - 6 tests ajoutés (96 au total, classe `SecuriteTests`).
 - Reste côté serveur : mot de passe root et SSH par mot de passe, `ufw`, fail2ban, mises à jour automatiques, `limit_req` Nginx (formulaires et `/admin/login/`), en-têtes Nginx (`server_tokens off`, CSP sur `/media/`), phpMyAdmin limité à une IP, sauvegardes. Côté projet : HSTS à 1 an avec `includeSubDomains` une fois le HTTPS vérifié, 2FA de l'administration (nouveau paquet : accord requis), page de confidentialité.
+
+### Mise en ligne sur le VPS (19 octobre 2026)
+- Déployé avec `deploy/deployer.sh` par SSH (clé `uciv_deploy`) : Gunicorn + Nginx + HTTPS Let's Encrypt (certificat pour `uciv.org` et `www.uciv.org`, valable jusqu'au 16 janvier 2027, renouvelé seul), MySQL, 10 articles et 6 opportunités d'exemple issus des migrations.
+- Contrôlé après déploiement : les 17 pages publiques, `robots.txt`, `sitemap.xml` et `llms.txt` répondent 200 ; `/back-office/login/` 200 ; `/admin/` et les adresses inconnues 404 ; redirection HTTP vers HTTPS ; en-têtes HSTS (1 jour), `X-Frame-Options`, `nosniff` ; limite Nginx des envois active ; cache partagé du limiteur de débit fonctionnel.
+- Incident corrigé au premier passage : `uciv-manage` utilisait `sudo -E`, ignoré par le sudo-rs du serveur, donc les migrations visaient SQLite et pas MySQL (500 sur les pages qui lisent la base). La commande passe maintenant les variables avec `runuser` et `env` ; les erreurs 500 sont écrites dans `journalctl -u uciv` (réglage `LOGGING`).
+- **Reste à faire sur le serveur** : créer le compte administrateur (`ssh -t uciv-vps uciv-manage createsuperuser`, interactif) ; désactiver la connexion SSH par mot de passe (`passwordauthentication yes` et `permitrootlogin yes` sont encore actifs) et changer le mot de passe root ; activer `ufw` (inactif) ; fail2ban et mises à jour automatiques ; configurer `EMAIL_*` pour recevoir les messages des formulaires par e-mail (sinon ils ne sont que dans la base) ; passer `HSTS_SECONDS` à 31536000 une fois le HTTPS validé ; Google Search Console.
 
 ### Adresse de l'administration : `/back-office/` (19 octobre 2026)
 - L'administration n'est plus à `/admin/` mais à **`/back-office/`**. Le réglage `ADMIN_URL` (variable d'environnement) permet d'en choisir une autre, plus difficile à deviner, sans toucher au code.
@@ -263,7 +269,7 @@ Quatre branches empilées, chacune partie de la précédente, fusionnées en une
 
 ## Prochaines étapes (par ordre)
 
-1. **Appliquer les migrations** (`python manage.py migrate`) puis créer un compte administrateur (`createsuperuser`) ; les 4 branches sont fusionnées dans `main`.
+1. **Créer le compte administrateur** sur le serveur : `ssh -t uciv-vps uciv-manage createsuperuser` (les migrations sont appliquées, les 4 branches fusionnées).
 2. **Implémenter le dashboard de l'équipe** à partir de la maquette validée (nouvelle branche partie de `feature/dashboard`) : connexion, tableau de bord, gestion des articles, opportunités, ressources et chiffres d'impact, messages reçus, abonnés.
 3. **Valider le mobile dans un vrai téléphone** (menu, formulaires, défilement des cartes) et décider de la tablette (720–1099 px, déduite du desktop, pas d'écran dans la maquette).
 4. **Écarts de contenu restants en mobile** : 2ᵉ photo d'article (non gérée par le modèle), pagination des actualités (s'affichera avec plus d'articles), images des « histoires » de Notre impact (articles sans image en base), une seule affiche pour le lancement de Leadership (la maquette en montre deux).
@@ -272,7 +278,7 @@ Quatre branches empilées, chacune partie de la précédente, fusionnées en une
 7. **Images à fournir** : portraits HD du bureau exécutif, photos générées de la maquette, 2ᵉ image d'article.
 8. **Contenus à remplacer** : fiches d'exemple (opportunités, ressources), chiffres d'impact, bios, dates et tarifs des programmes, textes des articles.
 9. **Finitions** : accessibilité, Google Search Console (SEO, GEO et images WebP faits).
-10. **Mise en ligne** : lancer `deploy/deployer.sh` sur le VPS (migrations, `createsuperuser`), puis durcir le serveur (voir « Sécurité du code » : SSH par mot de passe, mot de passe root, `ufw`, Nginx).
+10. **Après la mise en ligne** : créer le compte administrateur, durcir le serveur (SSH par mot de passe, mot de passe root, `ufw`, fail2ban), configurer l'envoi des e-mails, Google Search Console (voir « Mise en ligne sur le VPS »).
 
 Le détail de chaque page, composant, modèle et formulaire est dans [PLAN.md](PLAN.md).
 
