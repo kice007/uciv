@@ -78,6 +78,9 @@ ENV
 else
     echo "   fichier existant conservé"
 fi
+# Adresse de l'administration : ADMIN_URL du fichier d'environnement si elle existe, sinon /back-office/
+ADMIN_URL=$(grep '^ADMIN_URL=' "${ENV_FILE}" | cut -d= -f2 || true)
+ADMIN_URL=${ADMIN_URL:-back-office}
 
 echo "== 5/9 Commande d'administration « uciv-manage »"
 cat > /usr/local/bin/uciv-manage <<'MANAGE'
@@ -132,12 +135,14 @@ echo
 echo "== Vérifications"
 sleep 2
 curl -s -o /dev/null -w "https://${DOMAINE}/             : HTTP %{http_code} (200 attendu)\n" "https://${DOMAINE}/"
-curl -s -o /dev/null -w "https://${DOMAINE}/admin/login/ : HTTP %{http_code} (200 attendu)\n" "https://${DOMAINE}/admin/login/"
+curl -s -o /dev/null -w "administration                : HTTP %{http_code} (200 attendu)\n" "https://${DOMAINE}/${ADMIN_URL}/login/"
+curl -s -o /dev/null -w "ancienne adresse /admin/      : HTTP %{http_code} (404 attendu)\n" "https://${DOMAINE}/admin/login/"
 curl -s -o /dev/null -w "https://${DOMAINE}/actualites/  : HTTP %{http_code} (200 attendu)\n" "https://${DOMAINE}/actualites/"
 curl -s -o /dev/null -w "feuille de style             : HTTP %{http_code} (200 attendu)\n" "https://${DOMAINE}/static/app/assets/css/main.css"
 curl -s -o /dev/null -w "http -> https                : HTTP %{http_code} (301 attendu)\n" "http://${DOMAINE}/"
 echo
 echo "Site déployé. Étape suivante (une seule fois) : créer le compte administrateur :"
 echo "    uciv-manage createsuperuser"
+echo "Administration : https://${DOMAINE}/${ADMIN_URL}/"
 echo "Mise à jour ultérieure : relancer « bash deployer.sh »."
 echo "Journaux : journalctl -u uciv -f"

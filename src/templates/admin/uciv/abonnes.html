@@ -1,0 +1,53 @@
+{% extends "admin/base_site.html" %}
+
+{# Abonnés à la lettre d'information (maquette « Abonnés ») : chiffres, recherche, liste et export CSV. #}
+{% block bodyclass %}uciv-admin liste abonnes{% endblock %}
+{% block content_title %}{% endblock %}
+{% block content_subtitle %}{% endblock %}
+
+{% block content %}
+<header class="entete-page">
+  <div class="entete-page__textes">
+    <h1>{{ title }}</h1>
+    <p>{{ description }}</p>
+  </div>
+  <a class="bouton-vert" href="{{ url_export }}"><svg class="a-ico"><use href="#a-telecharger"/></svg>Exporter en CSV</a>
+</header>
+
+<section class="tb__chiffres chiffres--trois" aria-label="Chiffres clés">
+  <article class="carte chiffre chiffre--simple"><p class="chiffre__etiquette">Abonnés actifs</p><p class="chiffre__valeur">{{ actifs }}</p></article>
+  <article class="carte chiffre chiffre--simple"><p class="chiffre__etiquette">Ce mois-ci</p><p class="chiffre__valeur">+{{ ce_mois }}</p></article>
+  <article class="carte chiffre chiffre--simple"><p class="chiffre__etiquette">Désinscrits</p><p class="chiffre__valeur">{{ desinscrits }}</p></article>
+</section>
+
+<div class="liste__barre">
+  <form class="recherche" method="get" role="search">
+    <svg class="a-ico"><use href="#a-recherche"/></svg>
+    <input type="search" name="q" value="{{ recherche }}" placeholder="Rechercher une adresse…" aria-label="Rechercher une adresse">
+  </form>
+</div>
+
+<div class="liste__carte">
+  {% for a in abonnes %}
+    <a class="abonne" href="{{ a.url }}">
+      <span class="abonne__textes"><strong>{{ a.email }}</strong><span>{{ a.quand }}</span></span>
+      <span class="pastille pastille--{% if a.actif %}publie{% else %}lu{% endif %}">{% if a.actif %}Actif{% else %}Désinscrit{% endif %}</span>
+    </a>
+  {% empty %}
+    <p class="liste__vide">Aucun abonné{% if recherche %} pour « {{ recherche }} »{% endif %}.</p>
+  {% endfor %}
+</div>
+
+{% if pages %}
+  <footer class="liste__pied">
+    <p>{{ page.paginator.count }} abonné{{ page.paginator.count|pluralize }}</p>
+    <nav class="pagination" aria-label="Pagination">
+      {% if page_precedente %}<a class="rond" href="{{ page_precedente }}" aria-label="Page précédente"><svg class="a-ico"><use href="#a-gauche"/></svg></a>{% endif %}
+      {% for p in pages %}<a class="rond{% if p.actif %} est-actif{% endif %}" href="{{ p.url }}"{% if p.actif %} aria-current="page"{% endif %}>{{ p.numero }}</a>{% endfor %}
+      {% if page_suivante %}<a class="rond" href="{{ page_suivante }}" aria-label="Page suivante"><svg class="a-ico"><use href="#a-droite"/></svg></a>{% endif %}
+    </nav>
+  </footer>
+{% endif %}
+{% endblock %}
+
+{% block sidebar %}{% endblock %}

@@ -1,0 +1,89 @@
+{% extends "admin/base_site.html" %}
+{% load admin_urls %}
+
+{# Liste de contenus (maquette « Articles », « Opportunités », « Ressources ») : recherche, boutons de filtre, tableau en carte. #}
+{% block bodyclass %}uciv-admin liste{% endblock %}
+{% block content_title %}{% endblock %}
+{% block content_subtitle %}{% endblock %}
+{% block object-tools %}{% endblock %}
+
+{% block content %}
+<header class="entete-page">
+  <div class="entete-page__textes">
+    <h1>{{ title }}</h1>
+    {% if description %}<p>{{ description }}</p>{% endif %}
+  </div>
+  {% if has_add_permission %}
+    <a class="bouton-orange" href="{% url cl.opts|admin_urlname:'add' %}"><svg class="a-ico"><use href="#a-plus"/></svg>{{ nom_ajout }}</a>
+  {% endif %}
+</header>
+
+<div class="liste__barre">
+  <form class="recherche" method="get" role="search">
+    {% for nom, valeur in filtres.items %}<input type="hidden" name="{{ nom }}" value="{{ valeur }}">{% endfor %}
+    <svg class="a-ico"><use href="#a-recherche"/></svg>
+    <input type="search" name="q" value="{{ recherche }}" placeholder="Rechercher…" aria-label="Rechercher">
+  </form>
+  <nav class="chips" aria-label="Filtres">
+    {% for c in chips %}<a class="chip{% if c.actif %} est-actif{% endif %}" href="{{ c.url }}"{% if c.actif %} aria-current="true"{% endif %}>{{ c.libelle }}</a>{% endfor %}
+  </nav>
+</div>
+
+<div class="liste__carte">
+  <table class="liste__table">
+    <thead>
+      <tr>
+        {% for h in en_tetes %}<th scope="col">{{ h }}</th>{% endfor %}
+        <th scope="col">Statut</th>
+        <th scope="col"><span class="visuellement-masque">Actions</span></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for l in lignes %}
+        <tr>
+          <td class="liste__titre">
+            <a href="{{ l.url_modif }}"><strong>{{ l.titre }}</strong></a>
+            {% if l.sous %}<span>{{ l.sous }}</span>{% endif %}
+          </td>
+          {% for c in l.colonnes %}<td class="liste__col">{{ c }}</td>{% endfor %}
+          <td class="liste__statut"><span class="pastille pastille--{{ l.statut.0 }}">{{ l.statut.1 }}</span></td>
+          <td class="liste__actions"><div class="liste__boutons">
+            <a class="icone-bouton icone-bouton--ordi" href="{{ l.url_modif }}" aria-label="Modifier" title="Modifier"><svg class="a-ico"><use href="#a-modifier"/></svg></a>
+            {% if l.url_site %}<a class="icone-bouton icone-bouton--ordi" href="{{ l.url_site }}" target="_blank" rel="noopener" aria-label="Voir sur le site" title="Voir sur le site"><svg class="a-ico"><use href="#a-voir"/></svg></a>{% endif %}
+            {% if has_change_permission or has_delete_permission %}
+              <details class="menu-ligne">
+                <summary class="icone-bouton" aria-label="Plus d'actions" title="Plus d'actions"><svg class="a-ico"><use href="#a-plus-actions"/></svg></summary>
+                <div class="menu-ligne__liste">
+                  {% if has_change_permission %}
+                    <form method="post" action="">{% csrf_token %}
+                      <input type="hidden" name="action" value="{% if l.publie %}mettre_en_brouillon{% else %}publier{% endif %}">
+                      <input type="hidden" name="_selected_action" value="{{ l.pk }}">
+                      <button type="submit">{% if l.publie %}Repasser en brouillon{% else %}Publier{% endif %}</button>
+                    </form>
+                  {% endif %}
+                  {% if has_delete_permission %}<a class="danger" href="{{ l.url_suppression }}">Supprimer</a>{% endif %}
+                </div>
+              </details>
+            {% endif %}
+          </div></td>
+        </tr>
+      {% empty %}
+        <tr><td class="liste__vide" colspan="{{ en_tetes|length|add:2 }}">Aucun résultat{% if recherche %} pour « {{ recherche }} »{% endif %}.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<footer class="liste__pied">
+  <p>{{ lignes|length }} {{ nom_pluriel }} sur {{ total }}</p>
+  {% if pages %}
+    <nav class="pagination" aria-label="Pagination">
+      {% if page_precedente %}<a class="rond" href="{{ page_precedente }}" aria-label="Page précédente"><svg class="a-ico"><use href="#a-gauche"/></svg></a>{% endif %}
+      {% for p in pages %}<a class="rond{% if p.actif %} est-actif{% endif %}" href="{{ p.url }}"{% if p.actif %} aria-current="page"{% endif %}>{{ p.numero }}</a>{% endfor %}
+      {% if page_suivante %}<a class="rond" href="{{ page_suivante }}" aria-label="Page suivante"><svg class="a-ico"><use href="#a-droite"/></svg></a>{% endif %}
+    </nav>
+  {% endif %}
+</footer>
+{% endblock %}
+
+{% block sidebar %}{% endblock %}

@@ -1,0 +1,28 @@
+{# Une section du formulaire : carte blanche, champs en pleine largeur ou deux par ligne, interrupteurs pour les cases à cocher. #}
+<section class="carte formcarte">
+  {% if fieldset.name %}<h2 class="formcarte__titre">{{ fieldset.name }}</h2>{% endif %}
+  {% for line in fieldset %}
+    <div class="champs champs--{{ line.fields|length }}">
+      {% for field in line %}
+        {% if field.is_readonly %}
+          <div class="champ"><span class="champ__etiquette">{{ field.field.label }}</span><div class="lecture">{{ field.contents }}</div></div>
+        {% elif field.is_checkbox %}
+          <div class="champ champ--bascule{% if field.field.errors %} a-erreur{% endif %}">
+            <label class="bascule" for="{{ field.field.id_for_label }}">
+              <span class="bascule__textes"><strong>{{ field.field.label }}</strong>{% if field.field.help_text %}<small>{{ field.field.help_text }}</small>{% endif %}</span>
+              {{ field.field }}<span class="bascule__curseur" aria-hidden="true"></span>
+            </label>
+            {{ field.field.errors }}
+          </div>
+        {% else %}
+          <div class="champ{% if field.field.errors %} a-erreur{% endif %}">
+            <label for="{{ field.field.id_for_label }}">{{ field.field.label }}{% if not field.field.field.required %} <span class="facultatif">(facultatif)</span>{% endif %}</label>
+            {{ field.field }}
+            {{ field.field.errors }}
+            {% if field.field.help_text %}<p class="aide">{{ field.field.help_text|safe }}</p>{% endif %}
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  {% endfor %}
+</section>

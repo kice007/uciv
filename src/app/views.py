@@ -19,6 +19,7 @@ from core.utils import send_customize_email
 
 from . import content
 from . import seo as referencement
+from .ratelimit import limiter
 from .forms import ContactForm, EngagementForm, NewsletterForm, PartenariatForm
 from .models import (
     Abonne, Article, Indicateur, Opportunite, Ressource, SoumissionContact, SoumissionEngagement,
@@ -95,6 +96,7 @@ def equipe(request):
     return render(request, 'app/layout/equipe.html', {'eq': content.EQUIPE})
 
 
+@limiter('engagement', 5, 10 * 60)
 def engagement(request):
     """Page « Je veux m'engager » : présentation des 3 façons et formulaire d'engagement."""
     if request.method == 'POST':
@@ -119,6 +121,7 @@ def engagement(request):
     return render(request, 'app/layout/engagement.html', {'eng': content.ENGAGEMENT, 'form': form})
 
 
+@limiter('partenariat', 5, 10 * 60)
 def partenaires(request):
     """Page « Partenaires » : collaborations existantes, formes de partenariat et formulaire."""
     if request.method == 'POST':
@@ -141,6 +144,7 @@ def partenaires(request):
     return render(request, 'app/layout/partenaires.html', {'par': content.PAGE_PARTENAIRES, 'form': form})
 
 
+@limiter('contact', 5, 10 * 60)
 def contact(request):
     """Page « Contact » : formulaire et coordonnées officielles."""
     if request.method == 'POST':
@@ -304,6 +308,7 @@ def page_introuvable(request, exception=None):
 
 
 @require_POST
+@limiter('newsletter', 5, 10 * 60)
 def newsletter_inscription(request):
     """Formulaire « Lettre d'information » du pied de page.
 

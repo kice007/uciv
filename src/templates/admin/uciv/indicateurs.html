@@ -1,0 +1,43 @@
+{% extends "admin/base_site.html" %}
+
+{# Chiffres d'impact (maquette « Chiffres d'impact ») : tous les indicateurs sur une page, valeurs modifiables dans la liste. #}
+{% block bodyclass %}uciv-admin liste page-indicateurs{% endblock %}
+{% block content_title %}{% endblock %}
+{% block content_subtitle %}{% endblock %}
+
+{% block content %}
+<form method="post" id="changelist-form" novalidate>{% csrf_token %}
+  {% if cl.formset %}{{ cl.formset.management_form }}{{ cl.formset.non_form_errors }}{% endif %}
+
+  <header class="entete-page">
+    <div class="entete-page__textes">
+      <h1>{{ title }}</h1>
+      <p>{{ description }}</p>
+    </div>
+    {% if cl.formset %}<button type="submit" class="bouton-vert" name="_save"><svg class="a-ico"><use href="#a-ok"/></svg>Enregistrer</button>{% endif %}
+  </header>
+
+  <p class="bandeau"><svg class="a-ico"><use href="#a-alerte"/></svg>N'affichez que des chiffres vérifiés : ils sont publics.</p>
+
+  <div class="liste__carte indicateurs">
+    {% for form in cl.formset.forms %}
+      <div class="indic">
+        <svg class="a-ico indic__poignee" aria-hidden="true"><use href="#a-poignee"/></svg>
+        <strong class="indic__libelle">{{ form.instance.libelle }}</strong>
+        <div class="indic__valeur">
+          {% for cache in form.hidden_fields %}{{ cache }}{% endfor %}
+          {{ form.valeur }}{{ form.valeur.errors }}
+        </div>
+        <span class="indic__info">Ordre d'affichage : {{ form.instance.ordre }}</span>
+        {% if not form.instance.publish %}<span class="pastille pastille--brouillon">Masqué</span>
+        {% elif form.instance.valeur is None %}<span class="pastille pastille--avenir">À venir</span>
+        {% else %}<span class="pastille pastille--publie">Publié</span>{% endif %}
+      </div>
+    {% empty %}
+      <p class="liste__vide">Aucun indicateur.</p>
+    {% endfor %}
+  </div>
+</form>
+{% endblock %}
+
+{% block sidebar %}{% endblock %}

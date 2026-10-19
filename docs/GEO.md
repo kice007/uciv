@@ -21,7 +21,7 @@ Le multimodal et l'autorité hors du site sont les deux critères qui plafonnent
 
 ### Accessibilité technique
 - **Rendu côté serveur** : tout le texte est dans le HTML initial (Django). Les robots IA n'exécutent pas le JavaScript : c'est le point le plus important, et il est acquis.
-- **`/robots.txt`** : `GPTBot`, `OAI-SearchBot`, `ChatGPT-User`, `ClaudeBot` et `PerplexityBot` sont nommés et autorisés (sauf `/admin/`). Un groupe nommé remplace le groupe `*` : la règle sur `/admin/` est répétée dans chaque groupe. Les robots d'entraînement (`CCBot`, `Bytespider`, `anthropic-ai`, `cohere-ai`) ne sont pas listés : ils suivent donc la règle générale (autorisés). Pour les bloquer, ajouter un groupe `User-agent: …` suivi de `Disallow: /`.
+- **`/robots.txt`** : `GPTBot`, `OAI-SearchBot`, `ChatGPT-User`, `ClaudeBot` et `PerplexityBot` sont nommés et autorisés. L'administration n'y figure pas : une ligne `Disallow` révélerait son adresse secrète (ses pages portent déjà `noindex`). Les robots d'entraînement (`CCBot`, `Bytespider`, `anthropic-ai`, `cohere-ai`) ne sont pas listés : ils suivent donc la règle générale (autorisés). Pour les bloquer, ajouter un groupe `User-agent: …` suivi de `Disallow: /`.
 - **`/llms.txt`** : présentation du site, **faits clés** (fondateur, siège, contact, programmes, date de lancement, partenaires), les 14 pages avec leur description, les **5 dernières actualités** (mises à jour automatiquement) et les réseaux.
 - **`/sitemap.xml`** et URL canoniques : voir `docs/AVANCEMENT.md` (section SEO).
 

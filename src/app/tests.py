@@ -1,5 +1,7 @@
 from django.core import mail
-from django.test import TestCase, override_settings
+from django.utils import timezone
+from django.core.cache import cache
+from django.test import TestCase as TestCaseDjango, override_settings
 from django.urls import reverse
 
 from django.contrib.auth.models import User
@@ -9,6 +11,14 @@ from .models import (
     Abonne, Article, Indicateur, Opportunite, Ressource, SoumissionContact, SoumissionEngagement,
     SoumissionPartenariat,
 )
+
+
+class TestCase(TestCaseDjango):
+    """TestCase de Django, avec les compteurs du limiteur de débit remis à zéro avant chaque test."""
+
+    def setUp(self):
+        super().setUp()
+        cache.clear()
 
 
 class HomePageTests(TestCase):
@@ -408,24 +418,285 @@ class PagesDeContenuTests(TestCase):
 
 
 class AdministrationTests(TestCase):
+    def connecter(self):
+        from django.contrib.auth import get_user_model
+        get_user_model().objects.create_superuser('equipe', 'equipe@exemple.ci', 'mot-de-passe-solide',
+                                                  first_name='Emmanuel')
+        self.client.login(username='equipe', password='mot-de-passe-solide')
+
     def test_login_page_wears_uciv_branding(self):
-        response = self.client.get('/admin/login/')
+        response = self.client.get('/back-office/login/')
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'app/assets/css/admin.css')
-        self.assertContains(response, 'uciv-marque')
+        self.assertContains(response, 'Espace <em>équipe.</em>')
+        self.assertContains(response, 'Accès réservé à l\'équipe UCIV.')
         self.assertContains(response, 'Administration UCIV')
+        self.assertNotContains(response, 'uciv-lateral')
 
-    def test_dashboard_shows_site_models(self):
-        from django.contrib.auth import get_user_model
-        get_user_model().objects.create_superuser('equipe', 'equipe@exemple.ci', 'mot-de-passe-solide')
-        self.client.login(username='equipe', password='mot-de-passe-solide')
-        response = self.client.get('/admin/')
+    def test_dashboard_greets_user_and_shows_key_figures(self):
+        self.connecter()
+        Article.objects.create(titre='Publié', slug='publie', categorie='activites', date_publication='2026-10-01',
+                               publish=True)
+        Abonne.objects.create(email='lecteur@exemple.ci')
+        response = self.client.get('/back-office/')
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'Site UCIV')
-        self.assertContains(response, 'Gestion du site')
-        self.assertContains(response, 'Articles')
-        self.assertContains(response, 'Opportunités')
-        self.assertEqual(self.client.get('/admin/app/article/').status_code, 200)
+        self.assertContains(response, 'Bonjour Emmanuel')
+        for texte in ('Articles publiés', 'Opportunités en ligne', 'Ressources', 'Abonnés actifs', 'À faire',
+                      'Raccourcis', 'Derniers contenus modifiés', 'Messages récents'):
+            self.assertContains(response, texte)
+        self.assertContains(response, 'fiches d&#x27;exemple')
+        self.assertContains(response, 'opportunités sont des fiches d&#x27;exemple')
+
+    def test_dashboard_data_counts(self):
+        from django.template import Context, Template
+        Opportunite.objects.all().delete()
+        Ressource.objects.all().delete()
+        Opportunite.objects.create(categorie='stages', intitule='Exemple', publish=True, modele=True)
+        Opportunite.objects.create(categorie='stages', intitule='Réelle', publish=True)
+        Abonne.objects.create(email='lecteur@exemple.ci')
+        Abonne.objects.create(email='parti@exemple.ci', actif=False)
+        donnees = Template('{% load uciv_admin %}{% tableau_de_bord as d %}{{ d.chiffres.1.valeur }}|{{ d.chiffres.1.sous }}'
+                           '|{{ d.chiffres.3.valeur }}').render(Context())
+        self.assertEqual(donnees, '2|dont 1 fiche d\'exemple|1'.replace("'", '&#x27;'))
+
+    def test_sidebar_groups_and_unread_badge(self):
+        self.connecter()
+        SoumissionContact.objects.create(nom='Aya Koné', email='aya@exemple.ci', objet='Programme', message='Bonjour')
+        SoumissionContact.objects.create(nom='Déjà lu', email='lu@exemple.ci', objet='Autre', message='Salut',
+                                         publish=True)
+        response = self.client.get('/back-office/app/article/')
+        self.assertEqual(response.status_code, 200)
+        for texte in ('Pilotage', 'Contenu du site', 'Suivi', 'Tableau de bord', 'Articles',
+                      'Chiffres d&#x27;impact', 'Messages reçus', 'Abonnés', 'Voir le site'):
+            self.assertContains(response, texte)
+        self.assertContains(response, '<span class="uciv-nav__badge">1</span>', html=True)
+        self.assertContains(response, 'uciv-nav__lien est-actif', count=1)
+
+    def test_recent_messages_show_new_status(self):
+        self.connecter()
+        SoumissionContact.objects.create(nom='Aya Koné', email='aya@exemple.ci', objet='Programme', message='Bonjour')
+        response = self.client.get('/back-office/')
+        self.assertContains(response, 'Aya Koné')
+        self.assertContains(response, 'Contact · Programme')
+        self.assertContains(response, 'pastille--nouveau')
+        self.assertContains(response, '1 nouveau message')
+
+    def test_changelists_show_status_pills_and_bulk_actions(self):
+        self.connecter()
+        Article.objects.create(titre='Brouillon', slug='brouillon-a', categorie='activites',
+                               date_publication='2026-10-01')
+        publie = Article.objects.create(titre='Publié', slug='publie-a', categorie='activites',
+                                        date_publication='2026-10-02', publish=True)
+        Opportunite.objects.create(categorie='stages', intitule='Exemple', publish=True, modele=True)
+        reponse = self.client.get('/back-office/app/article/')
+        self.assertContains(reponse, 'pastille--brouillon')
+        self.assertContains(reponse, 'pastille--publie')
+        self.assertContains(self.client.get('/back-office/app/opportunite/'), 'Fiche d&#x27;exemple')
+        self.client.post('/back-office/app/article/', {'action': 'mettre_en_brouillon', '_selected_action': [publie.pk]})
+        publie.refresh_from_db()
+        self.assertFalse(publie.publish)
+        self.client.post('/back-office/app/article/', {'action': 'publier', '_selected_action': [publie.pk]})
+        publie.refresh_from_db()
+        self.assertTrue(publie.publish)
+
+    def test_admin_pages_still_render(self):
+        self.connecter()
+        for url in ('/back-office/app/article/add/', '/back-office/app/opportunite/', '/back-office/app/ressource/',
+                    '/back-office/app/indicateur/', '/back-office/app/abonne/', '/back-office/app/soumissionengagement/',
+                    '/back-office/app/soumissionpartenariat/', '/back-office/auth/user/', '/back-office/password_change/'):
+            self.assertEqual(self.client.get(url).status_code, 200, url)
+
+    def test_lists_follow_the_mockup_without_django_filters(self):
+        self.connecter()
+        Article.objects.all().delete()
+        Article.objects.create(titre='Brouillon', slug='b1', categorie='activites', date_publication='2026-10-01')
+        Article.objects.create(titre='Publié', slug='p1', categorie='activites', date_publication='2026-10-02',
+                               publish=True, a_la_une=True)
+        reponse = self.client.get('/back-office/app/article/')
+        self.assertNotContains(reponse, 'changelist-filter')
+        self.assertNotContains(reponse, 'class="breadcrumbs"')
+        self.assertNotContains(reponse, 'Choisir une option')
+        for chip in ('Tous', 'Publiés', 'Brouillons', 'À la une', 'Nos histoires'):
+            self.assertContains(reponse, chip)
+        self.assertContains(reponse, 'Nouvel article')
+        self.assertContains(reponse, '2 articles sur 2')
+        self.assertContains(self.client.get('/back-office/app/article/?publish__exact=0'), '1 articles sur 1')
+        publies = self.client.get('/back-office/app/article/?publish__exact=1')
+        self.assertContains(publies, 'class="chip est-actif"')
+        self.assertContains(publies, 'À la une · 3 min')
+
+    def test_list_search_and_chips_keep_each_other(self):
+        self.connecter()
+        Article.objects.all().delete()
+        Article.objects.create(titre='Go du Digital', slug='g1', categorie='activites', date_publication='2026-10-01',
+                               publish=True)
+        Article.objects.create(titre='Autre sujet', slug='a1', categorie='activites', date_publication='2026-10-02',
+                               publish=True)
+        reponse = self.client.get('/back-office/app/article/?q=Digital&publish__exact=1')
+        self.assertContains(reponse, 'Go du Digital')
+        self.assertNotContains(reponse, 'Autre sujet')
+        self.assertContains(reponse, 'name="publish__exact" value="1"')
+
+    def test_opportunity_and_resource_lists_have_their_own_filters(self):
+        self.connecter()
+        reponse = self.client.get('/back-office/app/opportunite/')
+        for chip in ('Toutes', 'Volontariat', 'Formations', 'Stages', 'Emploi', "Fiches d&#x27;exemple"):
+            self.assertContains(reponse, chip)
+        self.assertContains(reponse, 'Nouvelle opportunité')
+        self.assertContains(reponse, 'Date limite')
+        reponse = self.client.get('/back-office/app/ressource/')
+        for chip in ('Toutes', 'Guides', 'Vidéos', 'Podcasts'):
+            self.assertContains(reponse, chip)
+        self.assertContains(reponse, 'Nouvelle ressource')
+
+    def test_row_menu_publishes_and_deletes(self):
+        self.connecter()
+        Article.objects.all().delete()
+        article = Article.objects.create(titre='À publier', slug='ap', categorie='activites',
+                                         date_publication='2026-10-01')
+        reponse = self.client.get('/back-office/app/article/')
+        self.assertContains(reponse, 'value="publier"')
+        self.assertContains(reponse, reverse('admin:app_article_delete', args=[article.pk]))
+        self.assertContains(reponse, 'Modifier')
+
+    def test_article_form_is_split_in_cards_like_the_mockup(self):
+        self.connecter()
+        article = Article.objects.create(titre='Mon article', slug='mon-article', categorie='activites',
+                                         date_publication='2026-10-01', publish=True)
+        reponse = self.client.get(f'/back-office/app/article/{article.pk}/change/')
+        for titre in ('Contenu', 'Repères', 'Publication', 'Image'):
+            self.assertContains(reponse, f'<h2 class="formcarte__titre">{titre}</h2>', html=True)
+        self.assertContains(reponse, "Modifier l&#x27;article")
+        self.assertContains(reponse, 'Voir sur le site')
+        self.assertContains(reponse, 'Enregistrer')
+        self.assertContains(reponse, "Supprimer l&#x27;article")
+        self.assertContains(reponse, 'class="bascule"', count=3)
+        self.assertNotContains(reponse, 'submit-row')
+        self.assertNotContains(reponse, 'Enregistrer et continuer')
+
+    def test_new_forms_use_the_mockup_titles(self):
+        self.connecter()
+        self.assertContains(self.client.get('/back-office/app/opportunite/add/'), 'Nouvelle opportunité')
+        self.assertContains(self.client.get('/back-office/app/opportunite/add/'), 'Brouillon')
+        self.assertContains(self.client.get('/back-office/app/ressource/add/'), 'Nouvelle ressource')
+        self.assertContains(self.client.get('/back-office/app/article/add/'), 'Nouvel article')
+
+    def test_saving_a_form_with_the_save_button(self):
+        self.connecter()
+        reponse = self.client.post('/back-office/app/opportunite/add/', {
+            'intitule': 'Mission test', 'categorie': 'stages', 'source': 'UCIV', 'structure': '', 'lieu': 'Abidjan',
+            'description': '', 'date_limite': '', 'lien': '', 'publish': 'on', '_continue': '1',
+        })
+        self.assertEqual(reponse.status_code, 302)
+        self.assertTrue(Opportunite.objects.filter(intitule='Mission test', publish=True).exists())
+
+    def test_sidebar_matches_the_mockup(self):
+        self.connecter()
+        reponse = self.client.get('/back-office/')
+        for texte in ('Messages reçus', 'Abonnés', "Chiffres d&#x27;impact"):
+            self.assertContains(reponse, texte)
+        for absent in ("Demandes d&#x27;engagement", 'Propositions de partenariat', 'Groupes'):
+            self.assertNotContains(reponse, absent)
+
+    def test_inbox_merges_the_three_forms(self):
+        self.connecter()
+        SoumissionContact.objects.create(nom='Mariam Traoré', email='m@exemple.ci', objet='Une question', message='Salut')
+        SoumissionPartenariat.objects.create(nom='Awa Diallo', organisation='BonixUp', email='b@exemple.ci',
+                                             type_collaboration='Partenariats techniques', message='Collaborons')
+        SoumissionEngagement.objects.create(nom='Aya Konan', email='aya@exemple.ci', choix='volontaire',
+                                            competences='Communication, Événementiel', message='Bonjour')
+        reponse = self.client.get('/back-office/app/soumissioncontact/')
+        self.assertContains(reponse, 'Tous (3)')
+        self.assertContains(reponse, 'Nouveaux (3)')
+        for texte in ('Mariam Traoré', 'BonixUp · Awa Diallo', 'Aya Konan', 'Contact · Une question',
+                      'Partenariat · Partenariats techniques', "Je veux m&#x27;engager · Devenir volontaire"):
+            self.assertContains(reponse, texte)
+        engagement = self.client.get('/back-office/app/soumissioncontact/?f=engagement')
+        self.assertContains(engagement, 'Aya Konan')
+        self.assertNotContains(engagement, 'Mariam Traoré')
+        self.assertContains(engagement, 'Répondre par e-mail')
+        self.assertContains(engagement, 'mailto:aya@exemple.ci')
+        self.assertContains(engagement, 'Communication, Événementiel')
+
+    def test_inbox_can_mark_a_message_as_handled_and_back(self):
+        self.connecter()
+        message = SoumissionContact.objects.create(nom='Aya', email='aya@exemple.ci', objet='Autre', message='Salut')
+        url = '/back-office/app/soumissioncontact/'
+        reponse = self.client.post(url, {'message': f'contact-{message.pk}', 'etat': 'traite', 'f': 'tous'})
+        self.assertEqual(reponse.status_code, 302)
+        message.refresh_from_db()
+        self.assertTrue(message.publish)
+        self.assertContains(self.client.get(url), 'Remettre à traiter')
+        self.client.post(url, {'message': f'contact-{message.pk}', 'etat': 'a_traiter'})
+        message.refresh_from_db()
+        self.assertFalse(message.publish)
+
+    def test_inbox_ignores_unknown_message_ids(self):
+        self.connecter()
+        reponse = self.client.post('/back-office/app/soumissioncontact/', {'message': 'inconnu-1', 'etat': 'traite'})
+        self.assertEqual(reponse.status_code, 302)
+        reponse = self.client.post('/back-office/app/soumissioncontact/', {'message': 'contact-abc', 'etat': 'traite'})
+        self.assertEqual(reponse.status_code, 302)
+
+    def test_empty_inbox(self):
+        self.connecter()
+        self.assertContains(self.client.get('/back-office/app/soumissioncontact/'), 'Aucun message pour le moment')
+
+    def test_subscribers_page_shows_figures_search_and_export(self):
+        self.connecter()
+        Abonne.objects.create(email='aya.konan@gmail.com')
+        Abonne.objects.create(email='k.yao@outlook.fr')
+        parti = Abonne.objects.create(email='j.kouadio@gmail.com', actif=False)
+        parti.desinscrit_le = timezone.now()
+        parti.save()
+        reponse = self.client.get('/back-office/app/abonne/')
+        for texte in ('Abonnés actifs', 'Ce mois-ci', 'Désinscrits', 'Exporter en CSV', 'aya.konan@gmail.com',
+                      'Rechercher une adresse'):
+            self.assertContains(reponse, texte)
+        self.assertContains(reponse, 'Désinscrit le')
+        self.assertContains(self.client.get('/back-office/app/abonne/?q=outlook'), 'k.yao@outlook.fr')
+        self.assertNotContains(self.client.get('/back-office/app/abonne/?q=outlook'), 'aya.konan@gmail.com')
+        export = self.client.get(reverse('admin:app_abonne_export'))
+        contenu = export.content.decode('utf-8-sig')
+        self.assertIn('aya.konan@gmail.com', contenu)
+        self.assertNotIn('j.kouadio@gmail.com', contenu)
+
+    def test_impact_figures_page_edits_values_in_the_list(self):
+        self.connecter()
+        Indicateur.objects.all().delete()
+        vide = Indicateur.objects.create(libelle='Volontaires', ordre=1, publish=True)
+        rempli = Indicateur.objects.create(libelle='Partenaires', valeur=3, ordre=2, publish=True)
+        reponse = self.client.get('/back-office/app/indicateur/')
+        self.assertContains(reponse, "Chiffres d&#x27;impact")
+        self.assertContains(reponse, 'Un chiffre laissé vide')
+        self.assertContains(reponse, "N'affichez que des chiffres vérifiés")
+        self.assertContains(reponse, 'placeholder="À renseigner"')
+        self.assertContains(reponse, 'pastille--avenir')
+        self.assertContains(reponse, 'pastille--publie')
+        donnees = {'form-TOTAL_FORMS': '2', 'form-INITIAL_FORMS': '2', 'form-MIN_NUM_FORMS': '0',
+                   'form-MAX_NUM_FORMS': '1000', 'form-0-id': vide.pk, 'form-0-valeur': '42',
+                   'form-1-id': rempli.pk, 'form-1-valeur': '3', '_save': 'Enregistrer'}
+        self.assertEqual(self.client.post('/back-office/app/indicateur/', donnees).status_code, 302)
+        vide.refresh_from_db()
+        self.assertEqual(vide.valeur, 42)
+
+    def test_other_pages_have_no_breadcrumbs_or_django_chrome(self):
+        self.connecter()
+        reponse = self.client.get('/back-office/app/indicateur/')
+        self.assertNotContains(reponse, 'class="breadcrumbs"')
+        self.assertContains(reponse, 'uciv-lateral')
+
+    def test_unauthorized_staff_cannot_open_the_inbox(self):
+        from django.contrib.auth import get_user_model
+        get_user_model().objects.create_user('simple', 'simple@exemple.ci', 'mot-de-passe-solide', is_staff=True)
+        self.client.login(username='simple', password='mot-de-passe-solide')
+        self.assertEqual(self.client.get('/back-office/app/soumissioncontact/').status_code, 403)
+
+    def test_fresh_content_shows_just_now(self):
+        from django.template import Context, Template
+        Article.objects.create(titre='Tout neuf', slug='tout-neuf', categorie='activites', date_publication='2026-10-01')
+        rendu = Template('{% load uciv_admin %}{% tableau_de_bord as d %}{{ d.contenus.0.quand }}').render(Context())
+        self.assertIn('instant', rendu)
 
 
 class ReglagesBaseDeDonneesTests(TestCase):
@@ -583,7 +854,7 @@ class ReferencementTests(TestCase):
         self.assertEqual(reponse.status_code, 200)
         self.assertEqual(reponse['Content-Type'], 'text/plain; charset=utf-8')
         texte = reponse.content.decode()
-        self.assertIn('Disallow: /admin/', texte)
+        self.assertNotIn('admin', texte.lower())    # l'adresse secrète de l'administration ne doit pas fuiter
         self.assertIn('Sitemap: http://testserver/sitemap.xml', texte)
 
     def test_sitemap_lists_pages_and_published_articles_only(self):
@@ -683,8 +954,8 @@ class GeoTests(TestCase):
         texte = self.client.get('/robots.txt').content.decode()
         for robot in ('GPTBot', 'OAI-SearchBot', 'ChatGPT-User', 'ClaudeBot', 'PerplexityBot'):
             self.assertIn(f'User-agent: {robot}', texte)
-        groupes = texte.split('\n\n')
-        self.assertTrue(all('Disallow: /admin/' in g for g in groupes if g.startswith(('User-agent', '# Robots'))))
+        self.assertNotIn('Disallow', texte)
+        self.assertNotIn('admin', texte.lower())
         self.assertIn('Sitemap:', texte)
 
     def test_llms_txt_has_key_facts_and_latest_news(self):
@@ -847,7 +1118,7 @@ class SecuriteTests(TestCase):
         from django.conf import settings
         code = f"from core import settings as s; print({expression})"
         environ = {k: v for k, v in os.environ.items()
-                   if k not in ('SECRET_KEY', 'DEBUG', 'ALLOWED_HOSTS', 'HSTS_SECONDS')}
+                   if k not in ('SECRET_KEY', 'DEBUG', 'ALLOWED_HOSTS', 'HSTS_SECONDS', 'ADMIN_URL')}
         environ.update(env)
         return subprocess.run([sys.executable, '-c', code], cwd=settings.BASE_DIR, env=environ,
                               capture_output=True, text=True)
@@ -867,7 +1138,7 @@ class SecuriteTests(TestCase):
     def test_production_enables_hsts_and_secure_cookies(self):
         resultat = self.reglages(
             "(s.SECURE_HSTS_SECONDS, s.SESSION_COOKIE_SECURE, s.CSRF_COOKIE_SECURE, s.SECURE_SSL_REDIRECT)",
-            DEBUG='False', SECRET_KEY='x' * 64, ALLOWED_HOSTS='uciv.org')
+            DEBUG='False', SECRET_KEY='x' * 64, ALLOWED_HOSTS='uciv.org', ADMIN_URL='gestion-3fa9c1d27b4e')
         self.assertEqual(resultat.returncode, 0, resultat.stderr)
         self.assertEqual(resultat.stdout.strip(), '(86400, True, True, True)')
 
@@ -898,3 +1169,141 @@ class SecuriteTests(TestCase):
             self.assertNotIn(interdit, texte)
         import json
         self.assertEqual(json.loads(texte)['name'], '</script><script>alert(1)</script> <!-- & fin')
+
+
+class LimiteurDeDebitTests(TestCase):
+    """Au plus 5 envois par formulaire public et par adresse IP toutes les 10 minutes ; connexion à l'administration limitée."""
+
+    FORMULAIRES = {
+        'contact': ('app:contact', {'nom': 'Aya', 'email': 'aya@exemple.ci', 'objet': 'Autre', 'message': 'Bonjour'}),
+        'engagement': ('app:engagement', {'nom': 'Aya', 'email': 'aya@exemple.ci', 'choix': 'volontaire'}),
+        'partenaires': ('app:partenaires', {'nom': 'Awa', 'organisation': 'BonixUp', 'email': 'awa@bonixup.ci',
+                                            'type_collaboration': 'Sponsoring', 'message': 'Collaborons'}),
+        'newsletter': ('app:newsletter_inscription', {'email': 'lecteur@exemple.ci'}),
+    }
+
+    def envoyer(self, nom, **extra):
+        nom_url, donnees = self.FORMULAIRES[nom]
+        return self.client.post(reverse(nom_url), donnees, **extra)
+
+    def test_every_public_form_is_limited_after_five_posts(self):
+        for nom in self.FORMULAIRES:
+            cache.clear()
+            for _ in range(5):
+                self.assertNotEqual(self.envoyer(nom).status_code, 429, nom)
+            reponse = self.envoyer(nom)
+            self.assertEqual(reponse.status_code, 429, nom)
+            self.assertIn('Retry-After', reponse)
+            self.assertLessEqual(int(reponse['Retry-After']), 600)
+
+    def test_blocked_post_saves_nothing_and_page_explains(self):
+        for _ in range(5):
+            self.envoyer('contact')
+        reponse = self.envoyer('contact')
+        self.assertEqual(SoumissionContact.objects.count(), 5)
+        self.assertContains(reponse, 'Erreur 429', status_code=429)
+        self.assertContains(reponse, 'trop de demandes', status_code=429)
+        self.assertContains(reponse, 'noindex, nofollow', status_code=429)
+        self.assertContains(reponse, 'minutes', status_code=429)
+
+    def test_reading_pages_is_never_limited(self):
+        for _ in range(30):
+            self.assertEqual(self.client.get(reverse('app:contact')).status_code, 200)
+        self.assertNotEqual(self.envoyer('contact').status_code, 429)
+
+    def test_forms_have_separate_counters(self):
+        for _ in range(6):
+            self.envoyer('contact')
+        self.assertNotEqual(self.envoyer('engagement').status_code, 429)
+
+    def test_each_address_has_its_own_counter(self):
+        for _ in range(6):
+            self.envoyer('contact')
+        self.assertEqual(self.envoyer('contact').status_code, 429)
+        self.assertNotEqual(self.envoyer('contact', REMOTE_ADDR='10.9.9.9').status_code, 429)
+
+    @override_settings(DEBUG=False)
+    def test_behind_nginx_the_real_ip_header_identifies_the_visitor(self):
+        for _ in range(6):
+            self.envoyer('contact', HTTP_X_REAL_IP='203.0.113.5')
+        self.assertEqual(self.envoyer('contact', HTTP_X_REAL_IP='203.0.113.5').status_code, 429)
+        self.assertNotEqual(self.envoyer('contact', HTTP_X_REAL_IP='203.0.113.6').status_code, 429)
+
+    @override_settings(DEBUG=True)
+    def test_in_development_the_forwarded_header_cannot_dodge_the_limit(self):
+        for numero in range(5):
+            self.envoyer('contact', HTTP_X_REAL_IP=f'203.0.113.{numero}')
+        self.assertEqual(self.envoyer('contact', HTTP_X_REAL_IP='203.0.113.99').status_code, 429)
+
+    def test_admin_login_is_limited_per_username_across_addresses(self):
+        for numero in range(5):
+            reponse = self.client.post('/back-office/login/', {'username': 'cible', 'password': 'faux'},
+                                       REMOTE_ADDR=f'10.0.0.{numero}')
+            self.assertEqual(reponse.status_code, 200)
+        reponse = self.client.post('/back-office/login/', {'username': 'CIBLE', 'password': 'faux'}, REMOTE_ADDR='10.0.0.200')
+        self.assertEqual(reponse.status_code, 429)
+        self.assertIn('Retry-After', reponse)
+
+    def test_admin_login_is_limited_per_address(self):
+        for numero in range(10):
+            reponse = self.client.post('/back-office/login/', {'username': f'compte{numero}', 'password': 'faux'})
+            self.assertEqual(reponse.status_code, 200)
+        reponse = self.client.post('/back-office/login/', {'username': 'autre', 'password': 'faux'})
+        self.assertEqual(reponse.status_code, 429)
+
+    def test_a_real_login_still_works_within_the_limit(self):
+        User.objects.create_superuser('equipe', 'equipe@exemple.ci', 'mot-de-passe-solide')
+        self.client.post('/back-office/login/', {'username': 'equipe', 'password': 'faux'})
+        reponse = self.client.post('/back-office/login/', {'username': 'equipe', 'password': 'mot-de-passe-solide'})
+        self.assertEqual(reponse.status_code, 302)
+
+    def test_viewing_the_login_page_is_never_limited(self):
+        for _ in range(20):
+            self.assertEqual(self.client.get('/back-office/login/').status_code, 200)
+
+
+class AdresseAdministrationTests(TestCase):
+    """L'administration est à /back-office/ (réglage ADMIN_URL pour en choisir une autre) ; « admin » est refusé en production."""
+
+    def sous_processus(self, code, **env):
+        import os
+        import subprocess
+        import sys
+        from django.conf import settings
+        environ = {k: v for k, v in os.environ.items() if k not in ('SECRET_KEY', 'DEBUG', 'ALLOWED_HOSTS', 'ADMIN_URL')}
+        environ.update(env)
+        return subprocess.run([sys.executable, '-c', code], cwd=settings.BASE_DIR, env=environ, capture_output=True, text=True)
+
+    PROD = {'DEBUG': 'False', 'SECRET_KEY': 'x' * 64, 'ALLOWED_HOSTS': 'uciv.org'}
+    CODE = 'from core import settings as s; print(s.ADMIN_URL)'
+
+    def test_default_address_is_back_office_in_development_and_production(self):
+        self.assertEqual(self.sous_processus(self.CODE, DEBUG='True').stdout.strip(), 'back-office')
+        resultat = self.sous_processus(self.CODE, **self.PROD)
+        self.assertEqual(resultat.returncode, 0, resultat.stderr)
+        self.assertEqual(resultat.stdout.strip(), 'back-office')
+
+    def test_production_refuses_admin_as_address(self):
+        for valeur in ('admin', 'ADMIN', '/admin/'):
+            resultat = self.sous_processus(self.CODE, **dict(self.PROD, ADMIN_URL=valeur))
+            self.assertNotEqual(resultat.returncode, 0, valeur)
+            self.assertIn('ADMIN_URL', resultat.stderr)
+
+    def test_admin_url_cannot_contain_slashes_or_odd_characters(self):
+        for valeur in ('gestion/secrete-123456', '../etc/passwd-123', 'gestion secrete 123'):
+            resultat = self.sous_processus('from core import settings as s', **dict(self.PROD, ADMIN_URL=valeur))
+            self.assertNotEqual(resultat.returncode, 0, valeur)
+
+    def test_custom_address_moves_the_admin_and_the_default_disappears(self):
+        code = ("import django; django.setup(); from django.urls import reverse, get_resolver; "
+                "print(reverse('admin:index')); print([str(p.pattern) for p in get_resolver().url_patterns])")
+        resultat = self.sous_processus(code, DJANGO_SETTINGS_MODULE='core.settings', **dict(self.PROD, ADMIN_URL='gestion-3fa9c1d27b4e'))
+        self.assertEqual(resultat.returncode, 0, resultat.stderr)
+        self.assertIn('/gestion-3fa9c1d27b4e/', resultat.stdout)
+        self.assertNotIn("'back-office/'", resultat.stdout)
+
+    def test_admin_is_served_at_back_office_and_old_address_is_gone(self):
+        self.assertEqual(reverse('admin:index'), '/back-office/')
+        self.assertEqual(self.client.get(reverse('admin:login')).status_code, 200)
+        self.assertEqual(self.client.get('/admin/').status_code, 404)
+        self.assertEqual(self.client.get('/admin/login/').status_code, 404)

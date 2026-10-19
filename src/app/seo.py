@@ -234,12 +234,12 @@ ROBOTS_IA = ['GPTBot', 'OAI-SearchBot', 'ChatGPT-User', 'ClaudeBot', 'Perplexity
 
 
 def texte_robots(request):
-    """robots.txt : tout est exploré sauf l'administration ; les robots IA sont nommés et autorisés."""
-    lignes = ['User-agent: *', 'Allow: /', 'Disallow: /admin/', '',
-              '# Robots des moteurs de réponse IA : autorisés (le site doit pouvoir y être cité).',
-              '# Un groupe nommé remplace le groupe « * » : la règle sur /admin/ est donc répétée.']
+    """robots.txt : tout est exploré et les robots IA sont nommés et autorisés. L'administration n'y figure volontairement
+    pas : une ligne « Disallow » révélerait son adresse secrète (ses pages portent déjà `noindex`)."""
+    lignes = ['User-agent: *', 'Allow: /', '',
+              '# Robots des moteurs de réponse IA : autorisés (le site doit pouvoir y être cité).']
     lignes += [f'User-agent: {robot}' for robot in ROBOTS_IA]
-    lignes += ['Allow: /', 'Disallow: /admin/', '', f'Sitemap: {base_url(request)}/sitemap.xml', '']
+    lignes += ['Allow: /', '', f'Sitemap: {base_url(request)}/sitemap.xml', '']
     return '\n'.join(lignes)
 
 

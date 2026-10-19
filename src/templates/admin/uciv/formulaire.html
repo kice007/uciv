@@ -1,0 +1,48 @@
+{% extends "admin/change_form.html" %}
+{% load i18n admin_urls admin_modify %}
+
+{# Formulaire en deux colonnes (maquette « Modifier l'article », « Nouvelle opportunité », « Modifier la ressource »). #}
+{% block bodyclass %}{{ block.super }} uciv-form{% endblock %}
+{% block breadcrumbs %}{% endblock %}
+{% block content_title %}{% endblock %}
+{% block content_subtitle %}{% endblock %}
+{% block object-tools %}{% endblock %}
+
+{% block content %}
+<div id="content-main">
+<form {% if has_file_field %}enctype="multipart/form-data" {% endif %}{% if form_url %}action="{{ form_url }}" {% endif %}method="post" id="{{ opts.model_name }}_form" novalidate>{% csrf_token %}
+  {% if is_popup %}<input type="hidden" name="{{ is_popup_var }}" value="1">{% endif %}
+  {% if to_field %}<input type="hidden" name="{{ to_field_var }}" value="{{ to_field }}">{% endif %}
+
+  <header class="entete-form">
+    <div class="entete-form__titre">
+      <a class="retour" href="{% url opts|admin_urlname:'changelist' %}"><svg class="a-ico"><use href="#a-retour"/></svg>{{ uciv.retour }}</a>
+      <h1>{{ uciv.titre }} <span class="pastille pastille--{{ uciv.statut.0 }}">{{ uciv.statut.1 }}</span></h1>
+    </div>
+    <div class="entete-form__actions">
+      {% if uciv.url_site %}<a class="bouton-contour" href="{{ uciv.url_site }}" target="_blank" rel="noopener"><svg class="a-ico"><use href="#a-voir"/></svg><span class="libelle-voir">Voir sur le site</span></a>{% endif %}
+      <button type="submit" class="bouton-vert" name="_continue"><svg class="a-ico"><use href="#a-ok"/></svg>Enregistrer</button>
+    </div>
+  </header>
+
+  {% if errors %}
+    <p class="errornote">{% blocktranslate count counter=errors|length %}Please correct the error below.{% plural %}Please correct the errors below.{% endblocktranslate %}</p>
+    {{ adminform.form.non_field_errors }}
+  {% endif %}
+
+  <div class="form-grille">
+    <div class="form-grille__principal">
+      {% for fieldset in adminform %}{% if fieldset.name not in uciv.cote %}{% include "admin/uciv/_carte.html" %}{% endif %}{% endfor %}
+    </div>
+    <div class="form-grille__cote">
+      {% for fieldset in adminform %}{% if fieldset.name in uciv.cote %}{% include "admin/uciv/_carte.html" %}{% endif %}{% endfor %}
+      {% if change and has_delete_permission %}
+        <a class="bouton-supprimer" href="{% url opts|admin_urlname:'delete' original.pk|admin_urlquote %}"><svg class="a-ico"><use href="#a-corbeille"/></svg>{{ uciv.suppression }}</a>
+      {% endif %}
+    </div>
+  </div>
+
+  {% prepopulated_fields_js %}
+</form>
+</div>
+{% endblock %}

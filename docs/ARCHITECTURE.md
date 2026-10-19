@@ -31,9 +31,11 @@ sans dépendance tierce : `requirements.txt` ne contient que Django.
     │   ├── migrations/           # migrations de la base
     │   ├── admin.py              # administration Django
     │   ├── validators.py         # contrôle des fichiers téléversés (extensions, 10 Mo)
+    │   ├── ratelimit.py          # limiteur de débit des formulaires et de la connexion (429)
     │   ├── seo.py                # SEO et GEO : balises, JSON-LD, robots.txt, sitemap, llms.txt
     │   ├── views.py / urls.py    # toutes les pages, namespace « app » ; page_legale et page_introuvable (404)
     │   ├── templatetags/custom_tags.py  # filtres corps_article (articles) et crochets (pages légales)
+    │   ├── templatetags/uciv_admin.py   # menu et chiffres du tableau de bord de l'administration
     │   └── tests.py
     ├── templates/
     │   ├── app/base/base.html     # gabarit de base

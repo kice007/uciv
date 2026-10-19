@@ -1,4 +1,5 @@
 import os
+import re
 from pathlib import Path
 
 from django.core.exceptions import ImproperlyConfigured
@@ -26,6 +27,13 @@ else:
         raise ImproperlyConfigured('SECRET_KEY doit être définie en production (50 caractères aléatoires au minimum).')
     if not ALLOWED_HOSTS or '*' in ALLOWED_HOSTS:
         raise ImproperlyConfigured('ALLOWED_HOSTS doit lister les noms de domaine du site (pas « * ») en production.')
+# Adresse de l'administration : https://uciv.org/back-office/ par défaut ; ADMIN_URL permet d'en choisir une autre
+# (par exemple plus difficile à deviner, à garder hors du code et de git).
+ADMIN_URL = config('ADMIN_URL', default='back-office').strip('/ ')
+if not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_-]*', ADMIN_URL):
+    raise ImproperlyConfigured('ADMIN_URL ne peut contenir que des lettres, chiffres, tirets et tirets bas (pas de « / »).')
+if not DEBUG and ADMIN_URL.lower() == 'admin':
+    raise ImproperlyConfigured('ADMIN_URL ne peut pas valoir « admin » en production (adresse la plus attaquée).')
 # Adresse publique du site (ex. https://uciv.org) : fixe les URL canoniques, du sitemap et des données structurées.
 SITE_URL = config('SITE_URL', default='')
 
@@ -129,6 +137,14 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media_cdn'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Cache : mémoire locale en développement ; en production, un dossier partagé entre les processus Gunicorn
+# (le limiteur de débit de app/ratelimit.py y compte les envois de formulaires).
+if DEBUG:
+    CACHES = {'default': {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'}}
+else:
+    CACHES = {'default': {'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+                          'LOCATION': config('CACHE_DIR', default=str(BASE_DIR / 'cache_cdn'))}}
 
 # Email
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

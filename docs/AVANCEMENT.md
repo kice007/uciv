@@ -1,4 +1,4 @@
-# Avancement du projet UCIV
+﻿# Avancement du projet UCIV
 
 Point de reprise : ce qui est fait, ce qui ne l'est pas, et par où continuer.
 Dernière mise à jour : 18 octobre 2026.
@@ -78,6 +78,22 @@ Documents liés : [PLAN.md](PLAN.md) (ce qu'il faut construire),
 - 6 tests ajoutés (96 au total, classe `SecuriteTests`).
 - Reste côté serveur : mot de passe root et SSH par mot de passe, `ufw`, fail2ban, mises à jour automatiques, `limit_req` Nginx (formulaires et `/admin/login/`), en-têtes Nginx (`server_tokens off`, CSP sur `/media/`), phpMyAdmin limité à une IP, sauvegardes. Côté projet : HSTS à 1 an avec `includeSubDomains` une fois le HTTPS vérifié, 2FA de l'administration (nouveau paquet : accord requis), page de confidentialité.
 
+### Adresse de l'administration : `/back-office/` (19 octobre 2026)
+- L'administration n'est plus à `/admin/` mais à **`/back-office/`**. Le réglage `ADMIN_URL` (variable d'environnement) permet d'en choisir une autre, plus difficile à deviner, sans toucher au code.
+- `admin` est refusé en production ; l'adresse ne peut contenir que lettres, chiffres, `-` et `_`. `/admin/` répond 404.
+- `deploy/deployer.sh` lit `ADMIN_URL` dans `/etc/uciv/uciv.env` (sinon `back-office`), l'affiche à la fin et vérifie que `/admin/` répond 404.
+- `robots.txt` ne cite plus l'administration (ses pages portent déjà `noindex`).
+- Remarque : « back-office » reste facile à deviner ; la protection repose sur le mot de passe et le limiteur de débit (10 essais par IP et 5 par identifiant toutes les 15 minutes).
+- 5 tests (`AdresseAdministrationTests`, 149 au total).
+
+### Limiteur de débit des formulaires (18 octobre 2026)
+- **Python** (`app/ratelimit.py`, sans paquet de plus) : au plus **5 envois par formulaire et par adresse IP toutes les 10 minutes** pour Contact, Je veux m'engager, Partenaires et la lettre d'information ; au-delà, réponse **429** avec `Retry-After` et une page « Doucement, trop de demandes » (`layout/429.html`, texte dans `content.PAGE_429`, non indexée). Seuls les envois (POST) sont comptés : afficher une page n'est jamais limité.
+- **Connexion à l'administration** : 10 essais par adresse IP et 5 par identifiant toutes les 15 minutes (l'identifiant bloque aussi une attaque répartie sur plusieurs adresses).
+- **Adresse du visiteur** : derrière Nginx, l'en-tête `X-Real-IP` (écrit par Nginx) ; en développement (`DEBUG=True`) il est ignoré pour qu'on ne puisse pas le falsifier.
+- **Compteurs** : cache en mémoire en développement ; **dossier partagé `cache_cdn/`** en production (`CACHE_DIR` pour le changer), car chaque processus Gunicorn compterait à part avec un cache en mémoire. Le dossier est ignoré par Git.
+- **Nginx** (`deploy/nginx-uciv.conf`) : seconde barrière, 20 envois (POST) par minute et par adresse IP avec une rafale de 10, réponse 429. À appliquer en relançant `deploy/deployer.sh`.
+- 11 tests ajoutés (`LimiteurDeDebitTests`, 144 au total) ; les tests existants repartent d'un cache vide.
+
 ### Clé SSH de déploiement
 - Clé ed25519 dédiée créée sur le poste de déploiement (`~/.ssh/uciv_deploy`, hors du dépôt), installée sur le VPS ; connexion testée sans mot de passe ; raccourci `ssh uciv-vps`. Procédure, ajout d'un développeur, retrait d'accès et durcissement du serveur dans [DEPLOIEMENT.md](DEPLOIEMENT.md).
 - À faire : désactiver la connexion par mot de passe sur le serveur (après un second test de la clé), changer le mot de passe `root`, activer `ufw`.
@@ -117,6 +133,15 @@ Documents liés : [PLAN.md](PLAN.md) (ce qu'il faut construire),
 - Palette et typographies du site (vert profond, orange, jaune, crème ; Bricolage Grotesque, Instrument Serif, Plus Jakarta Sans), cartes arrondies, boutons en pastille, page de connexion sur fond vert profond. Thème clair fixe (le sélecteur clair/sombre est masqué).
 - Titres : « Administration UCIV », « Gestion du site » ; l'application s'affiche sous le nom « Site UCIV ».
 - 2 tests ajoutés (59 au total). Rendu à valider dans un navigateur.
+- **Refonte d'après la maquette du dashboard (18 octobre 2026)** : barre latérale verte (Pilotage, Contenu du site, Suivi, Technique) avec compteur de messages non traités, « Voir le site », utilisateur et déconnexion ; menu replié derrière un bouton sous 1024 px (`static/app/assets/js/admin.js`).
+  - **Tableau de bord** (`templates/admin/index.html`, balises `app/templatetags/uciv_admin.py`) : salutation et date, recherche d'article, 4 chiffres clés, « À faire » (messages, fiches d'exemple, chiffres d'impact à renseigner, brouillons), raccourcis, derniers contenus modifiés, messages récents.
+  - **Connexion** en deux panneaux (« Espace équipe. »), icônes Lucide (`templates/admin/_icones.html`), listes en cartes blanches.
+  - **Listes** : colonne « Statut » en pastilles (Publié, Brouillon, Fiche d'exemple ; Nouveau et Traité pour les messages), actions « Publier », « Repasser en brouillon », « Marquer comme traité » ; titres lisibles (« Articles »). Le champ `publish` d'un message sert de « traité » ; le champ n'est plus modifiable en ligne dans les listes (utiliser les actions).
+  - **Mise en conformité avec les écrans de la maquette (18 octobre 2026)** : plus de panneau de filtres ni de fil d'Ariane Django ; listes Articles, Opportunités et Ressources avec description, recherche, boutons de filtre (Tous, Publiés, Brouillons, À la une, Nos histoires… ; catégories et « Fiches d'exemple » pour les opportunités ; Guides, Vidéos, Podcasts pour les ressources), tableau en carte, icônes Modifier / Voir sur le site / menu « … » (publier ou repasser en brouillon, supprimer) et pagination ronde « N articles sur M ».
+  - **Formulaires en cartes** (gabarits `admin/uciv/formulaire.html` et `_carte.html`) : retour « ← Articles », titre et pastille de statut, boutons « Voir sur le site » et « Enregistrer », sections Contenu / Repères à gauche, Publication (interrupteurs) / Image à droite, bouton « Supprimer… ». Les libellés, aides et sections sont décrits dans `app/admin.py`.
+  - **Messages reçus** : une seule boîte réunit les demandes d'engagement, propositions de partenariat et messages de contact (liste à gauche, détail à droite, boutons de filtre Tous / Nouveaux / Engagement / Partenariat / Contact, « Répondre par e-mail », « Marquer comme traité »). **Abonnés** : trois chiffres, recherche, liste, « Exporter en CSV ». **Chiffres d'impact** : les valeurs se saisissent dans la liste, avec le bandeau « N'affichez que des chiffres vérifiés ».
+  - Barre latérale limitée aux entrées de la maquette ; les comptes (« Comptes ») restent accessibles aux super-utilisateurs depuis le bloc utilisateur.
+  - `admin.css` est chargée en dernier (après les feuilles de Django). 24 tests d'administration (133 au total). Rendu contrôlé avec Chrome sans interface à 1440 px et 700 px ; à valider sur un vrai téléphone.
 
 ### Pages de contenu : Opportunités, Actualités, Article, Notre impact, Ressources
 - **Modèles administrables** (`Article`, `Opportunite`, `Ressource`, `Indicateur`, migration `0004`) : tout nouveau contenu est non publié par défaut ; la case « publié » (`publish`) le met en ligne.
@@ -270,3 +295,5 @@ python manage.py runserver
 
 Pour lire ou modifier la maquette, ouvrir `maquette/design_uciv.pen` dans l'application
 Pencil : le fichier est chiffré et ne se lit que via ses outils MCP.
+
+

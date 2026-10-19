@@ -32,6 +32,7 @@ DEBUG=False
 ALLOWED_HOSTS=uciv.org,www.uciv.org
 CSRF_TRUSTED_ORIGINS=https://uciv.org,https://www.uciv.org
 SITE_URL=https://uciv.org
+ADMIN_URL=back-office
 USE_MYSQL=True
 MYSQL_DB=uciv
 MYSQL_USER=uciv_user
@@ -46,7 +47,13 @@ par défaut) ou si `ALLOWED_HOSTS` est vide ou contient `*`. `HSTS_SECONDS` (1 j
 le navigateur impose le HTTPS : une fois le HTTPS vérifié sur `uciv.org`, mettre `31536000` (1 an) dans `/etc/uciv/uciv.env`.
 
 `MYSQL_SSL_MODE` reste vide : la base est sur la même machine. Si elle devient distante, mettre `REQUIRED`.
+**`ADMIN_URL`** est l'adresse de l'administration : `https://uciv.org/back-office/` quand la variable est absente ou vide. Django refuse `admin` en production (l'adresse la plus attaquée). Pour une adresse plus difficile à deviner, ajoutez par exemple `ADMIN_URL=gestion-3fa9c1d27b4e` dans `/etc/uciv/uciv.env` puis `sudo systemctl restart uciv` ; `deploy/deployer.sh` la reprend pour ses vérifications.
+
 Les variables `EMAIL_*` activent l'envoi des messages des formulaires (voir `.env.example`).
+
+## Limite de débit et cache
+
+Les envois de formulaires sont limités par `app/ratelimit.py` (5 par formulaire et par adresse IP toutes les 10 minutes ; connexion à l'administration : 10 essais par IP et 5 par identifiant toutes les 15 minutes) et, devant Django, par Nginx (20 envois par minute et par IP). Les compteurs de Django sont stockés dans le dossier `src/cache_cdn/` (cache de fichiers, partagé entre les processus Gunicorn) ; `CACHE_DIR` permet de le déplacer. Le service ayant déjà le droit d'écrire dans `/srv/uciv`, rien d'autre à préparer. Pour remettre les compteurs à zéro (par exemple après un blocage par erreur) : `sudo uciv-manage shell -c "from django.core.cache import cache; cache.clear()"`.
 
 ## Créer les tables
 
@@ -55,7 +62,7 @@ Avec les variables chargées, depuis `src/` :
 ```bash
 ../venv/bin/python manage.py check --database default      # vérifie la connexion et les réglages
 ../venv/bin/python manage.py migrate                        # crée les tables + contenu de départ
-../venv/bin/python manage.py createsuperuser                # compte pour /admin/
+../venv/bin/python manage.py createsuperuser                # compte pour l'administration
 ../venv/bin/python manage.py collectstatic --noinput
 ```
 
@@ -64,7 +71,7 @@ SQLite de développement, qui ne contient que des données de test.
 
 ## Vérifier
 
-1. `/admin/` : connexion avec le compte créé, les modèles « Site UCIV » sont visibles.
+1. `/back-office/` : connexion avec le compte créé, les modèles « Site UCIV » sont visibles.
 2. Envoyer le formulaire de contact : la ligne apparaît dans phpMyAdmin (table `app_soumissioncontact`).
 3. Les pages Actualités, Opportunités, Ressources et Notre impact affichent le contenu de départ.
 
@@ -176,7 +183,7 @@ ssh root@213.130.144.126 "uciv-manage createsuperuser"      # une seule fois : c
 8. Configure Nginx : `/static/` et `/media/` servis directement, le reste transmis à Django.
 9. Obtient le certificat Let's Encrypt (renouvelé automatiquement) et redirige HTTP vers HTTPS.
 
-Il se termine par cinq vérifications (accueil, administration, actualités, feuille de style, redirection).
+Il se termine par six vérifications (accueil, administration, `/admin/` qui doit répondre 404, actualités, feuille de style, redirection).
 
 ### Mettre à jour le site
 

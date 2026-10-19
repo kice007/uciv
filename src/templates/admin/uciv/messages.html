@@ -1,0 +1,65 @@
+{% extends "admin/base_site.html" %}
+
+{# Messages reçus (maquette « Messages reçus ») : liste à gauche, détail du message choisi à droite. #}
+{% block bodyclass %}uciv-admin liste messages-recus{% endblock %}
+{% block content_title %}{% endblock %}
+{% block content_subtitle %}{% endblock %}
+
+{% block content %}
+<div class="boite-page{% if detail_ouvert %} boite-page--detail{% endif %}">
+<header class="entete-page">
+  <div class="entete-page__textes">
+    <h1>{{ title }}</h1>
+    <p>{{ description }}</p>
+  </div>
+</header>
+
+<nav class="chips chips--seuls" aria-label="Filtres">
+  {% for c in chips %}<a class="chip{% if c.actif %} est-actif{% endif %}" href="{{ c.url }}"{% if c.actif %} aria-current="true"{% endif %}>{{ c.libelle }}</a>{% endfor %}
+</nav>
+
+<div class="boite">
+  <div class="liste__carte boite__liste">
+    {% for m in messages_recus %}
+      <a class="msg{% if m.actif %} est-actif{% endif %}" href="{{ m.url }}">
+        <span class="avatar{% if m.nouveau %} avatar--vif{% endif %}">{{ m.initiales }}</span>
+        <span class="msg__textes">
+          <span class="msg__haut"><strong>{{ m.nom }}</strong><span class="msg__quand">{{ m.quand }}</span></span>
+          <span class="msg__sujet">{{ m.sujet }}</span>
+          {% if m.nouveau %}<span class="pastille pastille--nouveau">Nouveau</span>{% endif %}
+        </span>
+      </a>
+    {% empty %}
+      <p class="liste__vide">Aucun message pour le moment.</p>
+    {% endfor %}
+  </div>
+
+  {% if choisi %}
+    <article class="carte boite__detail">
+      <a class="retour retour--mobile" href="?{{ retour_liste }}"><svg class="a-ico"><use href="#a-retour"/></svg>Messages reçus</a>
+      <span class="pastille pastille--{% if choisi.nouveau %}nouveau{% else %}lu{% endif %}">{% if choisi.nouveau %}Nouveau{% else %}Traité{% endif %}</span>
+      <h2>{{ choisi.nom }}</h2>
+      <p class="boite__recu">{{ choisi.sujet }} · reçu {{ choisi.recu }}</p>
+      <dl class="fiche">
+        {% for libelle, valeur in choisi.details %}<div><dt>{{ libelle }}</dt><dd>{{ valeur }}</dd></div>{% endfor %}
+      </dl>
+      <h3>Message</h3>
+      <p class="boite__message">{{ choisi.message|default:"—"|linebreaksbr }}</p>
+      <div class="boite__actions">
+        <a class="bouton-vert" href="mailto:{{ choisi.email }}?subject={{ choisi.sujet|urlencode }}"><svg class="a-ico"><use href="#a-repondre"/></svg>Répondre par e-mail</a>
+        {% if peut_modifier %}
+          <form method="post" action="">{% csrf_token %}
+            <input type="hidden" name="message" value="{{ choisi.id }}">
+            <input type="hidden" name="f" value="{{ filtre }}">
+            <input type="hidden" name="etat" value="{% if choisi.nouveau %}traite{% else %}a_traiter{% endif %}">
+            <button type="submit" class="bouton-contour"><svg class="a-ico"><use href="#a-ok"/></svg>{% if choisi.nouveau %}Marquer comme traité{% else %}Remettre à traiter{% endif %}</button>
+          </form>
+        {% endif %}
+      </div>
+    </article>
+  {% endif %}
+</div>
+</div>
+{% endblock %}
+
+{% block sidebar %}{% endblock %}

@@ -1,0 +1,115 @@
+{% extends "admin/base_site.html" %}
+{% load uciv_admin %}
+
+{% block bodyclass %}uciv-admin dashboard{% endblock %}
+{% block nav-breadcrumbs %}{% endblock %}
+{% block content_title %}{% endblock %}
+{% block content_subtitle %}{% endblock %}
+
+{% block content %}
+{% tableau_de_bord as d %}
+<div class="tb">
+  <header class="tb__entete">
+    <div class="tb__titre">
+      <p class="tb__date">{% now "l j F Y" as aujourdhui %}{{ aujourdhui|capfirst }}</p>
+      <h1>Bonjour {% firstof user.first_name user.get_username %}</h1>
+    </div>
+    <div class="tb__actions">
+      <form class="tb__recherche" method="get" action="{{ d.url_articles }}" role="search">
+        <svg class="a-ico"><use href="#a-recherche"/></svg>
+        <input type="search" name="q" placeholder="Rechercher un contenu…" aria-label="Rechercher un contenu">
+      </form>
+      <a class="bouton-orange" href="{{ d.url_nouvel_article }}"><svg class="a-ico"><use href="#a-plus"/></svg>Nouvel article</a>
+    </div>
+  </header>
+
+  <section class="tb__chiffres" aria-label="Chiffres clés">
+    {% for c in d.chiffres %}
+      <article class="carte chiffre">
+        <div class="chiffre__haut">
+          <p>{{ c.libelle }}</p>
+          <span class="picto picto--{{ c.couleur }}"><svg class="a-ico"><use href="#a-{{ c.icone }}"/></svg></span>
+        </div>
+        <p class="chiffre__valeur">{{ c.valeur }}</p>
+        <p class="chiffre__sous">{{ c.sous }}</p>
+      </article>
+    {% endfor %}
+  </section>
+
+  <div class="tb__rang tb__rang--2">
+    <section class="carte" aria-labelledby="tb-a-faire">
+      <h2 class="carte__titre" id="tb-a-faire">À faire</h2>
+      {% if d.a_faire %}
+        <ul class="a-faire">
+          {% for t in d.a_faire %}
+            <li>
+              <span class="picto picto--carre picto--{{ t.couleur }}"><svg class="a-ico"><use href="#a-{{ t.icone }}"/></svg></span>
+              <span class="a-faire__textes"><strong>{{ t.titre }}</strong><span>{{ t.sous }}</span></span>
+              <a class="lien-action" href="{{ t.url }}">{{ t.lien }}<svg class="a-ico"><use href="#a-fleche"/></svg></a>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="vide"><svg class="a-ico"><use href="#a-ok"/></svg>Tout est à jour : rien à traiter pour le moment.</p>
+      {% endif %}
+    </section>
+
+    <section class="carte" aria-labelledby="tb-raccourcis">
+      <h2 class="carte__titre" id="tb-raccourcis">Raccourcis</h2>
+      <div class="raccourcis">
+        <a href="{{ d.url_nouvel_article }}"><svg class="a-ico"><use href="#a-article"/></svg>Nouvel article</a>
+        <a href="{{ d.url_nouvelle_opportunite }}"><svg class="a-ico"><use href="#a-opportunite"/></svg>Nouvelle opportunité</a>
+        <a href="{{ d.url_nouvelle_ressource }}"><svg class="a-ico"><use href="#a-ressource"/></svg>Nouvelle ressource</a>
+        <a href="{{ d.url_abonnes }}"><svg class="a-ico"><use href="#a-abonne"/></svg>Exporter les abonnés</a>
+      </div>
+    </section>
+  </div>
+
+  <div class="tb__rang tb__rang--2">
+    <section class="carte" aria-labelledby="tb-contenus">
+      <div class="carte__tete">
+        <h2 class="carte__titre" id="tb-contenus">Derniers contenus modifiés</h2>
+        <a class="lien-action" href="{{ d.url_articles }}">Tout voir</a>
+      </div>
+      {% if d.contenus %}
+        <ul class="liste-lignes">
+          {% for c in d.contenus %}
+            <li>
+              <a class="ligne" href="{{ c.url }}">
+                <span class="ligne__textes"><strong>{{ c.titre }}</strong><span>{{ c.type }} · {% if c.quand == "à l'instant" %}modifié à l'instant{% else %}modifié {{ c.quand }}{% endif %}</span></span>
+                <span class="pastille pastille--{{ c.statut.0 }}">{{ c.statut.1 }}</span>
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="vide">Aucun contenu pour le moment.</p>
+      {% endif %}
+    </section>
+
+    <section class="carte" aria-labelledby="tb-messages">
+      <div class="carte__tete">
+        <h2 class="carte__titre" id="tb-messages">Messages récents</h2>
+        <a class="lien-action" href="{{ d.url_messages }}">Tout voir</a>
+      </div>
+      {% if d.messages %}
+        <ul class="liste-lignes">
+          {% for m in d.messages %}
+            <li>
+              <a class="ligne" href="{{ m.url }}">
+                <span class="avatar">{{ m.initiales }}</span>
+                <span class="ligne__textes"><strong>{{ m.nom }}</strong><span>{{ m.sujet }}</span></span>
+                <span class="ligne__quand">{{ m.quand }}{% if m.nouveau %}<span class="pastille pastille--nouveau">Nouveau</span>{% endif %}</span>
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="vide">Aucun message reçu pour le moment.</p>
+      {% endif %}
+    </section>
+  </div>
+</div>
+{% endblock %}
+
+{% block sidebar %}{% endblock %}

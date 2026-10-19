@@ -30,7 +30,7 @@ Depuis `src/` :
 
 - Ne commite et ne pousse que sur demande explicite.
 - Jamais de `--force` ni de réécriture d'historique sans confirmation.
-- Ne versionne pas `.env`, `db.sqlite3`, `static_cdn/`, `media_cdn/`.
+- Ne versionne pas `.env`, `db.sqlite3`, `static_cdn/`, `media_cdn/`, `cache_cdn/`.
 
 ## Mise à jour de la documentation
 

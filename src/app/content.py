@@ -1420,3 +1420,12 @@ DESINSCRIPTION = {
         'bas': "Vous avez changé d'avis ? Réinscrivez-vous depuis le pied de page.",
     },
 }
+
+
+# --- Trop de demandes (limiteur de débit, voir app/ratelimit.py) -------------------------------------------------------
+PAGE_429 = {
+    'titre': 'Doucement,', 'suite': 'trop de demandes.',
+    'texte': "Plusieurs formulaires ont été envoyés depuis votre connexion en peu de temps. Par sécurité, "
+             "patientez {duree} avant de réessayer. Si vous êtes une personne et non un robot, merci de votre compréhension !",
+    'note': 'une petite pause ?', 'icone': 'clock',
+}

@@ -1,5 +1,5 @@
 {% extends "admin/base.html" %}
-{% load static %}
+{% load static uciv_admin %}
 
 {% block title %}{% if subtitle %}{{ subtitle }} | {% endif %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
 
@@ -8,20 +8,81 @@
 <link rel="icon" href="{% static 'app/assets/img/logo-uciv.png' %}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Instrument+Serif:ital@1&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
-{% endblock %}
-
-{% block extrastyle %}
-{{ block.super }}
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Instrument+Serif:ital@1&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+{# Chargée en dernier : les feuilles de Django (listes, formulaires) arrivent par extrastyle et ne doivent pas la dépasser. #}
 <link rel="stylesheet" href="{% static 'app/assets/css/admin.css' %}">
+<script src="{% static 'app/assets/js/admin.js' %}" defer></script>
 {% endblock %}
 
-{% block branding %}
-<a class="uciv-marque" href="{% url 'admin:index' %}">
-  <img src="{% static 'app/assets/img/logo-uciv.png' %}" alt="" width="40" height="42">
-  <span class="uciv-marque__nom">Une Côte d'Ivoire <em>Volontaire</em></span>
-  <span class="uciv-marque__badge">Administration</span>
-</a>
-{% endblock %}
 
+{% block bodyclass %}uciv-admin{% endblock %}
+
+{% block branding %}{% endblock %}
 {% block nav-global %}{% endblock %}
+{% block usertools %}{% endblock %}
+{% block nav-sidebar %}{% endblock %}
+{% block nav-breadcrumbs %}{% endblock %}
+
+{# En-tête : barre mobile + barre latérale (maquette « Dashboard · Tableau de bord »). Rien sur la page de connexion. #}
+{% block header %}
+{% if has_permission %}
+{% include "admin/_icones.html" %}
+<header id="header" class="uciv-barre">
+  <a class="uciv-logo" href="{% url 'admin:index' %}">
+    <img src="{% static 'app/assets/img/logo-uciv.png' %}" alt="" width="36" height="38">
+    <span class="uciv-logo__textes"><strong>UCIV</strong><span>Espace équipe</span></span>
+  </a>
+  <button class="uciv-burger" type="button" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="menu-admin" data-menu-ouvrir>
+    <svg class="a-ico"><use href="#a-menu"/></svg>
+  </button>
+</header>
+<div class="uciv-voile" data-menu-fermer></div>
+<aside class="uciv-lateral" id="menu-admin" aria-label="Navigation de l'administration">
+  <div class="uciv-lateral__haut">
+    <div class="uciv-lateral__entete">
+      <a class="uciv-logo" href="{% url 'admin:index' %}">
+        <img src="{% static 'app/assets/img/logo-uciv.png' %}" alt="" width="44" height="46">
+        <span class="uciv-logo__textes"><strong>UCIV</strong><span>Espace équipe</span></span>
+      </a>
+      <button class="uciv-lateral__fermer" type="button" aria-label="Fermer le menu" data-menu-fermer>
+        <svg class="a-ico"><use href="#a-fermer"/></svg>
+      </button>
+    </div>
+    {% menu_lateral as groupes %}
+    <nav class="uciv-nav">
+      {% for groupe in groupes %}
+        <div class="uciv-nav__groupe">
+          <p class="uciv-nav__titre">{{ groupe.titre }}</p>
+          {% for e in groupe.entrees %}
+            <a class="uciv-nav__lien{% if e.actif %} est-actif{% endif %}" href="{{ e.url }}"{% if e.actif %} aria-current="page"{% endif %}>
+              <svg class="a-ico"><use href="#a-{{ e.icone }}"/></svg>
+              <span>{{ e.libelle }}</span>
+              {% if e.badge %}<span class="uciv-nav__badge">{{ e.badge }}</span>{% endif %}
+            </a>
+          {% endfor %}
+        </div>
+      {% endfor %}
+    </nav>
+  </div>
+  <div class="uciv-lateral__bas">
+    {% if site_url %}
+      <a class="uciv-voir-site" href="{{ site_url }}" target="_blank" rel="noopener">
+        <svg class="a-ico"><use href="#a-externe"/></svg><span>Voir le site</span>
+      </a>
+    {% endif %}
+    <div class="uciv-utilisateur">
+      <span class="uciv-utilisateur__avatar">{% firstof user.first_name.0 user.username.0 %}{{ user.last_name.0 }}</span>
+      <span class="uciv-utilisateur__textes">
+        <strong>{% firstof user.get_full_name user.get_username %}</strong>
+        <span>{{ user.email|default:"Équipe UCIV" }}</span>
+        <span class="uciv-utilisateur__liens"><a href="{% url 'admin:password_change' %}">Mot de passe</a>{% if user.is_superuser %} · <a href="{% url 'admin:auth_user_changelist' %}">Comptes</a>{% endif %}</span>
+      </span>
+      <form id="logout-form" method="post" action="{% url 'admin:logout' %}">
+        {% csrf_token %}
+        <button type="submit" aria-label="Se déconnecter" title="Se déconnecter"><svg class="a-ico"><use href="#a-sortie"/></svg><span class="uciv-sortie__texte">Se déconnecter ({% firstof user.get_full_name user.get_username %})</span></button>
+      </form>
+    </div>
+  </div>
+</aside>
+{% endif %}
+{% endblock %}
