@@ -24,7 +24,7 @@ sans dépendance tierce : `requirements.txt` ne contient que Django.
     │   ├── constants.py  # constantes (chemins d'upload…)
     │   └── utils.py      # envoi d'e-mails, get_ip()
     ├── app/              # contenu éditorial du site
-    │   ├── content.py            # textes, navigation, programmes, articles
+    │   ├── content.py            # textes, navigation, programmes (dont PROGRAMMES_LEADERSHIP), équipe, formes des heros (FORMES_HEROS)
     │   ├── context_processors.py # variables communes (navigation, pied de page)
     │   ├── models.py             # Convention (abstrait), 3 modèles de formulaires, Article, Opportunite, Ressource, Indicateur, Abonne (lettre d'information)
     │   ├── forms.py              # formulaires (Engagement, Partenariat, Contact, Newsletter)
@@ -33,14 +33,14 @@ sans dépendance tierce : `requirements.txt` ne contient que Django.
     │   ├── validators.py         # contrôle des fichiers téléversés (extensions, 10 Mo)
     │   ├── ratelimit.py          # limiteur de débit des formulaires et de la connexion (429)
     │   ├── seo.py                # SEO et GEO : balises, JSON-LD, robots.txt, sitemap, llms.txt
-    │   ├── views.py / urls.py    # toutes les pages, namespace « app » ; page_legale et page_introuvable (404)
-    │   ├── templatetags/custom_tags.py  # filtres corps_article (articles) et crochets (pages légales)
+    │   ├── views.py / urls.py    # toutes les pages, namespace « app » ; programme_leadership (2 pages), recherche, page_legale, page_introuvable (404)
+    │   ├── templatetags/custom_tags.py  # filtres corps_article et crochets ; balise formes_hero (forme UCIV des heros)
     │   ├── templatetags/uciv_admin.py   # menu et chiffres du tableau de bord de l'administration
     │   └── tests.py
     ├── templates/
     │   ├── app/base/base.html     # gabarit de base
-    │   ├── app/layout/            # une page par gabarit ; legal.html (3 pages légales), 404.html, desinscription.html
-    │   ├── app/includes/          # en-tête, pied de page, icônes
+    │   ├── app/layout/            # une page par gabarit ; legal.html (3 pages légales), programme_leadership.html (2 programmes), recherche.html, 404.html, desinscription.html
+    │   ├── app/includes/          # en-tête, pied de page, icônes, _formes_uciv, _temoignages, _galerie
     │   ├── admin/base_site.html   # habillage UCIV de l'administration
     │   └── emails/                # gabarits d'e-mails
     ├── static/app/assets/{css,js,img}

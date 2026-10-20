@@ -1,7 +1,7 @@
 ﻿# Avancement du projet UCIV
 
 Point de reprise : ce qui est fait, ce qui ne l'est pas, et par où continuer.
-Dernière mise à jour : 19 octobre 2026.
+Dernière mise à jour : 20 octobre 2026.
 
 Documents liés : [PLAN.md](PLAN.md) (ce qu'il faut construire),
 [ARCHITECTURE.md](ARCHITECTURE.md) (structure), [CLAUDE.md](../CLAUDE.md) (règles agents),
@@ -14,7 +14,7 @@ Documents liés : [PLAN.md](PLAN.md) (ce qu'il faut construire),
 | Structure du projet (`src/core`, `src/app`) | Fait |
 | Dépendances | Fait : Django 6.1.2 et Pillow 13.0.0 (images) |
 | Page d'accueil | Faite, alignée sur la maquette |
-| Pages intérieures (14) | **14 faites** : les 9 précédentes + Opportunités, Actualités, Article, Notre impact, Ressources |
+| Pages intérieures (17) | **17 faites** : les 14 précédentes + « De la vision à l'action », « Les RH ont la parole » (programmes d'UCIV Leadership) et Rechercher |
 | Pages légales et 404 | **Faites** (desktop et mobile) : mentions légales, politique de confidentialité, conditions d'utilisation, page introuvable |
 | Modèles de données et administration | 8 modèles administrables : `Abonne` (lettre d'information), 3 de formulaires (`SoumissionEngagement`, `SoumissionPartenariat`, `SoumissionContact`) et 4 de contenu (`Article`, `Opportunite`, `Ressource`, `Indicateur`) ; `MembreEquipe`, `Programme` et `Partenaire` restent dans `content.py` |
 | Formulaires | 4 faits : engagement, partenariat, contact, lettre d'information (pied de page) |
@@ -24,6 +24,36 @@ Documents liés : [PLAN.md](PLAN.md) (ce qu'il faut construire),
 | Mise en ligne | **En ligne sur https://uciv.org** (19 octobre 2026) ; compte administrateur et durcissement du serveur à faire |
 
 ## Ce qui est fait
+
+### Mise à jour d'octobre 2026 (consignes UCIV, branche `feature/maj-client-octobre`)
+Consignes du client : `UCIV/info/uciv_update.md` ; maquette mise à jour (copie dans `maquette/design_uciv.pen`).
+- **Forme UCIV** : la forme du logo remplace les cercles de tous les heros. Positions de la maquette dans
+  `content.FORMES_HEROS`, rendues par la balise `{% formes_hero 'cle' %}` (`includes/_formes_uciv.html`, masque
+  `img/forme-uciv.svg`, CSS section 27). Les anciens cercles des heros sont retirés des gabarits.
+- **Chiffres clés** : champ `Indicateur.prefixe` (migration `0010`, « + » de « +1 800 », modifiable dans l'administration)
+  et valeurs remplies par la migration `0011` (seulement si encore vides). Mention « en cours de consolidation » masquée
+  quand tous les chiffres sont renseignés.
+- **Leticia BOSSON** : lauréate mise en avant sur Les Go du Digital et première histoire de Notre impact (migration `0011`,
+  uniquement si l'histoire n'avait pas été rédigée).
+- **Couvertures** : accueil (photo détourée), Go du Digital, Experience Lab, UCIV Leadership (avec la plaque du logo
+  sur fond vert profond, proposition à valider par Marshall) ; vraies photos sur les cartes programme.
+- **Témoignages** (`includes/_temoignages.html`) sur chaque page programme ; la section ne s'affiche que si un
+  témoignage est renseigné dans `content.py` (aujourd'hui : Leticia seulement). **Galerie** « En images » sur Go du Digital.
+- **Programmes d'UCIV Leadership** : 2 pages (`programme_leadership.html`, URL `vision_action` et `rh_parole`), section
+  sur la page Leadership, liens « Au sein du réseau » sur Nos programmes, menu (en retrait) et pied de page, SEO, FAQ.
+- **Partenaires** : photo de la collaboration et nom en dessous (accueil et page Partenaires).
+- **Équipe** : biographie de Marshall Kouamé, nouveaux portraits, groupes Bureau exécutif (5), Responsables (10),
+  Ambassadrices (2). L'ancienne liste « Médias & communication » est retirée.
+- **Liens** : plus aucun lien `#` (recherche de l'en-tête → page Rechercher, « Découvrir UCIV » → Qui sommes-nous,
+  « S'inscrire » des programmes → formulaire de contact objet « Programme », fiches sans lien sans bouton).
+  Test `test_no_dead_links` : chaque lien interne des pages répond.
+- **Actualités** : photos cadrées vers le haut pour garder les visages.
+- Images : originaux dans `sources/images/`, WebP générés par `outils/convertir_images.py` (+ 2 images de partage).
+- 11 tests ajoutés (174 au total).
+- **Heros alignés sur la maquette** (desktop 1440 et mobile 390) : hauteurs, positions, tailles de texte, photos, logo
+  Leadership et textes manuscrits relevés dans la maquette et vérifiés au pixel près (mesures puppeteer). À partir de 1100 px,
+  les heros reprennent la maquette à l'échelle de l'écran (`--u`, CSS sections 29 et 30).
+
 
 ### Projet
 - Structure `django-init` : `src/core` (réglages, URLs, utilitaires) et `src/app` (contenu éditorial), gabarits dans `src/templates/app/`, statiques dans `src/static/app/assets/`.
@@ -282,6 +312,11 @@ Quatre branches empilées, chacune partie de la précédente, fusionnées en une
 | `feature/dashboard` | Maquette du dashboard de l'équipe (pas de code) |
 
 ## Prochaines étapes (par ordre)
+
+0. **Mise à jour d'octobre** : faire relire la branche `feature/maj-client-octobre`, la fusionner, puis `migrate` en
+   production (migrations `0010` et `0011`). À confirmer avec UCIV : logo Leadership, Emmanuel Fieni Kouassi (retiré
+   de l'équipe, pas de photo), prénom de « Goho Auxane », 4ᵉ partenaire, logos des partenaires, témoignages des
+   autres programmes, dates des 2 nouveaux programmes.
 
 1. **Créer le compte administrateur** sur le serveur : `ssh -t uciv-vps uciv-manage createsuperuser` (les migrations sont appliquées, les 4 branches fusionnées).
 2. **Implémenter le dashboard de l'équipe** à partir de la maquette validée (nouvelle branche partie de `feature/dashboard`) : connexion, tableau de bord, gestion des articles, opportunités, ressources et chiffres d'impact, messages reçus, abonnés.

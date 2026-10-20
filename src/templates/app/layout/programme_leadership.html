@@ -1,0 +1,122 @@
+{% extends "app/base/base.html" %}
+{% load custom_tags static %}
+
+{# Page d'un programme d'UCIV Leadership. Reçoit `pl` (content.PROGRAMMES_LEADERSHIP). #}
+
+{% block content %}
+
+{# ---------------------------------------------------------------- Hero #}
+<section class="gd-hero pl-hero pl-hero--{{ pl.fond }}">
+  {% formes_hero pl.formes_cle %}
+  <div class="conteneur gd-hero__grille">
+    <div class="gd-hero__texte">
+      <nav class="fil fil--clair" aria-label="Fil d'Ariane">
+        <ol>
+          <li><a href="{% url 'app:home' %}">Accueil</a></li>
+          <li><a href="{% url 'app:uciv_leadership' %}">UCIV Leadership</a></li>
+          <li aria-current="page"><strong>{{ pl.nom }}</strong></li>
+        </ol>
+      </nav>
+      <p class="surtitre surtitre--blanc hero__entree" style="--i: 0">Programme · UCIV Leadership</p>
+      <h1 class="gd-hero__titre hero__entree" style="--i: 1">{{ pl.titre }} <em>{{ pl.suite }}</em></h1>
+      <p class="gd-hero__chapo hero__entree" style="--i: 2">{{ pl.chapo }}</p>
+      <div class="gd-hero__cta hero__entree" style="--i: 3">
+        <a class="btn btn--blanc" href="#inscriptions">
+          <span>S'inscrire</span>
+          <span class="btn__rond">{% include "app/includes/_icon.html" with name="arrow-right" %}</span>
+        </a>
+        <a class="btn btn--contour-blanc" href="{% url 'app:uciv_leadership' %}">Découvrir UCIV Leadership</a>
+      </div>
+    </div>
+    <div class="gd-hero__visuel">
+      <div class="gd-hero__photo">
+        <img src="{% static pl.image %}" alt="{{ pl.image_alt }}" fetchpriority="high">
+      </div>
+      <p class="manuscrit gd-hero__note" aria-hidden="true">{{ pl.note }}</p>
+    </div>
+  </div>
+</section>
+
+{# -------------------------------------------------------------- À propos #}
+<section class="section pl-apropos">
+  <div class="conteneur pl-apropos__grille">
+    <div data-reveal>
+      <p class="surtitre">À propos du programme</p>
+      <h2 class="titre titre--52">{{ pl.a_propos_titre }} <em class="pl-vert">{{ pl.a_propos_suite }}</em></h2>
+    </div>
+    <div class="pl-apropos__texte" data-reveal style="--i: 1">
+      {% for paragraphe in pl.a_propos %}<p{% if forloop.first %} class="pl-apropos__chapo"{% endif %}>{{ paragraphe }}</p>{% endfor %}
+    </div>
+  </div>
+</section>
+
+{# -------------------------------------------------------------- Objectifs #}
+<section class="section section--blanc el-objectifs">
+  <div class="conteneur el-objectifs__grille">
+    <div data-reveal>
+      <p class="surtitre">Nos objectifs</p>
+      <h2 class="el-objectifs__titre">Ce que le programme <em>permet aux participants.</em></h2>
+      <p class="texte">{{ pl.objectifs_intro }}</p>
+    </div>
+    <ol class="el-objectifs__liste pl-objectifs">
+      {% for titre, texte in pl.objectifs %}
+        <li class="{% if forloop.counter|divisibleby:2 %}el-objectif--orange{% else %}el-objectif--vert{% endif %}" data-reveal style="--i: {{ forloop.counter0 }}">
+          <span class="el-objectifs__num">0{{ forloop.counter }}</span>
+          <span class="pl-objectif"><strong>{{ titre }}</strong><span>{{ texte }}</span></span>
+        </li>
+      {% endfor %}
+    </ol>
+  </div>
+</section>
+
+{# ------------------------------------------------------ Approche & public #}
+<section class="section pl-cartes">
+  <div class="conteneur pl-cartes__grille">
+    <article class="pl-carte" data-reveal>
+      <p class="surtitre">Notre approche</p>
+      <h2 class="pl-carte__titre">{{ pl.approche_titre }} <em>{{ pl.approche_suite }}</em></h2>
+      {% for paragraphe in pl.approche %}<p>{{ paragraphe }}</p>{% endfor %}
+    </article>
+    <article class="pl-carte pl-carte--vert" data-reveal style="--i: 1">
+      <p class="surtitre surtitre--jaune">À qui s'adresse le programme ?</p>
+      <h2 class="pl-carte__titre">{{ pl.public_titre }} <em>{{ pl.public_suite }}</em></h2>
+      <p>{{ pl.public }}</p>
+    </article>
+  </div>
+</section>
+
+{# ----------------------------------------------------------- Témoignages #}
+{% include "app/includes/_temoignages.html" with temo=pl.temoignages fond="blanc" %}
+
+{# ------------------------------------------------------- Notre conviction #}
+<section class="section section--sombre pl-conviction">
+  <div class="conteneur pl-conviction__cadre" data-reveal>
+    <p class="surtitre surtitre--jaune">Notre conviction</p>
+    <p class="pl-conviction__intro">{{ pl.conviction }}</p>
+    <h2 class="pl-conviction__titre">{{ pl.conviction_titre }} <em>{{ pl.conviction_suite }}</em></h2>
+    <p class="pl-conviction__fin">{{ pl.conviction_fin }}</p>
+    <p class="manuscrit pl-conviction__signature">Une Côte d'Ivoire Volontaire, Agir pour le pays.</p>
+  </div>
+</section>
+
+{# ----------------------------------------------------------- Inscriptions #}
+<section class="gd-inscriptions" id="inscriptions">
+  <span class="forme gd-inscriptions__disque" aria-hidden="true"></span>
+  <div class="conteneur gd-inscriptions__grille">
+    <div data-reveal>
+      <p class="surtitre surtitre--blanc">Inscriptions</p>
+      <h2 class="gd-inscriptions__titre">{{ pl.inscriptions_titre }} <em>{{ pl.inscriptions_suite }}</em></h2>
+      <a class="btn btn--blanc" href="{{ pl.url_inscription }}">
+        <span>S'inscrire</span>
+        <span class="btn__rond">{% include "app/includes/_icon.html" with name="arrow-right" %}</span>
+      </a>
+    </div>
+    <dl class="gd-inscriptions__infos" data-reveal style="--i: 1">
+      {% for info in pl.inscriptions %}
+        <div><dt>{{ info.label }}</dt><dd>{{ info.valeur }}</dd></div>
+      {% endfor %}
+    </dl>
+  </div>
+</section>
+
+{% endblock %}

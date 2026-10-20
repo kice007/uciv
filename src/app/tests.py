@@ -912,7 +912,7 @@ class ImagesDuSiteTests(TestCase):
 
     def test_site_serves_webp_photos(self):
         html = self.client.get(reverse('app:go_du_digital')).content.decode()
-        self.assertIn('/static/app/assets/img/go-du-digital.webp', html)
+        self.assertIn('/static/app/assets/img/go-du-digital-couverture.webp', html)
         self.assertNotIn('.jpg"', html.split('</head>')[1].replace('og-', ''))
 
     def test_article_images_in_database_use_webp(self):
@@ -976,7 +976,7 @@ class GeoTests(TestCase):
         noms = [e['item']['name'] for e in liste['itemListElement']]
         self.assertIn('Marshall Kouamé', noms)
         self.assertIn('Martine Boa', noms)
-        self.assertEqual(len(noms), 9)
+        self.assertEqual(len(noms), 18)   # le président et les 17 membres des trois groupes
         self.assertTrue(all(e['item']['worksFor']['@id'].endswith('/#organisation') for e in liste['itemListElement']))
 
     def test_collection_pages_declare_date_modified(self):
@@ -1411,3 +1411,89 @@ class RejoindreLeadershipTests(TestCase):
     def test_form_section_exists_as_anchor_target(self):
         html = self.client.get(reverse('app:engagement')).content.decode()
         self.assertEqual(html.count('id="formulaire"'), 1)
+
+
+class MiseAJourOctobreTests(TestCase):
+    """Consignes d'UCIV d'octobre 2026 (UCIV/info/uciv_update.md) et liens du site."""
+
+    def test_leadership_programme_pages_render(self):
+        for nom, titre in [('vision_action', "De la vision"), ('rh_parole', 'Les RH ont')]:
+            response = self.client.get(reverse('app:' + nom))
+            self.assertEqual(response.status_code, 200)
+            self.assertTemplateUsed(response, 'app/layout/programme_leadership.html')
+            self.assertContains(response, titre)
+            self.assertContains(response, 'Nos objectifs')
+            self.assertContains(response, 'Notre conviction')
+            self.assertContains(response, '/contact/?objet=Programme#ecrire')
+
+    def test_leadership_programmes_are_linked(self):
+        urls = [reverse('app:vision_action'), reverse('app:rh_parole')]
+        for nom in ('uciv_leadership', 'nos_programmes', 'home'):
+            html = self.client.get(reverse('app:' + nom)).content.decode()
+            for url in urls:
+                self.assertIn(f'href="{url}"', html, f'{url} absent de {nom}')
+
+    def test_key_figures_are_published(self):
+        self.assertEqual(Indicateur.objects.get(libelle='Jeunes mobilisés').valeur_affichee, '+1 800')
+        for nom in ('home', 'impact'):
+            html = self.client.get(reverse('app:' + nom)).content.decode()
+            self.assertIn('+1 800', html)
+            self.assertNotIn('>000<', html)
+        self.assertNotContains(self.client.get(reverse('app:home')), 'Chiffres en cours de consolidation')
+
+    def test_figure_prefix_is_optional(self):
+        self.assertEqual(Indicateur(libelle='x', valeur=5).valeur_affichee, '5')
+        self.assertEqual(Indicateur(libelle='x').valeur_affichee, '')
+
+    def test_laureate_story_and_testimonial(self):
+        self.assertContains(self.client.get(reverse('app:go_du_digital')), 'Leticia BOSSON')
+        self.assertContains(self.client.get(reverse('app:impact')), 'Leticia BOSSON, Reine du Digital')
+
+    def test_empty_testimonials_are_hidden(self):
+        self.assertNotContains(self.client.get(reverse('app:experience_lab')), 'id="temoignages"')
+
+    def test_team_page_shows_every_member_with_photo(self):
+        html = self.client.get(reverse('app:equipe')).content.decode()
+        for groupe in content.EQUIPE['groupes']:
+            for membre in groupe['membres']:
+                self.assertIn(membre['nom'], html)
+                self.assertIn(membre['photo'].split('/')[-1], html)
+        self.assertNotIn('[Courte biographie', html)
+
+    def test_hero_shapes_replace_circles(self):
+        for nom in ('home', 'go_du_digital', 'vision_action', 'impact', 'equipe'):
+            html = self.client.get(reverse('app:' + nom)).content.decode()
+            self.assertIn('class="forme-uciv"', html, nom)
+        self.assertNotIn('hero__disque', self.client.get(reverse('app:home')).content.decode())
+
+    def test_search(self):
+        response = self.client.get(reverse('app:recherche'), {'q': 'leadership'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, reverse('app:vision_action'))
+        self.assertContains(self.client.get(reverse('app:recherche'), {'q': 'ressources humaines'}),
+                            reverse('app:rh_parole'))
+        self.assertContains(self.client.get(reverse('app:recherche'), {'q': 'zzzzzz'}), 'Aucun résultat')
+        self.assertEqual(self.client.get(reverse('app:recherche')).status_code, 200)
+        self.assertEqual(self.client.get(reverse('app:recherche'), {'q': '<script>' * 50}).status_code, 200)
+
+    def test_search_is_not_indexed(self):
+        self.assertContains(self.client.get(reverse('app:recherche'), {'q': 'go'}), 'noindex')
+
+    def test_no_dead_links(self):
+        """Aucun lien « # » vide, et chaque lien interne des pages du site répond (200 ou redirection)."""
+        import re
+        pages = [reverse('app:' + nom) for nom in content.PAGES_INDEXABLES]
+        pages += [reverse('app:recherche'), reverse('app:mentions_legales'), reverse('app:confidentialite'),
+                  reverse('app:conditions')]
+        pages += [a.get_absolute_url() for a in Article.objects.filter(publish=True)[:3]]
+        vus = set()
+        for page in pages:
+            html = self.client.get(page).content.decode()
+            self.assertNotIn('href="#"', html, page)
+            for lien in re.findall(r'href="(/[^"#]*)', html):
+                if lien in vus or lien.startswith(('/static/', '/media/')):
+                    continue
+                vus.add(lien)
+                statut = self.client.get(lien).status_code
+                self.assertIn(statut, (200, 301, 302), f'{lien} (depuis {page}) : {statut}')
+        self.assertGreater(len(vus), 30)

@@ -1,14 +1,12 @@
 {% extends "app/base/base.html" %}
-{% load static %}
+{% load custom_tags static %}
 
 
 {% block content %}
 
 {# ---------------------------------------------------------------- Hero #}
 <section class="con-hero">
-  <span class="forme con-hero__anneau-creme" aria-hidden="true"></span>
-  <span class="forme con-hero__disque" aria-hidden="true"></span>
-  <span class="forme con-hero__anneau-jaune" aria-hidden="true"></span>
+  {% formes_hero 'contact' %}
   <p class="manuscrit con-hero__note" aria-hidden="true">{{ ct.hero_note }}</p>
   <div class="conteneur con-hero__grille">
     <div class="con-hero__texte">

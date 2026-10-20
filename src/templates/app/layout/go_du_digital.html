@@ -1,11 +1,12 @@
 {% extends "app/base/base.html" %}
-{% load static %}
+{% load custom_tags static %}
 
 
 {% block content %}
 
 {# ---------------------------------------------------------------- Hero #}
 <section class="gd-hero">
+  {% formes_hero 'go_du_digital' %}
   <div class="conteneur gd-hero__grille">
     <div class="gd-hero__texte">
       <nav class="fil fil--clair" aria-label="Fil d'Ariane">
@@ -27,11 +28,8 @@
       </div>
     </div>
     <div class="gd-hero__visuel">
-      <span class="forme gd-hero__jaune" aria-hidden="true"></span>
-      <span class="gd-hero__disque" aria-hidden="true"></span>
       <div class="gd-hero__photo">
-        <img src="{% static 'app/assets/img/go-du-digital.webp' %}" width="1200" height="1000"
-             alt="Une jeune femme se filme avec son téléphone pendant un atelier." fetchpriority="high">
+        <img src="{% static gd.image %}" width="1400" height="1865" alt="{{ gd.image_alt }}" fetchpriority="high">
       </div>
       <p class="gd-hero__pastille"><strong>90 %</strong> <span>de pratique</span></p>
       <p class="manuscrit gd-hero__note" aria-hidden="true">{{ gd.hero_note }}</p>
@@ -110,6 +108,12 @@
   </div>
 </section>
 
+{# ----------------------------------------------------------- Témoignages #}
+{% include "app/includes/_temoignages.html" with temo=gd.temoignages fond="creme" %}
+
+{# ------------------------------------------------------------- En images #}
+{% include "app/includes/_galerie.html" with galerie=gd.galerie %}
+
 {# ---------------------------------------------------------- Public & suivi #}
 <section class="section gd-public">
   <div class="conteneur gd-public__grille">
@@ -147,7 +151,7 @@
     <div data-reveal>
       <p class="surtitre surtitre--blanc">Inscriptions</p>
       <h2 class="gd-inscriptions__titre">Rejoins la prochaine édition <em>des Go du Digital.</em></h2>
-      <a class="btn btn--blanc" href="#">
+      <a class="btn btn--blanc" href="{{ gd.url_inscription }}">
         <span>S'inscrire</span>
         <span class="btn__rond">{% include "app/includes/_icon.html" with name="arrow-right" %}</span>
       </a>

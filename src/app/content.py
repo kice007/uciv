@@ -34,6 +34,9 @@ URL_REJOINDRE_LEADERSHIP = lazy(_engagement, str)('leadership')
 
 URL_GO = reverse_lazy('app:go_du_digital')
 URL_EXPERIENCE = reverse_lazy('app:experience_lab')
+URL_VISION_ACTION = reverse_lazy('app:vision_action')
+URL_RH_PAROLE = reverse_lazy('app:rh_parole')
+URL_INSCRIPTION_PROGRAMME = lazy(lambda: reverse('app:contact') + '?objet=Programme#ecrire', str)()
 
 # --- Éléments communs à toutes les pages ----------------------------------
 
@@ -53,6 +56,8 @@ NAVIGATION = [
         'enfants': [
             {'label': 'Les Go du Digital', 'url': URL_GO},
             {'label': 'UCIV Leadership', 'url': URL_LEADERSHIP},
+            {'label': "De la vision à l'action", 'url': URL_VISION_ACTION, 'niveau': 2},
+            {'label': 'Les RH ont la parole', 'url': URL_RH_PAROLE, 'niveau': 2},
             {'label': 'Experience Lab', 'url': URL_EXPERIENCE},
         ],
     },
@@ -85,6 +90,8 @@ PIED_COLONNES = [
         'liens': [
             {'label': 'Les Go du Digital', 'url': URL_GO},
             {'label': 'UCIV Leadership', 'url': URL_LEADERSHIP},
+            {'label': "De la vision à l'action", 'url': URL_VISION_ACTION},
+            {'label': 'Les RH ont la parole', 'url': URL_RH_PAROLE},
             {'label': 'Experience Lab', 'url': URL_EXPERIENCE},
         ],
     },
@@ -92,6 +99,7 @@ PIED_COLONNES = [
         'titre': 'Nous connaître',
         'liens': [
             {'label': 'Qui sommes-nous ?', 'url': URL_QUI},
+            {'label': 'Équipe', 'url': reverse_lazy('app:equipe')},
             {'label': 'Notre impact', 'url': URL_IMPACT},
             {'label': 'Nos partenaires', 'url': URL_PARTENAIRES},
             {'label': 'Actualités', 'url': URL_ACTUALITES},
@@ -185,8 +193,8 @@ PROGRAMMES = [
                  "de la stratégie de contenu et des techniques de tournage.",
         'lien_label': 'Découvrir le programme',
         'url': URL_GO,
-        'image': 'app/assets/img/go-du-digital.webp',
-        'image_alt': "Une jeune femme se filme avec son téléphone pendant un atelier.",
+        'image': 'app/assets/img/go-du-digital-couverture.webp',
+        'image_alt': "Deux participantes des Go du Digital travaillent sur leur téléphone.",
         'detouree': False,
     },
     {
@@ -209,21 +217,21 @@ PROGRAMMES = [
                  "« Know yourself before showing yourself. »",
         'lien_label': 'Découvrir Experience Lab',
         'url': URL_EXPERIENCE,
-        'image': 'app/assets/img/experience-lab.webp',
-        'image_alt': 'Un jeune homme présente son parcours devant un petit groupe.',
+        'image': 'app/assets/img/experience-lab-couverture.webp',
+        'image_alt': "Les participants d'Experience Lab réunis dans un jardin.",
         'detouree': False,
     },
 ]
 
-# Les chiffres réels ne sont pas encore fournis par UCIV : `valeur` reste à None
-# et le gabarit affiche « à venir » à la place.
+# Chiffres transmis par UCIV (octobre 2026). Ils servent tant que la base ne contient aucun
+# indicateur publié ; sinon ce sont ceux de l'administration (« Chiffres d'impact ») qui s'affichent.
 INDICATEURS = [
-    {'valeur': None, 'label': 'Jeunes mobilisés'},
-    {'valeur': None, 'label': 'Volontaires'},
-    {'valeur': None, 'label': 'Programmes réalisés'},
-    {'valeur': None, 'label': 'Participants formés'},
-    {'valeur': None, 'label': 'Partenaires'},
-    {'valeur': None, 'label': 'Projets réalisés'},
+    {'valeur': '+1 800', 'label': 'Jeunes mobilisés'},
+    {'valeur': '40', 'label': 'Volontaires'},
+    {'valeur': '5', 'label': 'Programmes réalisés'},
+    {'valeur': '50', 'label': 'Participants formés'},
+    {'valeur': '4', 'label': 'Partenaires'},
+    {'valeur': '5', 'label': 'Projets réalisés'},
 ]
 
 FACONS_DE_S_ENGAGER = [
@@ -298,10 +306,15 @@ AUTRES_ARTICLES = [
     },
 ]
 
+# Photos de partenariat (UCIV n'a pas encore transmis les logos) : `position` garde les visages dans le cadre.
 PARTENAIRES = [
-    {'nom': 'BonixUp', 'apport': 'Formation'},
-    {'nom': 'PAIPRO-JEUNES', 'apport': 'Insertion professionnelle'},
-    {'nom': 'ONG Light for All CI', 'apport': 'Logistique de terrain'},
+    {'nom': 'BonixUp', 'apport': 'Formation', 'photo': 'app/assets/img/partenaire-bonixup.webp',
+     'photo_alt': "Signature du partenariat entre UCIV et BonixUp.", 'position': 'center 30%'},
+    {'nom': 'PAIPRO-JEUNES', 'apport': 'Insertion professionnelle', 'photo': 'app/assets/img/partenariat-paipro.webp',
+     'photo_alt': "Poignée de main lors de la signature entre UCIV et PAIPRO-JEUNES.", 'position': 'center 18%'},
+    {'nom': 'ONG Light for All CI', 'apport': 'Logistique de terrain',
+     'photo': 'app/assets/img/partenaire-light-for-all.webp',
+     'photo_alt': "Rencontre entre UCIV et l'ONG Light for All CI.", 'position': 'center 32%'},
 ]
 
 
@@ -365,6 +378,31 @@ LEADERSHIP = {
         {'titre': 'Impact social',
          'texte': 'Transformer les idées en actions utiles et mesurables.'},
     ],
+    'image': 'app/assets/img/leadership-couverture.webp',
+    'image_alt': 'Quatre membres du réseau UCIV Leadership, bras croisés, en tenue professionnelle.',
+    'programmes_intro': "Au sein du réseau, UCIV Leadership organise des programmes pour clarifier son "
+                        "ambition et se rapprocher du monde professionnel.",
+    'programmes': [
+        {'nom': "De la vision à l'action", 'etiquette': 'Ambition · Leadership',
+         'accroche': 'Transformer ses ambitions en actions concrètes.',
+         'texte': "Un programme pour clarifier sa vision, développer un état d'esprit orienté vers l'action "
+                  "et construire son plan d'action.",
+         'image': 'app/assets/img/vision-action-groupe.webp',
+         'image_alt': "Les participants du programme « De la vision à l'action » en photo de groupe.",
+         'url': URL_VISION_ACTION},
+        {'nom': 'Les RH ont la parole', 'etiquette': 'Employabilité · Recrutement',
+         'accroche': 'Comprendre les attentes des recruteurs pour mieux préparer son avenir professionnel.',
+         'texte': "Des panels et des échanges directs avec des spécialistes des ressources humaines : "
+                  "recrutement, CV, entretiens.",
+         'image': 'app/assets/img/rh-parole-groupe.webp',
+         'image_alt': "Les participants de « Les RH ont la parole » réunis dans un jardin.",
+         'url': URL_RH_PAROLE},
+    ],
+    'temoignages': {
+        'titre': 'Ils en parlent', 'suite': 'le mieux.',
+        'intro': 'Paroles de membres du réseau UCIV Leadership.',
+        'liste': [],
+    },
     'theme': "« S'engager aujourd'hui",
     'theme_suite': 'pour transformer demain. »',
     'lancement_infos': ['24 octobre 2026', 'American Corner', 'Heure à confirmer'],
@@ -456,8 +494,8 @@ NOS_PROGRAMMES = {
                      "compétition « La Reine du Digital ».",
             'lien_label': 'Découvrir le programme',
             'url': URL_GO,
-            'image': 'app/assets/img/go-du-digital.webp',
-            'image_alt': 'Une jeune femme se filme avec son téléphone pendant un atelier.',
+            'image': 'app/assets/img/go-du-digital-couverture.webp',
+            'image_alt': 'Deux participantes des Go du Digital travaillent sur leur téléphone.',
             'detouree': False,
         },
         {
@@ -475,6 +513,10 @@ NOS_PROGRAMMES = {
             'image': 'app/assets/img/groupe-nb.webp',
             'image_alt': 'Quatre jeunes leaders souriants, en tenue professionnelle.',
             'detouree': True,
+            'sous_programmes': [
+                {'label': "De la vision à l'action", 'url': URL_VISION_ACTION},
+                {'label': 'Les RH ont la parole', 'url': URL_RH_PAROLE},
+            ],
         },
         {
             'theme': 'vert',
@@ -487,8 +529,8 @@ NOS_PROGRAMMES = {
                      "présenter.",
             'lien_label': 'Découvrir Experience Lab',
             'url': URL_EXPERIENCE,
-            'image': 'app/assets/img/experience-lab.webp',
-            'image_alt': 'Un jeune homme présente son parcours devant un petit groupe.',
+            'image': 'app/assets/img/experience-lab-couverture.webp',
+            'image_alt': "Les participants d'Experience Lab réunis dans un jardin.",
             'detouree': False,
         },
     ],
@@ -496,7 +538,15 @@ NOS_PROGRAMMES = {
 
 # --- Page Les Go du Digital -------------------------------------------------
 
+# Témoignages des pages programme : une entrée par personne, affichée en carte
+# {'nom': 'Prénom Nom', 'programme': 'Participante — Les Go du Digital', 'citation': '…',
+#  'photo': 'app/assets/img/…webp' (facultatif : sans photo, une silhouette s'affiche)}.
+# La section n'apparaît que si au moins un témoignage est renseigné.
+
 GO_DU_DIGITAL = {
+    'image': 'app/assets/img/go-du-digital-couverture.webp',
+    'image_alt': 'Deux participantes des Go du Digital travaillent sur leur téléphone.',
+    'url_inscription': URL_INSCRIPTION_PROGRAMME,
     'hero_surtitre': 'Programme · Jeunes femmes · 6 samedis',
     'hero_chapo': "Le digital comme outil d'autonomie, d'expression et d'opportunité.",
     'hero_note': 'elles créent, elles osent !',
@@ -557,11 +607,45 @@ GO_DU_DIGITAL = {
         {'label': 'Tarif', 'valeur': 'À confirmer'},
         {'label': 'Modalités', 'valeur': 'À confirmer'},
     ],
+    'temoignages': {
+        'titre': 'Elles en parlent', 'suite': 'le mieux.',
+        'intro': 'Paroles de participantes, à la fin de leurs six samedis de formation.',
+        'laureate': {
+            'nom': 'Leticia BOSSON', 'programme': 'Lauréate — Les Go du Digital',
+            'badge': 'Lauréate · Reine du Digital',
+            'photo': 'app/assets/img/leticia-bosson.webp',
+            'photo_alt': 'Leticia BOSSON, couronnée Reine du Digital.',
+            'citation': "Ces six semaines de formation m'ont beaucoup appris. Nous avons été sérieusement "
+                        "formées à la création de contenu, avec beaucoup de pratique et d'exercices, ce qui "
+                        "m'a permis de monter très vite en compétence. Je sors de cette formation très "
+                        "heureuse, d'autant plus que j'ai été couronnée Reine. Je recommande à 100 % le "
+                        "programme Les Go du Digital.",
+        },
+        'liste': [],
+    },
+    'galerie': {
+        'titre': 'Six samedis', 'suite': 'de pratique.',
+        'intro': "Interventions, ateliers de création de contenu et remise des attestations de la dernière "
+                 "édition.",
+        # `taille` : place de la photo dans la mosaïque (maquette : 3 photos en haut, 4 en bas).
+        'photos': [
+            {'image': 'app/assets/img/gdd-18.webp', 'alt': 'Un intervenant présente un atelier aux participantes.', 'taille': 'haut-1'},
+            {'image': 'app/assets/img/gdd-img1355.webp', 'alt': 'Les participantes montrent leurs attestations de fin de formation.', 'taille': 'haut-2'},
+            {'image': 'app/assets/img/gdd-dsc00150.webp', 'alt': 'Une participante filme avec son téléphone.', 'taille': 'haut-3'},
+            {'image': 'app/assets/img/gdd-32.webp', 'alt': 'Des participantes concentrées sur leur téléphone.', 'taille': 'bas'},
+            {'image': 'app/assets/img/gdd-dsc00060.webp', 'alt': 'Une participante réfléchit pendant un atelier.', 'taille': 'bas'},
+            {'image': 'app/assets/img/gdd-42.webp', 'alt': 'La salle de formation pendant une intervention.', 'taille': 'bas'},
+            {'image': 'app/assets/img/gdd-img8842.webp', 'alt': "L'équipe et les participantes en tee-shirt UCIV.", 'taille': 'bas'},
+        ],
+    },
 }
 
 # --- Page Experience Lab ----------------------------------------------------
 
 EXPERIENCE_LAB = {
+    'image': 'app/assets/img/experience-lab-couverture.webp',
+    'image_alt': "Les participants d'Experience Lab réunis dans un jardin.",
+    'url_inscription': URL_INSCRIPTION_PROGRAMME,
     'hero_surtitre': 'Programme · Personal branding et pitch',
     'hero_chapo': "Apprendre à mieux se connaître, mieux se présenter et mieux "
                   "valoriser son expérience.",
@@ -591,6 +675,11 @@ EXPERIENCE_LAB = {
         {'label': 'Dates', 'valeur': 'À confirmer'},
         {'label': 'Modalités', 'valeur': 'À confirmer'},
     ],
+    'temoignages': {
+        'titre': 'Ils en parlent', 'suite': 'le mieux.',
+        'intro': "Ce que les participants retiennent de leur passage à l'Experience Lab.",
+        'liste': [],
+    },
 }
 
 # --- Page Équipe ------------------------------------------------------------
@@ -601,35 +690,196 @@ EQUIPE = {
     'hero_chapo': "UCIV est porté par une équipe de personnes engagées qui mettent "
                   "leurs compétences, leur temps et leur énergie au service de la "
                   "mission de l'organisation.",
-    'president_role': "Président et fondateur d'Une Côte d'Ivoire Volontaire.",
-    'president_bio': "[Courte biographie à transmettre : parcours, engagement et "
-                     "vision pour la jeunesse ivoirienne.]",
-    # `photo` : chemin statique du portrait, découpé dans l'affiche bureau-executif.jpg
-    # comme dans la maquette (basse résolution : à remplacer par des photos HD).
-    # Sans photo, la carte affiche les initiales.
-    'bureau': [
-        {'nom': 'Aïssata Ouattara', 'initiales': 'AO', 'couleur': 'orange',
-         'role': 'Secrétaire Générale', 'photo': 'app/assets/img/bureau-aissata-ouattara.jpg'},
-        {'nom': 'Dr Angèle Zang', 'initiales': 'AZ', 'couleur': 'vert',
-         'role': 'Trésorière Générale', 'photo': 'app/assets/img/bureau-angele-zang.jpg'},
-        {'nom': 'Roxane Atchia', 'initiales': 'RA', 'couleur': 'jaune',
-         'role': 'Commissaire aux comptes', 'photo': 'app/assets/img/bureau-roxane-atchia.jpg'},
-        {'nom': 'Martine Boa', 'initiales': 'MB', 'couleur': 'profond',
-         'role': 'Responsable Générale des projets', 'photo': 'app/assets/img/bureau-martine-boa.jpg'},
+    'president_photo': 'app/assets/img/equipe-marshall-kouame.webp',
+    'president_role': "Entrepreneur du numérique, spécialiste en communication visuelle et audiovisuelle, "
+                      "fondateur-président d'Une Côte d'Ivoire Volontaire.",
+    'president_bio': [
+        "Titulaire d'un diplôme en Art et Image Numérique, Marshall Kouamé met ses compétences créatives et "
+        "son expérience en communication au service de projets à impact social. Convaincu que l'engagement "
+        "citoyen est un puissant levier de développement, il s'investit dans la mobilisation, la formation "
+        "et l'accompagnement des jeunes à travers des initiatives qui favorisent le volontariat, "
+        "l'employabilité et le leadership.",
+        "À travers UCIV, il porte une vision : faire du volontariat une véritable école d'expérience, de "
+        "compétences et de leadership pour la jeunesse ivoirienne. Son ambition est de contribuer à "
+        "l'émergence d'une génération de jeunes responsables, compétents et engagés, capables de prendre "
+        "des initiatives et de participer activement au développement de la Côte d'Ivoire.",
     ],
-    'medias_intro': "Les biographies, photos et domaines d'expertise de chaque "
-                    "responsable seront ajoutés dès leur transmission.",
-    'medias': [
-        {'nom': 'Emmanuel Fieni Kouassi', 'initiales': 'EF', 'couleur': 'orange',
-         'role': 'Responsable Communication & mobilisation'},
-        {'nom': 'Djamira Kamagaté', 'initiales': 'DK', 'couleur': 'vert',
-         'role': 'Commissaire aux comptes adjointe et créatrice de contenu'},
-        {'nom': 'Mieimmo Kouassi', 'initiales': 'MK', 'couleur': 'jaune',
-         'role': 'Chargée de Marketing'},
-        {'nom': 'Ago Maria Konan', 'initiales': 'AM', 'couleur': 'profond',
-         'role': 'Secrétaire Générale adjointe et créatrice de contenu'},
+    'president_citation': "« Chaque jeune a un potentiel à révéler et un rôle à jouer dans la "
+                          "transformation de son pays. »",
+    # Portraits transmis par UCIV (octobre 2026), dossier « L'ÉQUIPE » : (nom, rôle, fichier).
+    # La couleur du liseré sous chaque photo est attribuée à la suite (voir plus bas).
+    'groupes': [
+        {
+            'cle': 'bureau', 'surtitre': 'Bureau exécutif', 'titre': "L'équipe",
+            'suite': 'qui fait avancer UCIV.',
+            'membres': [
+                ('Aïssata Ouattara', 'Secrétaire Générale', 'aissata-ouattara'),
+                ('Ago Maria Konan', 'Secrétaire Générale adjointe', 'ago-maria-konan'),
+                ('Dr Angèle Zang', 'Trésorière Générale', 'angele-zang'),
+                ('Roxane Atchia', 'Commissaire aux comptes', 'roxane-atchia'),
+                ('Djamira Kamagaté', 'Commissaire aux comptes adjointe', 'djamira-kamagate'),
+            ],
+        },
+        {
+            'cle': 'responsables', 'surtitre': 'Les responsables', 'titre': 'Celles et ceux',
+            'suite': 'qui portent les projets.',
+            'membres': [
+                ('Christelle Boidi', 'Responsable Générale des Ressources Humaines', 'christelle-boidi'),
+                ('Martine Boa', 'Responsable Générale des projets', 'martine-boa'),
+                ('Roxane Tchimou', 'Responsable Générale des Ambassadeurs', 'roxane-tchimou'),
+                ('Abissiri Coulibaly', 'Responsable de la logistique', 'abissiri-coulibaly'),
+                ('Danielle Bohoussou', 'Responsable Environnement & Écocitoyenneté', 'danielle-bohoussou'),
+                ('Goho Auxane', 'Responsable Communication', 'auxane-goho'),
+                ('Martial Coulibaly', 'Responsable Formations « Objectif Métiers »', 'martial-coulibaly'),
+                ('Nelly Atchia', 'Responsable Formations & Ateliers', 'nelly-atchia'),
+                ('Naomi Lahore Yao', "Responsable de l'Expérience Talent & Engagement", 'naomi-lahore-yao'),
+                ('Mieimmo Kouassi', 'Chargée de Marketing', 'mieimmo-kouassi'),
+            ],
+        },
+        {
+            'cle': 'ambassadrices', 'surtitre': 'Nos ambassadrices', 'titre': "La voix d'UCIV",
+            'suite': 'sur le terrain.',
+            'intro': "Elles portent les valeurs d'UCIV et relaient ses programmes auprès des jeunes.",
+            'membres': [
+                ('Désirée Okpekon', 'Ambassadrice', 'desiree-okpekon'),
+                ('Samira Kouassi', 'Ambassadrice', 'samira-kouassi'),
+            ],
+        },
     ],
 }
+
+_COULEURS_EQUIPE = ['orange', 'vert', 'jaune', 'profond', 'orange-fonce']
+for _groupe in EQUIPE['groupes']:
+    _groupe['membres'] = [
+        {'nom': nom, 'role': role, 'photo': f'app/assets/img/equipe-{fichier}.webp',
+         'couleur': _COULEURS_EQUIPE[n % len(_COULEURS_EQUIPE)]}
+        for n, (nom, role, fichier) in enumerate(_groupe['membres'])
+    ]
+
+# --- Programmes d'UCIV Leadership (une page par programme, même gabarit) ------------
+# Textes transmis par UCIV (octobre 2026). Clé = slug de l'URL /programmes/uciv-leadership/<slug>/.
+
+PROGRAMMES_LEADERSHIP = {
+    'de-la-vision-a-l-action': {
+        'nom': "De la vision à l'action", 'fond': 'profond', 'formes_cle': 'vision_action',
+        'titre': 'De la vision', 'suite': "à l'action.",
+        'chapo': 'Transformer ses ambitions en actions concrètes.',
+        'note': "passe à l'action !",
+        'image': 'app/assets/img/vision-action-couverture.webp',
+        'image_alt': "Un intervenant sourit pendant un échange du programme « De la vision à l'action ».",
+        'a_propos_titre': 'Avoir une vision', 'a_propos_suite': 'est un premier pas.',
+        'a_propos': [
+            "« De la vision à l'action » est un programme porté par Une Côte d'Ivoire Volontaire (UCIV). Il vise "
+            "à encourager les jeunes à clarifier leurs ambitions, à développer leur potentiel et à passer "
+            "concrètement à l'action pour construire leur avenir.",
+            "Avoir une vision est un premier pas, mais la concrétiser demande de la préparation, du courage, de "
+            "la discipline et de la persévérance. Ce programme invite les jeunes à dépasser leurs hésitations, "
+            "à mieux comprendre leur potentiel et à transformer leurs aspirations en initiatives concrètes.",
+            "À travers des échanges, des réflexions et des expériences inspirantes, les participants sont "
+            "encouragés à adopter une posture proactive face aux défis de leur parcours personnel, "
+            "professionnel et citoyen.",
+        ],
+        'objectifs_intro': "Cinq objectifs pour passer de l'intention à l'initiative.",
+        'objectifs': [
+            ('Clarifier sa vision', "Aider les jeunes à mieux définir leurs aspirations, leurs objectifs et la "
+                                    "direction qu'ils souhaitent donner à leur vie."),
+            ("Développer un état d'esprit orienté vers l'action",
+             "Encourager l'initiative, la responsabilité personnelle et la confiance en ses capacités."),
+            ('Surmonter les obstacles', "Apprendre à faire face à la peur, aux doutes et aux difficultés qui "
+                                        "freinent le passage à l'action."),
+            ("Construire un plan d'action", "Traduire ses ambitions en objectifs concrets, réalistes et "
+                                            "progressifs."),
+            ('Encourager le leadership', "Former une jeunesse capable de prendre des initiatives et de "
+                                         "contribuer positivement au développement de sa communauté."),
+        ],
+        'approche_titre': 'Échanger, réfléchir,', 'approche_suite': 'agir.',
+        'approche': [
+            "Le programme privilégie une approche participative, fondée sur le partage d'expériences, la "
+            "réflexion personnelle, les échanges et l'identification de pistes d'action concrètes.",
+            "L'objectif n'est pas seulement d'inspirer les participants, mais de les amener à repartir avec une "
+            "vision plus claire de leurs ambitions et une meilleure compréhension des étapes à franchir pour les "
+            "réaliser.",
+        ],
+        'public_titre': 'Pour les jeunes', 'public_suite': 'qui veulent agir.',
+        'public': "« De la vision à l'action » s'adresse principalement aux jeunes désireux de mieux orienter "
+                  "leur avenir, de développer leur leadership et de concrétiser leurs projets personnels, "
+                  "professionnels ou citoyens.",
+        'conviction': "Chez Une Côte d'Ivoire Volontaire, nous croyons que la jeunesse ne doit pas seulement "
+                      "rêver d'un avenir meilleur : elle doit pouvoir prendre part à sa construction.",
+        'conviction_titre': "Une vision donne une direction. L'action ouvre le chemin.",
+        'conviction_suite': "La persévérance permet d'avancer.",
+        'conviction_fin': "Avec « De la vision à l'action », UCIV encourage chaque jeune à devenir acteur de son "
+                          "avenir et contributeur du changement dans sa communauté.",
+        'inscriptions_titre': 'Transforme ton ambition', 'inscriptions_suite': "en plan d'action.",
+    },
+    'les-rh-ont-la-parole': {
+        'nom': 'Les RH ont la parole', 'fond': 'orange', 'formes_cle': 'rh_parole',
+        'titre': 'Les RH ont', 'suite': 'la parole.',
+        'chapo': 'Comprendre les attentes des recruteurs pour mieux préparer son avenir professionnel.',
+        'note': 'prépare ton avenir !',
+        'image': 'app/assets/img/rh-parole-groupe.webp',
+        'image_alt': "Les participants de « Les RH ont la parole » réunis dans un jardin.",
+        'a_propos_titre': 'Se rapprocher', 'a_propos_suite': 'du monde professionnel.',
+        'a_propos': [
+            "« Les RH ont la parole » est une initiative portée par Une Côte d'Ivoire Volontaire (UCIV). Elle "
+            "vise à rapprocher les jeunes du monde professionnel en leur donnant l'occasion d'échanger "
+            "directement avec des spécialistes des ressources humaines.",
+            "L'accès au premier emploi représente un défi pour de nombreux jeunes diplômés. Il devient donc "
+            "essentiel de mieux comprendre les attentes des entreprises, les critères de recrutement et les "
+            "compétences recherchées sur le marché du travail.",
+            "À travers des panels, des échanges interactifs et des témoignages de professionnels, cette "
+            "initiative permet aux participants de mieux comprendre les réalités du recrutement et de "
+            "bénéficier de conseils pratiques pour préparer leur insertion professionnelle.",
+        ],
+        'objectifs_intro': 'Cinq objectifs pour mieux comprendre le recrutement et préparer son insertion.',
+        'objectifs': [
+            ('Comprendre le recrutement', "Permettre aux jeunes de mieux connaître les attentes des recruteurs "
+                                          "et les étapes du processus de sélection."),
+            ('Renforcer son employabilité', "Aider les participants à identifier les compétences techniques et "
+                                            "comportementales recherchées par les employeurs."),
+            ('Mieux valoriser son profil', "Donner des conseils pratiques pour améliorer son CV, préparer ses "
+                                           "entretiens et présenter ses expériences."),
+            ('Créer un pont entre les jeunes et les entreprises',
+             'Favoriser le dialogue entre les professionnels RH et la nouvelle génération de talents.'),
+            ('Encourager le développement professionnel',
+             "Sensibiliser les jeunes à l'importance de la formation continue, du volontariat et de "
+             "l'acquisition d'expériences concrètes."),
+        ],
+        'approche_titre': 'Rencontrer, questionner,', 'approche_suite': 'comprendre.',
+        'approche': [
+            "Le programme repose sur des rencontres et des échanges directs avec des professionnels des "
+            "ressources humaines. Il privilégie le partage d'expériences, les questions-réponses et les conseils "
+            "pratiques pour mieux préparer l'entrée dans le monde du travail.",
+            "Au-delà de la transmission d'informations, « Les RH ont la parole » favorise une meilleure "
+            "compréhension mutuelle entre les attentes des jeunes candidats et les exigences du marché de "
+            "l'emploi.",
+        ],
+        'public_titre': 'Pour les étudiants', 'public_suite': 'et jeunes diplômés.',
+        'public': "Cette initiative s'adresse principalement aux étudiants, aux jeunes diplômés, aux personnes "
+                  "en recherche d'emploi et à tous les jeunes désireux de mieux préparer leur parcours "
+                  "professionnel.",
+        'conviction': "Chez Une Côte d'Ivoire Volontaire, nous sommes convaincus que l'employabilité des jeunes "
+                      "se construit grâce à l'acquisition de compétences, à l'expérience, à l'engagement et à "
+                      "une meilleure connaissance du monde professionnel.",
+        'conviction_titre': 'Donner la parole aux RH,',
+        'conviction_suite': "c'est donner aux jeunes des clés.",
+        'conviction_fin': 'Des clés pour mieux comprendre le recrutement et construire leur avenir professionnel.',
+        'inscriptions_titre': 'Prépare ton entrée', 'inscriptions_suite': 'dans le monde du travail.',
+    },
+}
+for _slug, _programme in PROGRAMMES_LEADERSHIP.items():
+    _programme.update(
+        slug=_slug,
+        url_inscription=URL_INSCRIPTION_PROGRAMME,
+        inscriptions=[
+            {'label': 'Format', 'valeur': 'À confirmer'},
+            {'label': 'Dates', 'valeur': 'À confirmer'},
+            {'label': 'Modalités', 'valeur': 'À confirmer'},
+        ],
+        temoignages={'titre': 'Ils en parlent', 'suite': 'le mieux.',
+                     'intro': f"Ce que les participants retiennent du programme « {_programme['nom']} ».",
+                     'liste': []},
+    )
 
 # --- Page Je veux m'engager -------------------------------------------------
 
@@ -677,11 +927,14 @@ PAGE_PARTENAIRES = {
                           "partenariat peut apporter aux jeunes.",
     'partenaires': [
         {'nom': 'BonixUp', 'apport': 'Accès à des formateurs',
-         'couleur': 'orange', 'icone': 'graduation-cap'},
+         'couleur': 'orange', 'icone': 'graduation-cap', 'photo': PARTENAIRES[0]['photo'],
+         'photo_alt': PARTENAIRES[0]['photo_alt'], 'position': PARTENAIRES[0]['position']},
         {'nom': 'PAIPRO-JEUNES', 'apport': "Accompagnement vers l'emploi",
-         'couleur': 'vert', 'icone': 'briefcase'},
+         'couleur': 'vert', 'icone': 'briefcase', 'photo': PARTENAIRES[1]['photo'],
+         'photo_alt': PARTENAIRES[1]['photo_alt'], 'position': PARTENAIRES[1]['position']},
         {'nom': 'ONG Light for All CI', 'apport': 'Logistique de terrain',
-         'couleur': 'profond', 'icone': 'truck'},
+         'couleur': 'profond', 'icone': 'truck', 'photo': PARTENAIRES[2]['photo'],
+         'photo_alt': PARTENAIRES[2]['photo_alt'], 'position': PARTENAIRES[2]['position']},
     ],
     'formes_intro': "Institutions, entreprises, associations, ONG, établissements de "
                     "formation : plusieurs manières de construire ensemble.",
@@ -716,13 +969,47 @@ CONTACT = {
              "possible.",
 }
 
+# --- Forme UCIV des bandeaux (heros) ----------------------------------------------------------------
+# La forme du logo remplace les cercles décoratifs (maquette, octobre 2026). Valeurs relevées dans la maquette,
+# en pixels, par rapport au coin haut gauche du hero : (x, y, largeur, hauteur, rotation, couleur).
+# Rotation en degrés dans le sens inverse des aiguilles d'une montre, autour du coin haut gauche (comme Pencil).
+# `desktop` : maquette de 1440 px ; `mobile` : maquette de 390 px (gabarit app/includes/_formes_uciv.html).
+
+_F_CREME, _F_JAUNE, _F_VERT, _F_ORANGE = 'var(--creme)', 'var(--jaune)', 'var(--vert)', 'var(--orange)'
+_F_BLANC = 'var(--blanc)'
+_F_MOBILE = [(280, -110, 181, 240, 0, 'rgba(255, 255, 255, .15)')]
+_F_HAUT_DROITE = (1184, -180, 331, 440, 0, _F_JAUNE)    # Experience Lab et programmes d'UCIV Leadership
+
+FORMES_HEROS = {
+    'home': {'desktop': [(1595.9, 355, 603, 901, 262, _F_CREME), (-90, 580, 226, 300, 0, _F_VERT)]},
+    'qui_sommes_nous': {'desktop': [(1561.7, 202.3, 591, 784, 269.2, _F_CREME), (1234, -200, 331, 440, 0, _F_JAUNE)]},
+    'nos_programmes': {'desktop': [(1486.5, 312.7, 286, 380, 293.7, _F_JAUNE),
+                                   (889, -14.7, 420, 457, 44.7, 'rgba(255, 255, 255, .08)')]},
+    'go_du_digital': {'desktop': [(1594.7, 289.4, 582, 792, -91.6, _F_CREME)]},
+    'uciv_leadership': {'desktop': [(817, -216, 734, 894, 0, _F_BLANC), (-146, 470, 271, 360, 0, _F_VERT)],
+                        'mobile': [(264, -56, 181, 240, 0, 'rgba(255, 255, 255, .15)')]},
+    'experience_lab': {'desktop': [_F_HAUT_DROITE, (1493.3, 396, 460, 610, 272.7, _F_CREME)]},
+    'vision_action': {'desktop': [_F_HAUT_DROITE, (1425.9, 182, 460, 610, 293.9, _F_CREME)]},
+    'rh_parole': {'desktop': [_F_HAUT_DROITE, (1501.1, 260, 460, 610, 276.5, _F_CREME)]},
+    'engagement': {'desktop': [(1042.1, -41, 484, 521, 11.8, _F_ORANGE)]},
+    'partenaires': {'desktop': [(1347.4, -127, 751, 808, -40.7, _F_CREME), (-128, 470, 256, 340, 0, _F_VERT)]},
+    'opportunites': {'desktop': [(1234, 110, 461, 461, -22.6, 'rgba(255, 255, 255, .08)')]},
+    'actualites': {'desktop': [(1144, -140, 392, 520, 0, _F_JAUNE), (1301.9, 521.4, 429, 470, 223.8, _F_ORANGE)]},
+    'article': {'desktop': [(-121, 300, 241, 320, 0, _F_JAUNE)]},
+    'impact': {'desktop': [(1117, -120, 407, 540, 0, _F_CREME)]},
+    'ressources': {'desktop': [(1134, -130, 392, 520, 0, _F_CREME)]},
+    'equipe': {'desktop': [(1144, -140, 392, 520, 0, _F_JAUNE)]},
+    'contact': {'desktop': [(1134, -130, 392, 520, 0, _F_CREME), (-170.4, 402.5, 256, 340, 16.2, _F_JAUNE)]},
+    'legal': {'desktop': [(1122, -170, 377, 500, 0, 'rgba(255, 255, 255, .1)')]},
+    'recherche': {'desktop': [(1134, -130, 392, 520, 0, 'rgba(255, 255, 255, .08)')]},
+}
+for _formes in FORMES_HEROS.values():
+    _formes.setdefault('mobile', _F_MOBILE)
+
 # --- Pages alimentées par la base : Opportunités, Actualités, Notre impact, Ressources ------------
-# Les formes décoratives des bandeaux sont exprimées en pixels sur la maquette de 1440 px ;
-# `creux` est le « rayon intérieur » (en %) : 0 = disque plein, 72 = anneau.
+# Les formes décoratives des bandeaux : voir FORMES_HEROS (`formes_cle`).
 
 _ACCUEIL = {'label': 'Accueil', 'url': URL_HOME}
-_ORANGE, _JAUNE, _VERT = 'var(--orange)', 'var(--jaune)', 'var(--vert)'
-_CREME, _BLANC_8 = 'var(--creme)', 'rgba(255, 255, 255, .08)'
 
 OPPORTUNITES_PAGE = {
     'hero': {
@@ -732,12 +1019,8 @@ OPPORTUNITES_PAGE = {
         'titre': 'Les opportunités qui peuvent', 'suite': 'faire grandir votre parcours.',
         'chapo': "Retrouvez sur cette page les opportunités proposées par UCIV et son réseau de "
                  "partenaires, mises à jour au fil de l'eau.",
-        'formes': [
-            {'x': 1020, 'y': 90, 'w': 520, 'c': _ORANGE, 'creux': 72},
-            {'x': 1120, 'y': 190, 'w': 320, 'c': _JAUNE, 'creux': 0},
-            {'x': 880, 'y': -150, 'w': 280, 'c': _BLANC_8, 'creux': 70},
-        ],
-        'note': {'texte': 'saisis ta chance !', 'x': 1000, 'y': 438, 'taille': 44, 'rot': -7, 'c': 'var(--blanc)'},
+        'formes_cle': 'opportunites',
+        'note': {'texte': 'saisis ta chance !', 'x': 1000, 'y': 470, 'taille': 44, 'rot': -7, 'c': 'var(--blanc)'},
     },
     'categories': [
         ('Volontariat', "Des missions permettant de s'engager et de développer son expérience."),
@@ -759,11 +1042,7 @@ ACTUALITES_PAGE = {
         'titre': "L'actualité", 'suite': "d'UCIV.",
         'chapo': "Découvrez les activités, projets, événements, partenariats et initiatives qui "
                  "font vivre Une Côte d'Ivoire Volontaire.",
-        'formes': [
-            {'x': 1080, 'y': -140, 'w': 520, 'c': _JAUNE, 'creux': 78},
-            {'x': 930, 'y': 250, 'w': 380, 'c': _ORANGE, 'creux': 0},
-            {'x': 1210, 'y': 330, 'w': 300, 'c': _VERT, 'creux': 70},
-        ],
+        'formes_cle': 'actualites',
     },
     'par_page': 6,
 }
@@ -775,12 +1054,8 @@ IMPACT_PAGE = {
         'surtitre': 'Notre impact',
         'titre': 'Des actions. Des expériences.', 'suite': "De l'impact.",
         'chapo': "Nous voulons pouvoir mesurer notre engagement à travers des résultats concrets.",
-        'formes': [
-            {'x': 1050, 'y': -120, 'w': 540, 'c': _CREME, 'creux': 80},
-            {'x': 960, 'y': 270, 'w': 330, 'c': _JAUNE, 'creux': 0},
-            {'x': 1200, 'y': 300, 'w': 300, 'c': _ORANGE, 'creux': 70},
-        ],
-        'note': {'texte': 'des preuves, pas des promesses', 'x': 890, 'y': 406, 'taille': 38, 'rot': -5,
+        'formes_cle': 'impact',
+        'note': {'texte': 'des preuves, pas des promesses', 'x': 890, 'y': 440, 'taille': 38, 'rot': -5,
                  'c': 'var(--blanc)'},
     },
     'chiffres_intro': "Une recherche est en cours pour établir des chiffres fiables. Les valeurs "
@@ -801,11 +1076,7 @@ RESSOURCES_PAGE = {
         'titre': "Apprendre. S'informer.", 'suite': 'Progresser.',
         'chapo': "Retrouvez les ressources produites ou recommandées par UCIV pour accompagner les "
                  "jeunes dans leur développement personnel, professionnel et citoyen.",
-        'formes': [
-            {'x': 1070, 'y': -130, 'w': 520, 'c': _CREME, 'creux': 80},
-            {'x': 980, 'y': 260, 'w': 320, 'c': _JAUNE, 'creux': 0},
-            {'x': 1220, 'y': 300, 'w': 300, 'c': _VERT, 'creux': 70},
-        ],
+        'formes_cle': 'ressources',
     },
     'note_modele': "Les fiches ci-dessus sont des emplacements : elles seront alimentées depuis "
                    "l'espace d'administration du site.",
@@ -820,11 +1091,20 @@ RESSOURCES_PAGE = {
     },
 }
 
+RECHERCHE_PAGE = {
+    'hero': {
+        'fond': 'vert-profond', 'hauteur': 420, 'taille': 72, 'taille_mobile': 40, 'largeur_texte': 760,
+        'largeur_chapo': 560, 'formes_cle': 'recherche',
+        'fil': [_ACCUEIL, {'label': 'Rechercher'}],
+        'surtitre': 'Rechercher',
+        'titre': 'Que cherchez-vous', 'suite': 'sur le site ?',
+        'chapo': "Programmes, actualités, opportunités, ressources : tapez un ou plusieurs mots.",
+    },
+    'exemples': ['Go du Digital', 'Leadership', 'volontaire', 'partenariat', 'recrutement'],
+}
+
 ARTICLE_PAGE = {
-    'formes': [
-        {'x': 1090, 'y': -160, 'w': 520, 'c': _ORANGE, 'creux': 78},
-        {'x': -160, 'y': 300, 'w': 320, 'c': _JAUNE, 'creux': 74},
-    ],
+    'formes_cle': 'article',
 }
 
 # --- Référencement (SEO) ----------------------------------------------------
@@ -884,6 +1164,26 @@ SEO_PAGES = {
         'cours': {'nom': 'Experience Lab', 'public': 'Jeunes'},
         'image': 'app/assets/img/og-experience-lab.jpg',
     },
+    'vision_action': {
+        'titre': "De la vision à l'action — Programme UCIV Leadership",
+        'description': "De la vision à l'action, programme d'UCIV Leadership : clarifier son ambition, surmonter "
+                       "ses doutes et construire un plan d'action concret.",
+        'type': 'cours',
+        'fil': [_ACC, ('Nos programmes', 'nos_programmes'), ('UCIV Leadership', 'uciv_leadership'),
+                ("De la vision à l'action", None)],
+        'cours': {'nom': "De la vision à l'action", 'public': 'Jeunes'},
+        'image': 'app/assets/img/og-vision-action.jpg',
+    },
+    'rh_parole': {
+        'titre': "Les RH ont la parole — Programme d'UCIV Leadership",
+        'description': "Les RH ont la parole, programme d'UCIV Leadership : échanger avec des recruteurs pour "
+                       "comprendre le recrutement et réussir son CV et ses entretiens.",
+        'type': 'cours',
+        'fil': [_ACC, ('Nos programmes', 'nos_programmes'), ('UCIV Leadership', 'uciv_leadership'),
+                ('Les RH ont la parole', None)],
+        'cours': {'nom': 'Les RH ont la parole', 'public': 'Étudiants, jeunes diplômés et chercheurs d\'emploi'},
+        'image': 'app/assets/img/og-rh-parole.jpg',
+    },
     'engagement': {
         'titre': "Je veux m'engager — Devenir volontaire avec UCIV",
         'description': "Il y a une place pour ton engagement : deviens volontaire, rejoins UCIV Leadership ou propose "
@@ -932,7 +1232,7 @@ SEO_PAGES = {
 
 # Pages listées dans le sitemap et dans llms.txt, dans l'ordre d'importance.
 PAGES_INDEXABLES = ['home', 'qui_sommes_nous', 'equipe', 'nos_programmes', 'go_du_digital', 'uciv_leadership',
-                    'experience_lab', 'engagement', 'partenaires', 'opportunites', 'actualites', 'impact',
+                    'vision_action', 'rh_parole', 'experience_lab', 'engagement', 'partenaires', 'opportunites', 'actualites', 'impact',
                     'ressources', 'contact']
 # Paramètres d'URL qui ne changent que l'affichage : ces variantes ne sont pas indexées.
 PARAMETRES_FILTRES = ('categorie', 'type', 'theme', 'choix', 'objet')
@@ -1068,6 +1368,34 @@ FAQ = {
         ("Quel est le format et quelles sont les dates ?",
          "Le format, les dates et les modalités d'inscription d'Experience Lab sont encore à confirmer."),
     ],
+    'vision_action': [
+        ("Qu'est-ce que « De la vision à l'action » ?",
+         "« De la vision à l'action » est un programme d'UCIV Leadership qui encourage les jeunes à clarifier leurs "
+         "ambitions, à développer leur potentiel et à passer concrètement à l'action pour construire leur avenir."),
+        ("Quels sont les objectifs de « De la vision à l'action » ?",
+         "Le programme aide les jeunes à clarifier leur vision, à développer un état d'esprit orienté vers "
+         "l'action, à surmonter les obstacles, à construire un plan d'action et à exercer leur leadership."),
+        ("À qui s'adresse « De la vision à l'action » ?",
+         "Il s'adresse principalement aux jeunes désireux de mieux orienter leur avenir, de développer leur "
+         "leadership et de concrétiser leurs projets personnels, professionnels ou citoyens."),
+        ("Quand a lieu « De la vision à l'action » ?",
+         "Le format, les dates et les modalités d'inscription sont encore à confirmer."),
+    ],
+    'rh_parole': [
+        ("Qu'est-ce que « Les RH ont la parole » ?",
+         "« Les RH ont la parole » est une initiative d'UCIV Leadership qui permet aux jeunes d'échanger "
+         "directement avec des spécialistes des ressources humaines, à travers des panels, des échanges "
+         "interactifs et des témoignages de professionnels."),
+        ("Qu'apprend-on pendant le programme ?",
+         "Les participants comprennent mieux les attentes des recruteurs et les étapes du recrutement, "
+         "identifient les compétences recherchées et reçoivent des conseils pratiques pour leur CV et leurs "
+         "entretiens."),
+        ("À qui s'adresse « Les RH ont la parole » ?",
+         "Aux étudiants, aux jeunes diplômés, aux personnes en recherche d'emploi et à tous les jeunes désireux "
+         "de mieux préparer leur parcours professionnel."),
+        ("Quand a lieu « Les RH ont la parole » ?",
+         "Le format, les dates et les modalités d'inscription sont encore à confirmer."),
+    ],
     'engagement': [
         ("Comment devenir volontaire avec UCIV ?",
          "Pour devenir volontaire, il suffit de remplir le formulaire d'engagement en choisissant « Devenir "
@@ -1162,24 +1490,14 @@ LEGAL_DOCUMENTS = [
      'icone': 'file-text', 'texte': "Les règles d'usage du site et des formulaires."},
 ]
 
-def _legal_formes(x, y, w, h):
-    """Formes du bandeau (maquette 1440 px) : anneau blanc, disque jaune et anneau orange
-    centré sur le disque (même centre : 1265, 325), dont la taille varie selon la page."""
-    return [
-        {'x': 1060, 'y': -170, 'w': 500, 'c': 'rgba(255, 255, 255, .1)', 'creux': 78},
-        {'x': 1190, 'y': 250, 'w': 150, 'c': 'var(--jaune)', 'creux': 0},
-        {'x': x, 'y': y, 'w': w, 'h': h, 'c': 'var(--orange)', 'creux': 70},
-    ]
-
-
-def _legal_hero(label, titre, suite, chapo, anneau):
+def _legal_hero(label, titre, suite, chapo):
     return {
         'fond': 'vert-profond', 'hauteur': 480, 'taille': 72, 'taille_mobile': 40,
         'largeur_texte': 760, 'largeur_chapo': 580,
         'fil': [_ACCUEIL, {'label': label}],
         'surtitre': 'Informations légales',
         'titre': titre, 'suite': suite, 'chapo': chapo,
-        'formes': _legal_formes(*anneau), 'maj': LEGAL_MAJ,
+        'formes_cle': 'legal', 'maj': LEGAL_MAJ,
     }
 
 
@@ -1191,7 +1509,7 @@ LEGAL = {
         'hero': _legal_hero(
             'Mentions légales', 'Mentions', 'légales.',
             "Qui édite ce site, qui l'héberge et à qui s'adresser : les informations "
-            "obligatoires, en toute transparence.", (1146, 208, 238, 234)),
+            "obligatoires, en toute transparence."),
         'sections': [
             {'titre': 'Éditeur du site', 'blocs': [
                 {'p': "Le site uciv.ci [adresse à confirmer] est édité par Une Côte d'Ivoire "
@@ -1249,7 +1567,7 @@ LEGAL = {
         'hero': _legal_hero(
             'Politique de confidentialité', 'Politique de', 'confidentialité.',
             "Quelles données nous collectons, pourquoi, combien de temps nous les gardons, et "
-            "comment exercer vos droits.", (1131, 195, 268, 259)),
+            "comment exercer vos droits."),
         'sections': [
             {'titre': 'Responsable du traitement', 'blocs': [
                 {'p': "Le responsable du traitement des données collectées sur ce site est Une "
@@ -1329,8 +1647,7 @@ LEGAL = {
                        "contenus et de ses formulaires.",
         'hero': _legal_hero(
             "Conditions d'utilisation", 'Conditions', "d'utilisation.",
-            "Les règles qui encadrent l'usage du site, de ses contenus et de ses formulaires.",
-            (1134, 196, 261, 259)),
+            "Les règles qui encadrent l'usage du site, de ses contenus et de ses formulaires."),
         'sections': [
             {'titre': 'Objet', 'blocs': [
                 {'p': "Les présentes conditions encadrent l'utilisation du site d'Une Côte "

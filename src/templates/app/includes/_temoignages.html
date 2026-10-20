@@ -1,0 +1,47 @@
+{% load static %}
+{# Section « Témoignages » d'une page programme. Reçoit `temo` (voir content.py) et `fond` (« creme » ou « blanc »). #}
+{# N'apparaît que si un témoignage est renseigné : lauréate mise en avant et/ou cartes. #}
+{% if temo.laureate or temo.liste %}
+<section class="section temo temo--{{ fond|default:'creme' }}" id="temoignages">
+  <div class="conteneur">
+    <div class="entete-section" data-reveal>
+      <div>
+        <p class="surtitre">Témoignages</p>
+        <h2 class="titre titre--52">{{ temo.titre }} <em>{{ temo.suite }}</em></h2>
+      </div>
+      <p class="texte">{{ temo.intro }}</p>
+    </div>
+    {% if temo.laureate %}
+      <figure class="temo-une" data-reveal>
+        <div class="temo-une__photo">
+          <img src="{% static temo.laureate.photo %}" width="1400" height="928" alt="{{ temo.laureate.photo_alt }}" loading="lazy">
+        </div>
+        <div class="temo-une__texte">
+          <p class="temo-une__badge">{% include "app/includes/_icon.html" with name="crown" %}<span>{{ temo.laureate.badge }}</span></p>
+          <blockquote class="temo-une__citation"><p>« {{ temo.laureate.citation }} »</p></blockquote>
+          <figcaption class="temo-une__signature">
+            <strong>{{ temo.laureate.nom }}</strong>
+            <span>{{ temo.laureate.programme }}</span>
+          </figcaption>
+        </div>
+      </figure>
+    {% endif %}
+    {% if temo.liste %}
+      <ul class="temo-cartes">
+        {% for t in temo.liste %}
+          <li class="temo-carte" data-reveal style="--i: {{ forloop.counter0 }}">
+            <span class="temo-carte__guillemets">{% include "app/includes/_icon.html" with name="quote" %}</span>
+            <blockquote><p>« {{ t.citation }} »</p></blockquote>
+            <div class="temo-carte__personne">
+              <span class="temo-carte__photo">
+                {% if t.photo %}<img src="{% static t.photo %}" alt="" loading="lazy">{% else %}{% include "app/includes/_icon.html" with name="user" %}{% endif %}
+              </span>
+              <span><strong>{{ t.nom }}</strong><span>{{ t.programme }}</span></span>
+            </div>
+          </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  </div>
+</section>
+{% endif %}

@@ -1,12 +1,12 @@
 {% extends "app/base/base.html" %}
-{% load static %}
+{% load custom_tags static %}
 
 
 {% block content %}
 
 {# ---------------------------------------------------------------- Hero #}
 <section class="np-hero">
-  <span class="forme forme--anneau np-hero__anneau" aria-hidden="true"></span>
+  {% formes_hero 'nos_programmes' %}
   <div class="conteneur np-hero__grille">
     <div class="np-hero__texte">
       <nav class="fil fil--clair" aria-label="Fil d'Ariane">
@@ -22,8 +22,6 @@
       <p class="np-hero__chapo hero__entree" style="--i: 2">{{ np.hero_chapo }}</p>
     </div>
     <div class="np-hero__visuel" aria-hidden="true">
-      <span class="np-hero__disque"></span>
-      <span class="forme np-hero__rond"></span>
       <p class="manuscrit np-hero__note">apprendre en faisant</p>
     </div>
   </div>
@@ -75,6 +73,14 @@
           <h2>{{ p.titre }}</h2>
           <p class="np-programme__accroche">{{ p.accroche }}</p>
           <p class="texte">{{ p.texte }}</p>
+          {% if p.sous_programmes %}
+            <div class="np-sous">
+              <p class="np-sous__label">Au sein du réseau</p>
+              <ul class="np-sous__liens">
+                {% for sp in p.sous_programmes %}<li><a href="{{ sp.url }}">{{ sp.label }}{% include "app/includes/_icon.html" with name="arrow-up-right" %}</a></li>{% endfor %}
+              </ul>
+            </div>
+          {% endif %}
           <a class="btn btn--{{ p.bouton }}" href="{{ p.url }}">
             <span>{{ p.lien_label }}</span>
             <span class="btn__rond">{% include "app/includes/_icon.html" with name="arrow-right" %}</span>

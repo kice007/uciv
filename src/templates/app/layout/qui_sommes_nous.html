@@ -1,12 +1,12 @@
 {% extends "app/base/base.html" %}
-{% load static %}
+{% load custom_tags static %}
 
 
 {% block content %}
 
 {# ---------------------------------------------------------------- Hero #}
 <section class="qs-hero">
-  <span class="forme qs-hero__anneau" aria-hidden="true"></span>
+  {% formes_hero 'qui_sommes_nous' %}
   <div class="conteneur qs-hero__grille">
     <div class="qs-hero__texte">
       <nav class="fil fil--clair" aria-label="Fil d'Ariane">
@@ -22,7 +22,6 @@
       <p class="qs-hero__chapo hero__entree" style="--i: 2">{{ qui.hero_chapo }}</p>
     </div>
     <div class="qs-hero__visuel">
-      <span class="qs-hero__disque" aria-hidden="true"></span>
       <img class="qs-hero__photo" src="{% static 'app/assets/img/groupe-nb.webp' %}" width="1374" height="1145"
            alt="Quatre jeunes leaders souriants, en tenue professionnelle." fetchpriority="high">
     </div>

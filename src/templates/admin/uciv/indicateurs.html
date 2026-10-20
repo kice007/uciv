@@ -26,7 +26,7 @@
         <strong class="indic__libelle">{{ form.instance.libelle }}</strong>
         <div class="indic__valeur">
           {% for cache in form.hidden_fields %}{{ cache }}{% endfor %}
-          {{ form.valeur }}{{ form.valeur.errors }}
+          {{ form.prefixe }}{{ form.valeur }}{{ form.prefixe.errors }}{{ form.valeur.errors }}
         </div>
         <span class="indic__info">Ordre d'affichage : {{ form.instance.ordre }}</span>
         {% if not form.instance.publish %}<span class="pastille pastille--brouillon">Masqué</span>

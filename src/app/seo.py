@@ -134,8 +134,7 @@ def _blocs_specifiques(request, nom, page, url):
         })
     elif nom == 'equipe':
         membres = [('Marshall Kouamé', 'Président et fondateur')]
-        membres += [(m['nom'], m['role']) for m in content.EQUIPE['bureau']]
-        membres += [(m['nom'], m['role']) for m in content.EQUIPE['medias']]
+        membres += [(m['nom'], m['role']) for groupe in content.EQUIPE['groupes'] for m in groupe['membres']]
         blocs.append({
             '@context': 'https://schema.org', '@type': 'ItemList', 'name': "Équipe d'UCIV",
             'itemListElement': [
@@ -146,6 +145,7 @@ def _blocs_specifiques(request, nom, page, url):
         })
     elif page['type'] == 'programmes':
         programmes = [('Les Go du Digital', 'go_du_digital'), ('UCIV Leadership', 'uciv_leadership'),
+                      ("De la vision à l'action", 'vision_action'), ('Les RH ont la parole', 'rh_parole'),
                       ('Experience Lab', 'experience_lab')]
         blocs.append({
             '@context': 'https://schema.org', '@type': 'ItemList', 'name': 'Programmes d\'UCIV',
@@ -257,7 +257,8 @@ def texte_llms(request):
               f"- Siège : Abidjan, Côte d'Ivoire ({content.COORDONNEES['adresse']})",
               f"- Contact : {content.COORDONNEES['email']} ; téléphone {telephones}",
               "- Programmes : Les Go du Digital (6 samedis, jeunes femmes, pratique à 90 %) ; UCIV Leadership "
-              "(réseau sélectif de 30 à 50 membres) ; Experience Lab (personal branding et pitch)",
+              "(réseau sélectif de 30 à 50 membres, avec ses programmes « De la vision à l'action » et « Les RH ont la "
+              "parole ») ; Experience Lab (personal branding et pitch)",
               f"- Lancement d'UCIV Leadership : 24 octobre 2026, {lancement['lieu']}, {lancement['ville']} "
               "(conférence au format TEDx, heure à confirmer)",
               "- Partenaires : BonixUp, PAIPRO-JEUNES, ONG Light for All CI", '',

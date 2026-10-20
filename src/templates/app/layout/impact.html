@@ -19,7 +19,7 @@
       {% for indicateur in indicateurs %}
         <li class="imp-carte imp-carte--{{ indicateur.couleur }}" data-reveal style="--i: {{ forloop.counter0 }}">
           <span class="forme imp-carte__anneau" aria-hidden="true"></span>
-          <p class="imp-carte__valeur">{% if indicateur.valeur is not None %}{{ indicateur.valeur }}{% else %}000{% endif %}</p>
+          <p class="imp-carte__valeur">{{ indicateur.valeur|default:"000" }}</p>
           <p class="imp-carte__libelle">{{ indicateur.libelle }}</p>
         </li>
       {% endfor %}

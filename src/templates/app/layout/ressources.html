@@ -36,7 +36,7 @@
               <h2>{{ r.titre }}</h2>
               <p class="res-carte__meta">{{ r.meta }}</p>
             </div>
-            <a class="lien-fleche lien-fleche--orange" href="{{ r.url|default:'#' }}">Consulter{% include "app/includes/_icon.html" with name="arrow-right" %}</a>
+            {% if r.url %}<a class="lien-fleche lien-fleche--orange" href="{{ r.url }}">Consulter{% include "app/includes/_icon.html" with name="arrow-right" %}</a>{% endif %}
           </li>
         {% endfor %}
       </ul>

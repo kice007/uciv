@@ -1,12 +1,12 @@
 {% extends "app/base/base.html" %}
-{% load static %}
+{% load custom_tags static %}
 
 
 {% block content %}
 
 {# ---------------------------------------------------------------- Hero #}
 <section class="lead-hero">
-  <span class="forme lead-hero__anneau" aria-hidden="true"></span>
+  {% formes_hero 'uciv_leadership' %}
   <div class="conteneur lead-hero__grille">
     <div class="lead-hero__texte">
       <nav class="fil" aria-label="Fil d'Ariane">
@@ -31,13 +31,12 @@
     </div>
 
     <div class="lead-hero__visuel">
-      <span class="lead-hero__disque" aria-hidden="true"></span>
       <span class="lead-hero__logo">
         <img src="{% static 'app/assets/img/logo-uciv-leadership.webp' %}" width="3801" height="1453"
              alt="UCIV Leadership — le réseau des leaders">
       </span>
-      <img class="lead-hero__photo" src="{% static 'app/assets/img/groupe-nb.webp' %}" width="1374" height="1145"
-           alt="Quatre jeunes leaders souriants, en tenue professionnelle." fetchpriority="high">
+      <img class="lead-hero__photo" src="{% static leadership.image %}" width="1086" height="576"
+           alt="{{ leadership.image_alt }}" fetchpriority="high">
     </div>
   </div>
 </section>
@@ -73,6 +72,35 @@
         {% endfor %}
       </ul>
     </div>
+  </div>
+</section>
+
+{# ------------------------------------------------- Programmes du réseau #}
+<section class="section section--sombre lead-programmes" id="programmes-du-reseau">
+  <div class="conteneur">
+    <div class="entete-section" data-reveal>
+      <div>
+        <p class="surtitre surtitre--jaune">Les programmes d'UCIV Leadership</p>
+        <h2 class="titre titre--52 titre--clair">Deux rendez-vous <em>pour passer à l'action.</em></h2>
+      </div>
+      <p class="texte texte--clair">{{ leadership.programmes_intro }}</p>
+    </div>
+    <ul class="lead-programmes__liste">
+      {% for p in leadership.programmes %}
+        <li class="lead-prog" data-reveal style="--i: {{ forloop.counter0 }}">
+          <a class="lead-prog__lien" href="{{ p.url }}">
+            <span class="lead-prog__visuel"><img src="{% static p.image %}" alt="{{ p.image_alt }}" loading="lazy"></span>
+            <span class="lead-prog__texte">
+              <span class="lead-prog__tag">{{ p.etiquette }}</span>
+              <span class="lead-prog__nom">{{ p.nom }}</span>
+              <span class="lead-prog__accroche">{{ p.accroche }}</span>
+              <span class="lead-prog__desc">{{ p.texte }}</span>
+              <span class="lien-fleche">Découvrir le programme{% include "app/includes/_icon.html" with name="arrow-right" %}</span>
+            </span>
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
   </div>
 </section>
 
@@ -140,6 +168,9 @@
     </ol>
   </div>
 </section>
+
+{# ----------------------------------------------------------- Témoignages #}
+{% include "app/includes/_temoignages.html" with temo=leadership.temoignages fond="blanc" %}
 
 {# ----------------------------------------------------------------- Thème #}
 <section class="lead-theme">

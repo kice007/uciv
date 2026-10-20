@@ -1,0 +1,20 @@
+{% load static %}
+{# Section « En images » d'une page programme. Reçoit `galerie` (voir content.py : GO_DU_DIGITAL['galerie']). #}
+<section class="section section--blanc galerie">
+  <div class="conteneur">
+    <div class="entete-section" data-reveal>
+      <div>
+        <p class="surtitre">En images</p>
+        <h2 class="titre titre--52">{{ galerie.titre }} <em>{{ galerie.suite }}</em></h2>
+      </div>
+      <p class="texte">{{ galerie.intro }}</p>
+    </div>
+    <ul class="galerie__grille">
+      {% for photo in galerie.photos %}
+        <li class="galerie__photo galerie__photo--{{ photo.taille }}" data-reveal="image" style="--i: {{ forloop.counter0 }}">
+          <img src="{% static photo.image %}" alt="{{ photo.alt }}" loading="lazy">
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>

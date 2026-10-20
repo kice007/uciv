@@ -1,0 +1,49 @@
+{% extends "app/base/base.html" %}
+
+
+{% block content %}
+
+{% include "app/includes/_hero_page.html" with hero=page.hero %}
+
+{# ------------------------------------------------------------- Résultats #}
+<section class="section rch" id="resultats">
+  <div class="conteneur">
+    <form class="rch-form" method="get" action="{% url 'app:recherche' %}#resultats" role="search">
+      <label class="visuellement-masque" for="rch-q">Rechercher sur le site</label>
+      <input class="rch-form__champ" id="rch-q" type="search" name="q" value="{{ requete }}" maxlength="100"
+             placeholder="Ex. Go du Digital, volontaire, recrutement…" autocomplete="off">
+      <button class="btn btn--orange" type="submit">
+        <span>Rechercher</span>
+        <span class="btn__rond">{% include "app/includes/_icon.html" with name="search" %}</span>
+      </button>
+    </form>
+
+    {% if requete %}
+      <p class="rch-compte">{% if resultats %}{{ resultats|length }} résultat{{ resultats|length|pluralize }} pour « {{ requete }} »{% else %}Aucun résultat pour « {{ requete }} ».{% endif %}</p>
+      {% if resultats %}
+        <ul class="rch-liste">
+          {% for r in resultats %}
+            <li class="rch-resultat">
+              <a href="{{ r.url }}">
+                <span class="rch-resultat__type">{{ r.type }}</span>
+                <span class="rch-resultat__titre">{{ r.titre }}</span>
+                {% if r.texte %}<span class="rch-resultat__texte">{{ r.texte|truncatechars:180 }}</span>{% endif %}
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endif %}
+
+    {% if not resultats %}
+      <div class="rch-pistes">
+        <p>Quelques pistes :</p>
+        <ul class="qs-chips">
+          {% for mot in page.exemples %}<li><a href="?q={{ mot|urlencode }}#resultats">{{ mot }}</a></li>{% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+{% endblock %}

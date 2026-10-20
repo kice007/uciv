@@ -6,7 +6,7 @@
 
 {# ---------------------------------------------------------------- Hero #}
 <section class="art-hero">
-  {% for f in page.formes %}<span class="forme ph-forme" style="--x: {{ f.x }}; --y: {{ f.y }}; --w: {{ f.w }}; --c: {{ f.c }}; --in: {{ f.creux }}" aria-hidden="true"></span>{% endfor %}
+  {% formes_hero page.formes_cle %}
   <div class="conteneur art-hero__grille">
     <nav class="fil fil--clair" aria-label="Fil d'Ariane">
       <ol>

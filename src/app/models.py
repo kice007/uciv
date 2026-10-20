@@ -217,6 +217,8 @@ class Indicateur(Convention):
     """Chiffre d'impact (page « Notre impact », section « Vision & chiffres » de l'accueil)."""
 
     libelle = models.CharField('libellé', max_length=80)
+    prefixe = models.CharField('préfixe', max_length=3, blank=True,
+                               help_text='Affiché devant le chiffre, ex. « + » pour « +1 800 ».')
     valeur = models.PositiveIntegerField(null=True, blank=True,
                                          help_text='Laisser vide tant que le chiffre n\'est pas vérifié.')
     ordre = models.PositiveSmallIntegerField(default=0)
@@ -227,6 +229,13 @@ class Indicateur(Convention):
 
     def __str__(self):
         return self.libelle
+
+    @property
+    def valeur_affichee(self):
+        """Chiffre affiché sur le site : préfixe et séparateur de milliers (« +1 800 »), vide si non renseigné."""
+        if self.valeur is None:
+            return ''
+        return f'{self.prefixe}{self.valeur:,}'.replace(',', ' ')
 
 
 def _nouveau_jeton():

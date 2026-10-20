@@ -44,7 +44,7 @@
               <li>{% include "app/includes/_icon.html" with name="map-pin" %}<span>Lieu</span><strong>{{ o.lieu|default:"À renseigner" }}</strong></li>
               <li>{% include "app/includes/_icon.html" with name="calendar" %}<span>Date limite</span><strong class="opp-carte__date">{% if o.date_limite %}{{ o.date_limite|date:"d/m/Y" }}{% else %}jj/mm/aaaa{% endif %}</strong></li>
             </ul>
-            <a class="lien-fleche lien-fleche--orange" href="{{ o.lien|default:'#' }}">Voir le détail{% include "app/includes/_icon.html" with name="arrow-right" %}</a>
+            {% if o.lien %}<a class="lien-fleche lien-fleche--orange" href="{{ o.lien }}">Voir le détail{% include "app/includes/_icon.html" with name="arrow-right" %}</a>{% endif %}
           </li>
         {% endfor %}
       </ul>

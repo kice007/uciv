@@ -1,12 +1,12 @@
 {% extends "app/base/base.html" %}
-{% load static %}
+{% load custom_tags static %}
 
 {% block content %}
 
 {# ---------------------------------------------------------------- Hero #}
 <section class="hero">
+  {% formes_hero 'home' %}
   <div class="hero__cadre">
-    <span class="forme forme--anneau hero__anneau-vert" aria-hidden="true"></span>
 
     <div class="hero__texte">
       <p class="surtitre surtitre--blanc hero__entree" style="--i: 0">La Volonté, notre seule monnaie</p>
@@ -33,12 +33,10 @@
     </ul>
 
     <div class="hero__visuel">
-      <span class="forme hero__disque" aria-hidden="true"></span>
-      <span class="forme forme--anneau hero__anneau-jaune" aria-hidden="true"></span>
       <p class="manuscrit hero__signature" aria-hidden="true">Agir pour le pays !</p>
       <div class="hero__photo">
-        <img src="{% static 'app/assets/img/groupe-couleur.webp' %}" width="1486" height="1059"
-             alt="Quatre jeunes volontaires souriants et enthousiastes." fetchpriority="high">
+        <img src="{% static 'app/assets/img/accueil-couverture.webp' %}" width="1400" height="1050"
+             alt="Quatre jeunes d'UCIV en tenue professionnelle, souriants." fetchpriority="high">
       </div>
     </div>
   </div>
@@ -164,7 +162,7 @@
       <p class="surtitre surtitre--blanc">Notre vision</p>
       <h2 class="titre titre--clair titre--48">Une jeunesse engagée, responsable <em>et actrice du changement.</em></h2>
       <p class="texte texte--clair">Nous voulons contribuer à l'émergence d'une génération de jeunes capables de prendre des initiatives, de développer leurs compétences et de participer activement au développement de leur communauté et de leur pays.</p>
-      <a class="btn btn--blanc" href="#">
+      <a class="btn btn--blanc" href="{% url 'app:qui_sommes_nous' %}">
         <span>Découvrir UCIV</span>
         <span class="btn__rond">{% include "app/includes/_icon.html" with name="arrow-right" %}</span>
       </a>
@@ -178,7 +176,7 @@
           </div>
         {% endfor %}
       </dl>
-      <p class="indicateurs__note">Chiffres en cours de consolidation — publiés dès qu'ils seront vérifiés.</p>
+      {% if indicateurs_incomplets %}<p class="indicateurs__note">Chiffres en cours de consolidation — publiés dès qu'ils seront vérifiés.</p>{% endif %}
     </div>
   </div>
 </section>
@@ -304,9 +302,12 @@
     </div>
     <ul class="partenaires__cartes">
       {% for partenaire in partenaires %}
-        <li class="carte-partenaire" data-reveal style="--i: {{ forloop.counter0 }}">
-          <span class="carte-partenaire__apport">{{ partenaire.apport }}</span>
-          <strong>{{ partenaire.nom }}</strong>
+        <li class="carte-partenaire carte-partenaire--photo" data-reveal style="--i: {{ forloop.counter0 }}">
+          <span class="carte-partenaire__photo"><img src="{% static partenaire.photo %}" alt="{{ partenaire.photo_alt }}" loading="lazy" style="object-position: {{ partenaire.position }}"></span>
+          <span class="carte-partenaire__infos">
+            <span class="carte-partenaire__apport">{{ partenaire.apport }}</span>
+            <strong>{{ partenaire.nom }}</strong>
+          </span>
         </li>
       {% endfor %}
       <li data-reveal style="--i: 3">

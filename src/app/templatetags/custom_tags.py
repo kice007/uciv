@@ -55,3 +55,16 @@ def crochets(texte):
 def get_item(dictionnaire, cle):
     """Valeur d'un dictionnaire pour une clé variable : {{ d|get_item:cle }}."""
     return dictionnaire.get(cle) if dictionnaire else None
+
+
+@register.inclusion_tag('app/includes/_formes_uciv.html')
+def formes_hero(cle):
+    """Formes UCIV décoratives d'un hero, d'après content.FORMES_HEROS[cle] (positions de la maquette)."""
+    from app import content
+
+    formes = content.FORMES_HEROS.get(cle, {})
+
+    def styles(liste):
+        return [f'--x: {x}; --y: {y}; --w: {w}; --h: {h}; --r: {r}; --c: {c}' for x, y, w, h, r, c in liste]
+
+    return {'desktop': styles(formes.get('desktop', [])), 'mobile': styles(formes.get('mobile', []))}

@@ -1,12 +1,12 @@
 {% extends "app/base/base.html" %}
-{% load static %}
+{% load custom_tags static %}
 
 
 {% block content %}
 
 {# ---------------------------------------------------------------- Hero #}
 <section class="par-hero">
-  <span class="forme par-hero__anneau-vert" aria-hidden="true"></span>
+  {% formes_hero 'partenaires' %}
   <div class="conteneur par-hero__grille">
     <div class="par-hero__texte">
       <nav class="fil fil--clair" aria-label="Fil d'Ariane">
@@ -26,8 +26,6 @@
       </div>
     </div>
     <div class="par-hero__visuel">
-      <span class="forme par-hero__anneau-jaune" aria-hidden="true"></span>
-      <span class="par-hero__disque" aria-hidden="true"></span>
       <div class="par-hero__photo">
         <img src="{% static 'app/assets/img/partenariat-paipro.webp' %}" width="1200" height="900"
              alt="Poignée de main lors de la signature entre UCIV et PAIPRO-JEUNES." fetchpriority="high">
@@ -48,12 +46,9 @@
     </div>
     <ul class="par-cartes">
       {% for partenaire in par.partenaires %}
-        <li class="par-carte par-carte--{{ partenaire.couleur }}" data-reveal style="--i: {{ forloop.counter0 }}">
-          <div class="par-carte__haut">
-            <span class="par-carte__picto">{% include "app/includes/_icon.html" with name=partenaire.icone %}</span>
-            <span class="par-carte__etiquette">Partenaire</span>
-          </div>
-          <div>
+        <li class="par-carte par-carte--photo par-carte--{{ partenaire.couleur }}" data-reveal style="--i: {{ forloop.counter0 }}">
+          <span class="par-carte__photo"><img src="{% static partenaire.photo %}" alt="{{ partenaire.photo_alt }}" loading="lazy" style="object-position: {{ partenaire.position }}"></span>
+          <div class="par-carte__infos">
             <h3>{{ partenaire.nom }}</h3>
             <p>{{ partenaire.apport }}</p>
           </div>

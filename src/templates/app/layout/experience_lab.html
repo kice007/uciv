@@ -1,12 +1,12 @@
 {% extends "app/base/base.html" %}
-{% load static %}
+{% load custom_tags static %}
 
 
 {% block content %}
 
 {# ---------------------------------------------------------------- Hero #}
 <section class="gd-hero gd-hero--vert">
-  <span class="forme gd-hero__orange" aria-hidden="true"></span>
+  {% formes_hero 'experience_lab' %}
   <div class="conteneur gd-hero__grille">
     <div class="gd-hero__texte">
       <nav class="fil fil--clair" aria-label="Fil d'Ariane">
@@ -28,11 +28,8 @@
       </div>
     </div>
     <div class="gd-hero__visuel">
-      <span class="forme gd-hero__jaune" aria-hidden="true"></span>
-      <span class="gd-hero__disque" aria-hidden="true"></span>
       <div class="gd-hero__photo">
-        <img src="{% static 'app/assets/img/experience-lab.webp' %}" width="1200" height="1000"
-             alt="Un jeune homme présente son parcours devant un petit groupe." fetchpriority="high">
+        <img src="{% static el.image %}" width="1400" height="932" alt="{{ el.image_alt }}" fetchpriority="high">
       </div>
       <p class="manuscrit gd-hero__note" aria-hidden="true">{{ el.hero_note }}</p>
     </div>
@@ -77,6 +74,9 @@
   </div>
 </section>
 
+{# ----------------------------------------------------------- Témoignages #}
+{% include "app/includes/_temoignages.html" with temo=el.temoignages fond="creme" %}
+
 {# ----------------------------------------------------------- Inscriptions #}
 <section class="gd-inscriptions" id="inscriptions">
   <span class="forme gd-inscriptions__disque" aria-hidden="true"></span>
@@ -84,7 +84,7 @@
     <div data-reveal>
       <p class="surtitre surtitre--blanc">Inscriptions</p>
       <h2 class="gd-inscriptions__titre">Mieux te connaître <em>pour mieux te présenter.</em></h2>
-      <a class="btn btn--blanc" href="#">
+      <a class="btn btn--blanc" href="{{ el.url_inscription }}">
         <span>S'inscrire</span>
         <span class="btn__rond">{% include "app/includes/_icon.html" with name="arrow-right" %}</span>
       </a>

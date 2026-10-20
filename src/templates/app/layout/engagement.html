@@ -1,12 +1,12 @@
 {% extends "app/base/base.html" %}
-{% load static %}
+{% load custom_tags static %}
 
 
 {% block content %}
 
 {# ---------------------------------------------------------------- Hero #}
 <section class="eng-hero">
-  <span class="forme eng-hero__anneau-vert" aria-hidden="true"></span>
+  {% formes_hero 'engagement' %}
   <div class="conteneur eng-hero__grille">
     <div class="eng-hero__texte">
       <nav class="fil fil--clair" aria-label="Fil d'Ariane">
@@ -20,8 +20,6 @@
       <p class="eng-hero__chapo hero__entree" style="--i: 2">{{ eng.hero_chapo }}</p>
     </div>
     <div class="eng-hero__visuel">
-      <span class="forme eng-hero__anneau-jaune" aria-hidden="true"></span>
-      <span class="eng-hero__disque" aria-hidden="true"></span>
       <div class="eng-hero__photo">
         <img src="{% static 'app/assets/img/volontaires-terrain.webp' %}" width="928" height="1136"
              alt="De jeunes volontaires en tee-shirt orange lors d'une action de terrain." fetchpriority="high">

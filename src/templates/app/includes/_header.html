@@ -29,7 +29,7 @@
             {% if item.enfants %}
               <ul class="sousmenu">
                 {% for enfant in item.enfants %}
-                  <li><a href="{{ enfant.url }}">{{ enfant.label }}</a></li>
+                  <li{% if enfant.niveau == 2 %} class="est-sous-programme"{% endif %}><a href="{{ enfant.url }}">{{ enfant.label }}</a></li>
                 {% endfor %}
               </ul>
             {% endif %}
@@ -39,7 +39,7 @@
     </nav>
 
     <div class="entete__actions">
-      <a class="rond-bouton entete__recherche" href="#" aria-label="Rechercher">
+      <a class="rond-bouton entete__recherche" href="{% url 'app:recherche' %}" aria-label="Rechercher">
         {% include "app/includes/_icon.html" with name="search" %}
       </a>
       <a class="btn btn--vert btn--compact entete__cta" href="{% url 'app:engagement' %}">Je veux m'engager</a>
@@ -72,7 +72,7 @@
             {% if item.enfants %}
               <ul class="menu-mobile__sous">
                 {% for enfant in item.enfants %}
-                  <li><a href="{{ enfant.url }}">{{ enfant.label }}</a></li>
+                  <li{% if enfant.niveau == 2 %} class="est-sous-programme"{% endif %}><a href="{{ enfant.url }}">{{ enfant.label }}</a></li>
                 {% endfor %}
               </ul>
             {% endif %}

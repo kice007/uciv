@@ -1,6 +1,6 @@
-{# Bandeau de page à formes décoratives. Reçoit `hero` (voir content.py : OPPORTUNITES_PAGE, ACTUALITES_PAGE…). #}
-<section class="ph ph--{{ hero.fond }}{% if hero.maj %} ph--legal{% endif %}" style="--h: {{ hero.hauteur }}">
-  {% for f in hero.formes %}<span class="forme ph-forme" style="--x: {{ f.x }}; --y: {{ f.y }}; --w: {{ f.w }};{% if f.h %} --h-forme: {{ f.h }};{% endif %} --c: {{ f.c }}; --in: {{ f.creux }}" aria-hidden="true"></span>{% endfor %}
+{% load custom_tags %}{# Bandeau de page à formes décoratives. Reçoit `hero` (voir content.py : OPPORTUNITES_PAGE, ACTUALITES_PAGE…). #}
+<section class="ph ph--{{ hero.fond }} ph--{{ hero.formes_cle }}{% if hero.maj %} ph--legal{% endif %}" style="--h: {{ hero.hauteur }}">
+  {% formes_hero hero.formes_cle %}
   {% if hero.note %}<p class="manuscrit ph-note" style="--x: {{ hero.note.x }}; --y: {{ hero.note.y }}; --fs: {{ hero.note.taille }}; --rot: {{ hero.note.rot }}; --c: {{ hero.note.c }}" aria-hidden="true">{{ hero.note.texte }}</p>{% endif %}
   <div class="conteneur ph-grille">
     <div class="ph-texte" style="--tw: {{ hero.largeur_texte }}">

@@ -1,14 +1,12 @@
 {% extends "app/base/base.html" %}
-{% load static %}
+{% load custom_tags static %}
 
 
 {% block content %}
 
 {# ---------------------------------------------------------------- Hero #}
 <section class="eq-hero">
-  <span class="forme eq-hero__anneau-jaune" aria-hidden="true"></span>
-  <span class="forme eq-hero__disque" aria-hidden="true"></span>
-  <span class="forme eq-hero__anneau-vert" aria-hidden="true"></span>
+  {% formes_hero 'equipe' %}
   <div class="conteneur eq-hero__grille">
     <div class="eq-hero__texte">
       <nav class="fil fil--clair" aria-label="Fil d'Ariane">
@@ -31,7 +29,7 @@
     <div class="eq-president__visuel" data-reveal="image">
       <span class="eq-president__arche" aria-hidden="true"></span>
       <div class="eq-president__photo">
-        <img src="{% static 'app/assets/img/marshall-kouame.webp' %}" width="1638" height="2048" loading="lazy"
+        <img src="{% static eq.president_photo %}" width="675" height="900" loading="lazy"
              alt="Portrait de Marshall Kouamé, président et fondateur d'UCIV.">
       </div>
     </div>
@@ -39,29 +37,25 @@
       <p class="surtitre">Président · Fondateur</p>
       <h2 class="eq-president__nom">Marshall <em>Kouamé.</em></h2>
       <p class="eq-president__role">{{ eq.president_role }}</p>
-      <p class="texte">{{ eq.president_bio }}</p>
+      {% for paragraphe in eq.president_bio %}<p class="texte">{{ paragraphe }}</p>{% endfor %}
+      <blockquote class="eq-president__citation"><p>{{ eq.president_citation }}</p></blockquote>
     </div>
   </div>
 </section>
 
-{# ------------------------------------------------------- Bureau exécutif #}
-<section class="section section--blanc eq-bureau">
-  <div class="conteneur">
-    <div data-reveal>
-      <p class="surtitre">Bureau exécutif</p>
-      <h2 class="eq-titre">L'équipe <em>qui fait avancer UCIV.</em></h2>
+{# -------------------------------------- Bureau exécutif, responsables, ambassadrices #}
+{% for groupe in eq.groupes %}
+<section class="section{% cycle ' section--blanc' '' ' section--blanc' %} eq-groupe eq-groupe--{{ groupe.cle }}">
+  <div class="conteneur eq-groupe__cadre">
+    <div class="eq-groupe__entete" data-reveal>
+      <p class="surtitre">{{ groupe.surtitre }}</p>
+      <h2 class="eq-titre">{{ groupe.titre }} <em>{{ groupe.suite }}</em></h2>
+      {% if groupe.intro %}<p class="texte">{{ groupe.intro }}</p>{% endif %}
     </div>
-    <ul class="eq-membres">
-      {% for membre in eq.bureau %}
-        <li class="eq-membre eq-membre--{{ membre.couleur }}" data-reveal style="--i: {{ forloop.counter0 }}">
-          <div class="eq-membre__visuel">
-            <span class="eq-membre__fond" aria-hidden="true"></span>
-            {% if membre.photo %}
-              <img class="eq-membre__photo" src="{% static membre.photo %}" alt="Portrait de {{ membre.nom }}" loading="lazy">
-            {% else %}
-              <span class="eq-membre__initiales" aria-hidden="true">{{ membre.initiales }}</span>
-            {% endif %}
-          </div>
+    <ul class="eq-grille">
+      {% for membre in groupe.membres %}
+        <li class="eq-carte eq-carte--{{ membre.couleur }}" data-reveal style="--i: {{ forloop.counter0 }}">
+          <span class="eq-carte__photo"><img src="{% static membre.photo %}" width="675" height="900" alt="Portrait de {{ membre.nom }}" loading="lazy"></span>
           <h3>{{ membre.nom }}</h3>
           <p>{{ membre.role }}</p>
         </li>
@@ -69,28 +63,7 @@
     </ul>
   </div>
 </section>
-
-{# ------------------------------------------------- Médias & communication #}
-<section class="section eq-medias">
-  <div class="conteneur">
-    <div class="entete-section" data-reveal>
-      <div>
-        <p class="surtitre">Direction des médias &amp; de la communication</p>
-        <h2 class="eq-titre">Celles et ceux <em>qui racontent UCIV.</em></h2>
-      </div>
-      <p class="texte">{{ eq.medias_intro }}</p>
-    </div>
-    <ul class="eq-medias__liste">
-      {% for membre in eq.medias %}
-        <li class="eq-media eq-media--{{ membre.couleur }}" data-reveal style="--i: {{ forloop.counter0 }}">
-          <span class="eq-media__initiales">{{ membre.initiales }}</span>
-          <h3>{{ membre.nom }}</h3>
-          <p>{{ membre.role }}</p>
-        </li>
-      {% endfor %}
-    </ul>
-  </div>
-</section>
+{% endfor %}
 
 {# ----------------------------------------------------------------- Appel #}
 <section class="np-appel np-appel--orange">

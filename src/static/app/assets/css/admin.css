@@ -623,7 +623,10 @@ body.uciv-admin #container :is(.bouton-vert, .bouton-contour, .retour, .chip, .r
 .indic__poignee { width: 16px; height: 16px; color: rgba(23, 18, 12, .35); }
 .indic__libelle { font-size: 15px; font-weight: 800; }
 .indic__valeur input { box-sizing: border-box; width: 100%; padding: 13px 16px; border: 1px solid rgba(23, 18, 12, .15); border-radius: 12px; background: #fff; font-size: 17px; font-weight: 800; }
-.indic__valeur .errorlist { margin: 4px 0 0; padding: 0; list-style: none; color: var(--error-fg); font-size: 13px; }
+.indic__valeur { display: flex; flex-wrap: wrap; gap: 8px; }
+.indic__valeur input[name$="-prefixe"] { flex: 0 0 64px; text-align: center; }
+.indic__valeur input[name$="-valeur"] { flex: 1 1 0; min-width: 0; }
+.indic__valeur .errorlist { flex-basis: 100%;  margin: 4px 0 0; padding: 0; list-style: none; color: var(--error-fg); font-size: 13px; }
 .indic__info { color: var(--uciv-texte); font-size: 14px; }
 .pastille--avenir { background: #F1E6D3; color: var(--uciv-texte); }
 

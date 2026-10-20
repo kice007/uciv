@@ -296,8 +296,8 @@ class IndicateurAdmin(admin.ModelAdmin):
     """Chiffres d'impact : une seule page, les valeurs se saisissent dans la liste."""
 
     change_list_template = 'admin/uciv/indicateurs.html'
-    list_display = ('libelle', 'valeur', 'ordre', 'publish')
-    list_editable = ('valeur',)
+    list_display = ('libelle', 'prefixe', 'valeur', 'ordre', 'publish')
+    list_editable = ('prefixe', 'valeur')
     list_per_page = 50
     readonly_fields = ('created_at', 'update_at')
 
@@ -305,6 +305,8 @@ class IndicateurAdmin(admin.ModelAdmin):
         champ = super().formfield_for_dbfield(db_field, request, **kwargs)
         if db_field.name == 'valeur':
             champ.widget.attrs['placeholder'] = 'À renseigner'
+        if db_field.name == 'prefixe':
+            champ.widget.attrs.update(placeholder='+', size=2, title='Préfixe, ex. « + »')
         return champ
 
     def changelist_view(self, request, extra_context=None):

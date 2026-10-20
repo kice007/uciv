@@ -4,10 +4,13 @@ Vues de l'application `app`.
 Une vue reçoit la requête du navigateur, prépare les données (le « contexte »)
 et les envoie à un gabarit HTML qui produit la page.
 """
+import unicodedata
+
 from django.conf import settings
 from django.http import HttpResponse
 from django.contrib import messages
 from django.core.paginator import Paginator
+from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.templatetags.static import static
 from django.urls import reverse
@@ -62,13 +65,19 @@ def home(request):
         context['articles'] = [_carte_article(a) for a in publies.exclude(pk=une.pk)[:3]]
     indicateurs = Indicateur.objects.filter(publish=True)
     if indicateurs:
-        context['indicateurs'] = [{'valeur': i.valeur, 'label': i.libelle} for i in indicateurs]
+        context['indicateurs'] = [{'valeur': i.valeur_affichee, 'label': i.libelle} for i in indicateurs]
+    context['indicateurs_incomplets'] = any(not i['valeur'] for i in context['indicateurs'])
     return render(request, 'app/layout/index.html', context)
 
 
 def uciv_leadership(request):
     """Page du programme UCIV Leadership."""
     return render(request, 'app/layout/uciv_leadership.html', {'leadership': content.LEADERSHIP})
+
+
+def programme_leadership(request, cle):
+    """Page d'un programme d'UCIV Leadership (« De la vision à l'action », « Les RH ont la parole »)."""
+    return render(request, 'app/layout/programme_leadership.html', {'pl': content.PROGRAMMES_LEADERSHIP[cle]})
 
 
 def qui_sommes_nous(request):
@@ -251,7 +260,7 @@ def impact(request):
     """Page « Notre impact » : indicateurs et histoires."""
     couleurs = content.IMPACT_PAGE['couleurs']
     indicateurs = [
-        {'libelle': i.libelle, 'valeur': i.valeur, 'couleur': couleurs[n % len(couleurs)]}
+        {'libelle': i.libelle, 'valeur': i.valeur_affichee, 'couleur': couleurs[n % len(couleurs)]}
         for n, i in enumerate(Indicateur.objects.filter(publish=True))
     ]
     histoires = Article.objects.filter(publish=True, histoire=True)[:3]
@@ -282,6 +291,42 @@ def ressources(request):
         'chips_type': _pastilles(request, 'type', Ressource.TYPES, type_, conserver=('theme',)),
         'chips_theme': _pastilles(request, 'theme', Ressource.THEMES, theme, conserver=('type',)),
         'modele': any(f.modele for f in fiches),
+    })
+
+
+def _sans_accents(texte):
+    return ''.join(c for c in unicodedata.normalize('NFD', texte.lower()) if not unicodedata.combining(c))
+
+
+def recherche(request):
+    """Page « Rechercher » : pages du site, actualités, opportunités et ressources contenant les mots cherchés."""
+    requete = ' '.join(request.GET.get('q', '').split())[:100]
+    resultats = []
+    if requete:
+        mots = _sans_accents(requete).split()
+        for nom in content.PAGES_INDEXABLES:
+            page = content.SEO_PAGES[nom]
+            texte = ' '.join([page['titre'], page['description']] + [q + ' ' + r for q, r in content.FAQ.get(nom, [])])
+            if all(mot in _sans_accents(texte) for mot in mots):
+                resultats.append({'type': 'Page', 'titre': page['titre'].split(' — ')[0].split(' | ')[0],
+                                  'texte': page['description'], 'url': reverse('app:' + nom)})
+        filtre_article, filtre_opportunite, filtre_ressource = Q(), Q(), Q()
+        for mot in requete.split():
+            filtre_article &= Q(titre__icontains=mot) | Q(chapo__icontains=mot) | Q(corps__icontains=mot)
+            filtre_opportunite &= (Q(intitule__icontains=mot) | Q(description__icontains=mot)
+                                   | Q(structure__icontains=mot))
+            filtre_ressource &= Q(titre__icontains=mot) | Q(meta__icontains=mot)
+        for a in Article.objects.filter(filtre_article, publish=True)[:10]:
+            resultats.append({'type': a.etiquette_affichee, 'titre': a.titre, 'texte': a.chapo,
+                              'url': a.get_absolute_url()})
+        for o in Opportunite.objects.filter(filtre_opportunite, publish=True, modele=False)[:10]:
+            resultats.append({'type': 'Opportunité', 'titre': o.intitule, 'texte': o.description,
+                              'url': o.lien or reverse('app:opportunites')})
+        for r in Ressource.objects.filter(filtre_ressource, publish=True, modele=False)[:10]:
+            resultats.append({'type': 'Ressource', 'titre': r.titre, 'texte': r.meta,
+                              'url': r.url or reverse('app:ressources')})
+    return render(request, 'app/layout/recherche.html', {
+        'page': content.RECHERCHE_PAGE, 'requete': requete, 'resultats': resultats,
     })
 
 
