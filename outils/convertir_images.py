@@ -34,6 +34,8 @@ PARTAGE = {
     'og-experience-lab.jpg': ('experience-lab.jpg', 0.5, None),
     'og-engagement.jpg': ('volontaires-terrain.jpg', 0.35, None),
     'og-partenaires.jpg': ('partenariat-paipro.jpg', 0.4, None),
+    'og-vision-action.jpg': ('vision-action-groupe.jpg', 0.4, None),
+    'og-rh-parole.jpg': ('rh-parole-groupe.jpg', 0.45, None),
 }
 LARGEUR_OG, HAUTEUR_OG = 1200, 630
 
