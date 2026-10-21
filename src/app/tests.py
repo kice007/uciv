@@ -1618,3 +1618,15 @@ class StatiqueAvecEmpreinteTests(TestCase):
             fichier.write_text('a{color:blue}', encoding='utf-8')
             self.assertNotEqual(avant, stockage.url('a.css'))
             self.assertEqual(stockage.url('absent.css'), '/static/absent.css')
+
+
+class BandeauPartenairesTests(TestCase):
+    def test_photo_du_bandeau_cadree_sur_les_visages(self):
+        """La photo est un portrait dont les visages sont en haut : le recadrage ne doit pas viser le centre."""
+        from pathlib import Path
+        from django.conf import settings
+        css = (Path(settings.BASE_DIR) / 'static' / 'app' / 'assets' / 'css' / 'main.css').read_text(encoding='utf-8')
+        regle = css[css.index('.par-hero__photo img {'):]
+        regle = regle[:regle.index('}')]
+        self.assertIn('object-position: center top', regle)
+        self.assertContains(self.client.get(reverse('app:partenaires')), 'par-hero__photo')

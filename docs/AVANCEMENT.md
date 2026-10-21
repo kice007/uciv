@@ -26,6 +26,9 @@ Documents liés : [PLAN.md](PLAN.md) (ce qu'il faut construire),
 ## Ce qui est fait
 
 
+### Partenaires : visages visibles dans le bandeau (21 octobre 2026)
+- La photo du bandeau (`partenariat-paipro`, un portrait dont les visages sont en haut) était recadrée au centre : en cercle (bureau, tablette) comme en rectangle (mobile), le haut des têtes était coupé et, sur téléphone, le visage de l'homme à droite sortait du cadre. `object-position: center top` : les deux visages sont entiers à 1440, 1100, 768 et 390 px. Test `BandeauPartenairesTests`.
+
 ### Cache du navigateur : adresses statiques avec empreinte (21 octobre 2026)
 - **Problème en production** : Nginx garde les fichiers statiques 30 jours dans le navigateur et `main.css` gardait le même nom après chaque mise en ligne. Un visiteur déjà venu recevait le nouveau HTML avec l'ancien CSS : style incomplet, formes du logo absentes. Un navigateur neuf affichait le site correctement.
 - **Correctif** : `core/storage.py` (`StatiqueAvecEmpreinte`, déclaré dans `STORAGES` de `settings.py`) ajoute `?v=<empreinte du contenu>` à chaque `{% static %}` : l'adresse change dès que le fichier change, donc le navigateur recharge. Aucune configuration Nginx à toucher. Limite : les `url()` écrits dans le CSS lui-même (masque `forme-uciv.svg`, polices) ne sont pas versionnés.
