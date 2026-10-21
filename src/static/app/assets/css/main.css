@@ -975,8 +975,11 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .lead-infos { display: flex; flex-wrap: wrap; gap: 10px; margin: 28px 0 32px; }
 .lead-infos li { padding: 10px 18px; border-radius: 999px; box-shadow: inset 0 0 0 1.5px var(--filet); font-size: 14px; font-weight: 600; }
 .lead-infos .lead-infos__principale { background: var(--encre); color: var(--blanc); box-shadow: none; }
-.lead-lancement__visuel { position: relative; max-width: 440px; width: 100%; margin-inline: auto; }
-.lead-lancement__visuel img { width: 100%; border-radius: var(--rayon); }
+.lead-lancement__visuel { position: relative; max-width: 520px; width: 100%; aspect-ratio: 520 / 420; margin-inline: auto; }
+/* Deux affiches qui se chevauchent, légèrement inclinées (cotes de la maquette : cadre 520 x 420) */
+.lead-lancement__visuel img { position: absolute; height: auto; object-fit: cover; border-radius: 24px; box-shadow: 0 18px 40px rgba(14, 40, 25, .16); }
+.lead-lancement__premiere { left: 0; top: 5.48%; width: 52.5%; aspect-ratio: 273 / 357; transform: rotate(4deg); }
+.lead-lancement__seconde { left: 44.42%; top: 2.38%; width: 55.58%; aspect-ratio: 289 / 384; transform: rotate(-3deg); }
 .lead-lancement__disque { z-index: -1; right: -28px; bottom: -28px; width: 70%; aspect-ratio: 1; background: var(--jaune); opacity: .5; }
 @media (min-width: 900px) {
   .lead-lancement__grille { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(40px, 6vw, 96px); }
@@ -2516,8 +2519,10 @@ button { font: inherit; color: inherit; cursor: pointer; }
   .lead-lancement .surtitre { margin-bottom: 24px; }
   .lead-infos { gap: 8px; margin: 24px 0 34px; }
   .lead-infos li { padding-block: 8px; }
-  .lead-lancement__visuel { height: 283px; }
-  .lead-lancement__visuel img { width: 195px; height: 258px; margin: 7px auto 0; object-fit: cover; border-radius: 16px; }
+  .lead-lancement__visuel { aspect-ratio: 350 / 283; max-width: 350px; }
+  .lead-lancement__visuel img { border-radius: 16px; }
+  .lead-lancement__premiere { top: 5.3%; width: 52.57%; aspect-ratio: 184 / 240; }
+  .lead-lancement__seconde { left: 44.29%; top: 2.47%; width: 55.71%; aspect-ratio: 195 / 258; }
   .lead-lancement__disque { display: none; }
 
   /* Ressources */
