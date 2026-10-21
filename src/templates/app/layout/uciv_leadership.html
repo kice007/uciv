@@ -2,6 +2,11 @@
 {% load custom_tags static %}
 
 
+{% block head %}<link rel="preload" as="image" href="{% static 'app/assets/img/logo-uciv-leadership.webp' %}" type="image/webp">{% endblock %}
+
+{# Le logo du réseau s'assemble sur fond blanc à la place du loader du site. #}
+{% block loader %}{% include "app/includes/_loader_leadership.html" %}{% endblock %}
+
 {% block content %}
 
 {# ---------------------------------------------------------------- Hero #}

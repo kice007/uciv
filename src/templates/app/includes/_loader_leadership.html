@@ -1,0 +1,10 @@
+{% load static %}{% comment %}
+  Loader de la page UCIV Leadership : le logo du réseau s'assemble (panneau blanc sur ordinateur, vert profond du site sur mobile), puis sortie par le rideau, sans le rideau orange du site : le panneau monte et découvre directement le jaune du bandeau. À placer juste après <body> à la place du loader du site
+  (bloc « loader » de base.html). CSS : section « Loader UCIV Leadership » de app/assets/css/loader.css ; JS : app/assets/js/loader-leadership.js.
+  Options (attributs de #uciv-loader) :
+    data-src   image du logo (WebP à fond transparent)
+    data-min   durée minimale d'affichage en ms (l'animation complète dure 3,4 s)
+    data-max   sortie forcée au bout de ce délai en ms, même si la page n'a pas fini de charger
+{% endcomment %}
+<div id="uciv-loader" class="uciv-loader uciv-loader--leadership" role="status" aria-live="polite" data-src="{% static 'app/assets/img/logo-uciv-leadership.webp' %}" data-min="3400" data-max="15000"><div class="uciv-loader__panel"><div class="uciv-loader__inner"><div class="ull" aria-hidden="true"></div><span class="uciv-loader__sr">Chargement de la page UCIV Leadership…</span></div></div></div>
+<script src="{% static 'app/assets/js/loader-leadership.js' %}"></script>

@@ -26,6 +26,13 @@ Documents liés : [PLAN.md](PLAN.md) (ce qu'il faut construire),
 ## Ce qui est fait
 
 
+### Loader de la page UCIV Leadership (21 octobre 2026)
+- Sur la page UCIV Leadership, le loader du site est remplacé par l'animation du logo du réseau sur **fond blanc** (ordinateur) ou **vert profond du site, `#0C3322`** (mobile, moins de 720 px ; le voile du clic suit la même couleur) ; sur ordinateur le logo est réduit à 680 px au plus (900 px à l'origine) (fichier `logo-uciv-leadership-anime.html` fourni par UCIV) : le corps du logo, le point qui tombe, « UCIV. », les dix lettres de LEADERSHIP, puis le slogan « Le réseau des Leaders » qui se découvre (3,4 s au total). La page apparaît ensuite avec **la même sortie que l'accueil** : le logo s'élève en s'effaçant, puis le panneau (blanc ou vert) monte (mêmes règles `.uciv-loader.is-leaving` que le loader du site). **Sans le rideau orange du site** : le panneau découvre directement le jaune du bandeau de la page, sans passage par l'orange.
+- Il se rejoue à chaque visite de la page (le loader du site, lui, ne se joue qu'une fois par session). La sortie attend la fin de l'animation et le chargement de la page ; sortie forcée au bout de 15 s ; sans animation (réglage « réduire les animations ») le logo reste fixe 0,4 s.
+- **Dès le clic** sur un lien vers cette page (menu, cartes, pied de page), un voile blanc recouvre l'écran : pas de flash de l'ancienne page pendant la requête, et le loader prend le relais à l'arrivée (`main.js`, section 7).
+- Le logo est celui du site (`logo-uciv-leadership.webp`, préchargé) et non l'image encodée dans le fichier fourni : les découpes de l'animation tombent exactement dessus. Fichiers : `includes/_loader_leadership.html`, `js/loader-leadership.js`, section « Loader UCIV Leadership » de `css/loader.css` ; `base.html` a un bloc `loader` remplaçable. Réglage : `data-min` (durée minimale) dans `_loader_leadership.html`.
+- Tests : `LoaderLeadershipTests`.
+
 ### Partenaires : visages visibles dans le bandeau (21 octobre 2026)
 - La photo du bandeau (`partenariat-paipro`, un portrait dont les visages sont en haut) était recadrée au centre : en cercle (bureau, tablette) comme en rectangle (mobile), le haut des têtes était coupé et, sur téléphone, le visage de l'homme à droite sortait du cadre. `object-position: center top` : les deux visages sont entiers à 1440, 1100, 768 et 390 px. Test `BandeauPartenairesTests`.
 

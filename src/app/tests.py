@@ -1333,11 +1333,14 @@ class LoaderTests(TestCase):
             html = self.html(nom)
             self.assertEqual(html.count('id="uciv-loader"'), 1, nom)
             self.assertLess(html.index('id="uciv-loader"'), html.index('class="skip-link"'), nom)
-            self.assertGreater(html.index('id="uciv-loader"'), html.index('<body>'), nom)
-            self.assertIn('data-once="session"', html, nom)
+            self.assertGreater(html.index('id="uciv-loader"'), html.index('<body'), nom)
             self.assertIn('role="status"', html, nom)
             self.assertIn('app/assets/css/loader.css', html, nom)
-            self.assertIn('app/assets/js/loader.js', html, nom)
+            if nom == 'uciv_leadership':   # cette page a son propre loader (logo animé sur fond blanc)
+                self.assertIn('app/assets/js/loader-leadership.js', html, nom)
+            else:
+                self.assertIn('data-once="session"', html, nom)
+                self.assertIn('app/assets/js/loader.js', html, nom)
             self.assertIn('<noscript><style>#uciv-loader', html, nom)
 
     def test_loader_svg_ids_are_unique_and_do_not_clash_with_the_icon_sprite(self):
@@ -1630,3 +1633,41 @@ class BandeauPartenairesTests(TestCase):
         regle = regle[:regle.index('}')]
         self.assertIn('object-position: center top', regle)
         self.assertContains(self.client.get(reverse('app:partenaires')), 'par-hero__photo')
+
+
+class LoaderLeadershipTests(TestCase):
+    """La page UCIV Leadership a son loader (logo animé sur fond blanc) à la place de celui du site."""
+
+    def test_page_leadership_utilise_son_loader(self):
+        html = self.client.get(reverse('app:uciv_leadership')).content.decode()
+        self.assertIn('uciv-loader--leadership', html)
+        self.assertIn('loader-leadership.js', html)
+        self.assertIn('logo-uciv-leadership.webp', html)
+        self.assertIn('uciv-loader__panel', html)
+        self.assertNotIn('uciv-loader__accent', html)   # pas de rideau orange : on découvre directement le jaune du bandeau
+        self.assertNotIn('app/assets/js/loader.js', html)
+
+    def test_les_autres_pages_gardent_le_loader_du_site(self):
+        for nom in ('home', 'qui_sommes_nous', 'partenaires'):
+            html = self.client.get(reverse('app:' + nom)).content.decode()
+            self.assertIn('uciv-loader__panel', html, nom)
+            self.assertNotIn('uciv-loader--leadership', html, nom)
+
+    def test_adresse_de_leadership_exposee_pour_le_voile(self):
+        html = self.client.get(reverse('app:home')).content.decode()
+        self.assertIn(f'data-url-leadership="{reverse("app:uciv_leadership")}"', html)
+
+    def test_fichiers_du_loader_existent(self):
+        from pathlib import Path
+        from django.conf import settings
+        statique = Path(settings.BASE_DIR) / 'static' / 'app' / 'assets'
+        self.assertTrue((statique / 'js' / 'loader-leadership.js').exists())
+        self.assertTrue((statique / 'img' / 'logo-uciv-leadership.webp').exists())
+        css = (statique / 'css' / 'loader.css').read_text(encoding='utf-8')
+        self.assertIn('.uciv-loader--leadership', css)
+        self.assertIn('.uciv-loader--leadership .uciv-loader__panel{background:#fff}', css)
+        # mobile : vert profond du site ; ordinateur : logo réduit
+        self.assertIn('@media (max-width:719px){.uciv-loader--leadership .uciv-loader__panel{background:#0c3322}}', css)
+        self.assertIn('@media (min-width:720px){.uciv-loader--leadership .ull{width:min(72vw,680px)}}', css)
+        # sortie : le panneau monte (mêmes règles que le loader du site) ; le loader Leadership n'a pas de rideau orange
+        self.assertIn('.uciv-loader.is-leaving .uciv-loader__panel{animation:ul-curtain', css)

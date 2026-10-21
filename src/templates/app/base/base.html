@@ -35,8 +35,8 @@
   {{ seo.balisage }}
   {% block head %}{% endblock %}
 </head>
-<body>
-  {% include "app/includes/_loader.html" %}
+<body data-url-leadership="{% url 'app:uciv_leadership' %}">
+  {% block loader %}{% include "app/includes/_loader.html" %}{% endblock %}
   <a class="skip-link" href="#contenu">Aller au contenu</a>
 
   {% include "app/includes/_icons.html" %}

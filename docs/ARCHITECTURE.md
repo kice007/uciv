@@ -41,7 +41,7 @@ sans dépendance tierce : `requirements.txt` ne contient que Django.
     ├── templates/
     │   ├── app/base/base.html     # gabarit de base
     │   ├── app/layout/            # une page par gabarit ; legal.html (3 pages légales), programme_leadership.html (2 programmes), recherche.html, 404.html, desinscription.html
-    │   ├── app/includes/          # en-tête, pied de page, icônes, _formes_uciv, _temoignages, _galerie
+    │   ├── app/includes/          # en-tête, pied de page, icônes, _formes_uciv, _temoignages, _galerie, loaders (_loader.html du site, _loader_leadership.html de la page UCIV Leadership)
     │   ├── admin/base_site.html   # habillage UCIV de l'administration
     │   └── emails/                # gabarits d'e-mails
     ├── static/app/assets/{css,js,img}

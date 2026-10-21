@@ -4,3 +4,13 @@ html.uciv-loading{overflow:hidden}.uciv-loader{--ul-bg:#fffaf3;--ul-accent:#da81
 
 /* Les animations d'entrée de la page attendent la fin du loader (html.uciv-loading) pour être vues. */
 html.uciv-loading :is(.hero__entree, .hero__photo, .hero__disque, .hero__signature) { animation-play-state: paused; }
+
+/* Loader UCIV Leadership : le logo du réseau s'assemble (voir includes/_loader_leadership.html et js/loader-leadership.js).
+   Même sortie que le loader du site, sans le rideau orange : le logo s'élève en s'effaçant, puis le panneau monte et découvre directement le jaune
+   du bandeau (règles .uciv-loader.is-leaving ci-dessus). Panneau blanc sur ordinateur (même en thème sombre), vert profond du site sur mobile
+   (< 720 px) ; le logo est un peu plus petit sur ordinateur. */
+.uciv-loader--leadership .uciv-loader__panel{background:#fff}
+.uciv-loader--leadership .ull{position:relative;width:min(92vw,900px);aspect-ratio:2576/985;overflow:visible}
+.uciv-loader--leadership .ull__piece{position:absolute;inset:0;width:100%;height:100%;display:block;max-width:none}
+@media (min-width:720px){.uciv-loader--leadership .ull{width:min(72vw,680px)}}
+@media (max-width:719px){.uciv-loader--leadership .uciv-loader__panel{background:#0c3322}}

@@ -6,6 +6,7 @@
  * 4. Points des carrousels à défilement horizontal
  * 5. Formulaires pas encore branchés
  * 6. Pastilles « Objet » du formulaire de contact
+ * 7. Voile dès le clic sur un lien vers la page UCIV Leadership (son loader prend ensuite le relais)
  */
 (function () {
   'use strict';
@@ -179,5 +180,34 @@
       });
     }, { rootMargin: '-20% 0px -70% 0px' });
     document.querySelectorAll('.leg-section').forEach(function (section) { observateur.observe(section); });
+  }
+
+  /* 7. Voile vers UCIV Leadership ------------------------------------ */
+  // Dès qu'on choisit d'aller sur la page UCIV Leadership, un voile recouvre l'écran : le navigateur ne montre pas
+  // l'ancienne page pendant la requête, et le loader du réseau prend le relais à l'arrivée.
+  var urlLeadership = document.body.getAttribute('data-url-leadership');
+  var voile = null;
+  if (urlLeadership) {
+    document.addEventListener('click', function (e) {
+      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      var lien = e.target.closest ? e.target.closest('a[href]') : null;
+      if (!lien || lien.target === '_blank' || lien.hasAttribute('download')) return;
+      if (lien.origin !== window.location.origin || lien.pathname !== urlLeadership) return;
+      if (window.location.pathname === urlLeadership) return;
+      if (!voile) {
+        voile = document.createElement('div');
+        voile.setAttribute('aria-hidden', 'true');
+        // Même fond que le loader de la page : vert profond du site sur mobile, blanc sur ordinateur.
+        var fond = window.matchMedia('(max-width: 719px)').matches ? '#0c3322' : '#fff';
+        voile.style.cssText = 'position:fixed;inset:0;z-index:9998;background:' + fond + ';opacity:0;pointer-events:none;transition:opacity .25s ease';
+        document.body.appendChild(voile);
+      }
+      void voile.offsetWidth;
+      voile.style.opacity = '1';
+    });
+    // Retour arrière : la page revient du cache avec son voile, on l'enlève.
+    window.addEventListener('pageshow', function (e) {
+      if (e.persisted && voile) voile.style.opacity = '0';
+    });
   }
 })();
