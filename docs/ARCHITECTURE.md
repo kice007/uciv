@@ -22,6 +22,7 @@ sans dépendance tierce : `requirements.txt` ne contient que Django.
     │   ├── urls.py       # admin + app.urls + médias/statiques, handler404 (aperçu /404/ en DEBUG)
     │   ├── wsgi.py / asgi.py
     │   ├── constants.py  # constantes (chemins d'upload…)
+    │   ├── storage.py    # statiques avec empreinte (?v=…) contre le cache de 30 jours
     │   └── utils.py      # envoi d'e-mails, get_ip()
     ├── app/              # contenu éditorial du site
     │   ├── content.py            # textes, navigation, programmes (dont PROGRAMMES_LEADERSHIP), équipe, formes des heros (FORMES_HEROS)

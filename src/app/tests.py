@@ -309,7 +309,7 @@ class ContenuModelsTests(TestCase):
             titre='Un article', slug='un-article', categorie='activites',
             date_publication='2026-10-01', image='app/assets/img/groupe-nb.webp',
         )
-        self.assertTrue(article.image_url.endswith('app/assets/img/groupe-nb.webp'))
+        self.assertTrue(article.image_url.split('?')[0].endswith('app/assets/img/groupe-nb.webp'))
         self.assertEqual(str(article), 'Un article')
 
     def test_article_without_image_has_empty_url(self):
@@ -1594,3 +1594,27 @@ class FormeLogoSectionsTests(TestCase):
         self.assertIn('.qs-vision::before, .qs-citation::before', bloc)
         self.assertIn('.eng-hero::before', bloc)
         self.assertTrue((statique / 'img' / 'forme-uciv.svg').exists())
+
+
+class StatiqueAvecEmpreinteTests(TestCase):
+    """Le navigateur garde les statiques 30 jours : l'adresse doit changer quand le fichier change."""
+
+    def test_pages_chargent_le_css_avec_empreinte(self):
+        import re
+        html = self.client.get(reverse('app:home')).content.decode()
+        self.assertRegex(html, r'/static/app/assets/css/main\.css\?v=[0-9a-f]{10}"')
+        self.assertRegex(html, r'/static/app/assets/js/main\.js\?v=[0-9a-f]{10}"')
+
+    def test_empreinte_suit_le_contenu(self):
+        import tempfile
+        from pathlib import Path
+        from core.storage import StatiqueAvecEmpreinte
+        with tempfile.TemporaryDirectory() as dossier:
+            stockage = StatiqueAvecEmpreinte(location=dossier, base_url='/static/')
+            fichier = Path(dossier) / 'a.css'
+            fichier.write_text('a{color:red}', encoding='utf-8')
+            avant = stockage.url('a.css')
+            self.assertEqual(avant, stockage.url('a.css'))
+            fichier.write_text('a{color:blue}', encoding='utf-8')
+            self.assertNotEqual(avant, stockage.url('a.css'))
+            self.assertEqual(stockage.url('absent.css'), '/static/absent.css')

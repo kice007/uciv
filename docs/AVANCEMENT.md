@@ -26,6 +26,11 @@ Documents liés : [PLAN.md](PLAN.md) (ce qu'il faut construire),
 ## Ce qui est fait
 
 
+### Cache du navigateur : adresses statiques avec empreinte (21 octobre 2026)
+- **Problème en production** : Nginx garde les fichiers statiques 30 jours dans le navigateur et `main.css` gardait le même nom après chaque mise en ligne. Un visiteur déjà venu recevait le nouveau HTML avec l'ancien CSS : style incomplet, formes du logo absentes. Un navigateur neuf affichait le site correctement.
+- **Correctif** : `core/storage.py` (`StatiqueAvecEmpreinte`, déclaré dans `STORAGES` de `settings.py`) ajoute `?v=<empreinte du contenu>` à chaque `{% static %}` : l'adresse change dès que le fichier change, donc le navigateur recharge. Aucune configuration Nginx à toucher. Limite : les `url()` écrits dans le CSS lui-même (masque `forme-uciv.svg`, polices) ne sont pas versionnés.
+- Tests : `StatiqueAvecEmpreinteTests`.
+
 ### Boutons du bandeau d'accueil (21 octobre 2026)
 - **Forme du logo dans les sections** : les anneaux et demi-cercles décoratifs des sections prennent la forme du logo des bandeaux (`forme-uciv.svg` en masque CSS, section 29 de `main.css`) : appels à l'action (`np-appel__anneau`), vision de l'accueil, inscriptions Go du Digital / Experience Lab / programmes Leadership, cartes de Notre impact, coordonnées du contact, « Une question ? » des pages légales et « Pourquoi rejoindre » de Leadership. Même position et même teinte qu'avant, forme pleine au lieu d'un anneau. Également : la carte « Notre vision » et la citation de Qui sommes-nous ? (et de Notre impact), anneaux posés en `::before`. Les anciens anneaux `::before` des bandeaux en mobile (Opportunités, Engagement, Partenaires, Go du Digital, Contact, article) doublaient la forme du logo : supprimés. Non modifiés : les pages d'erreur (404, 429, désinscription). Test `FormeLogoSectionsTests`.
 - Accueil, section « Nos programmes » : la carte UCIV Leadership utilise la photo de couverture détourée `leadership-couverture` (quatre membres du réseau, fond transparent sur le jaune de la carte) à la place de `groupe-nb`. Test `CarteLeadershipAccueilTests`.
