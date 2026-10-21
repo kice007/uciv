@@ -205,8 +205,8 @@ PROGRAMMES = [
                  "d'opportunités partagées entre membres.",
         'lien_label': 'Rejoindre UCIV Leadership',
         'url': URL_REJOINDRE_LEADERSHIP,
-        'image': 'app/assets/img/groupe-nb.webp',
-        'image_alt': 'Quatre jeunes leaders souriants, en tenue professionnelle.',
+        'image': 'app/assets/img/leadership-couverture.webp',
+        'image_alt': 'Quatre membres du réseau UCIV Leadership, bras croisés, en tenue professionnelle.',
         'detouree': True,
     },
     {
