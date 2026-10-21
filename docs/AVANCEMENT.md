@@ -25,6 +25,22 @@ Documents liés : [PLAN.md](PLAN.md) (ce qu'il faut construire),
 
 ## Ce qui est fait
 
+
+### Cadrage des images d'articles (21 octobre 2026)
+- Les cartes et les pages d'article recadraient toutes les photos au centre, ce qui coupait des visages. Le modèle `Article` a un nouveau champ **`image_position`** (valeur de `object-position`, « center » par défaut, validée : mots-clés ou pourcentages seulement), modifiable dans l'administration (section Image, « Cadrage de l'image »).
+- Il est appliqué partout : cartes d'actualités, article à la une, cartes de l'accueil, « Nos histoires » et image de la page de l'article.
+- Migration `0014_cadrage_images_articles` : ajoute le champ et règle chaque photo existante (PAIPRO `center 10%`, affiche jaune `center 35%`, rencontre `center 25%`, Go du Digital et Experience Lab `60% center`, volontaires `center 56%`), sans écraser un cadrage déjà choisi.
+- Tests : `CadrageImagesTests` (cadrages posés, rendu dans les cartes, l'accueil et l'article, valeurs refusées).
+
+### Leticia BOSSON dans Notre impact et dans les actualités (21 octobre 2026)
+- **Notre impact, « Nos histoires »** : la carte de la lauréate montre la photo de Leticia BOSSON et son nom dans la description (« Leticia BOSSON, lauréate des Go du Digital : … » à la place de « [Nom de la lauréate] »). Migration `0012_laureate_nom_dans_la_description`.
+- **Actualités** : l'article « La Reine du Digital » devient « … : le parcours de Leticia BOSSON », avec sa photo, son nom et son témoignage (migration `0013_actualite_laureate`). Le lien de l'article ne change pas. Les deux migrations ne touchent que les articles non retravaillés depuis l'administration.
+- Les deux autres histoires (volontaire, participant) gardent leurs textes d'attente.
+
+### Lancement d'UCIV Leadership : deux affiches (20 octobre 2026)
+- La section « Lancement » affiche deux affiches qui se chevauchent comme dans la maquette : `affiche-leadership-orange` à gauche (inclinée de +4°) et `affiche-leadership-jaune` par-dessus à droite (−3°), coins arrondis, cotes de la maquette en bureau (cadre 520 × 420) et en mobile (350 × 283). La maquette montre une affiche « sauge » à la place de la jaune : elle n'a pas été fournie.
+- Base du travail : la branche `feature/maj-client-octobre` (mise à jour d'octobre d'UCIV : recherche, galerie, témoignages, nouvelles photos), avancée en local dans `main`. Mon travail local antérieur (chiffres, photos, équipe) est conservé dans le stash `travail-local-avant-base-maj-client-octobre`, la branche faisant la même chose.
+
 ### Mise à jour d'octobre 2026 (consignes UCIV, branche `feature/maj-client-octobre`)
 Consignes du client : `UCIV/info/uciv_update.md` ; maquette mise à jour (copie dans `maquette/design_uciv.pen`).
 - **Forme UCIV** : la forme du logo remplace les cercles de tous les heros. Positions de la maquette dans

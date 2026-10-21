@@ -19,3 +19,6 @@ build/
 .DS_Store
 .idea/
 .vscode/
+
+# Originaux d'appareil photo fournis par l'équipe (plusieurs centaines de Mo) : seuls les masters de sources/images sont versionnés
+LES IMAGES D*ACTUALISATION/

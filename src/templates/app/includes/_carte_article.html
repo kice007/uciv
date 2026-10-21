@@ -2,7 +2,8 @@
 <article class="lst-article{% if haut %} lst-article--haut{% endif %}" data-reveal style="--i: {{ delai|default:0 }}">
   <a class="lst-article__lien" href="{% url 'app:article' article.slug %}">
     <div class="lst-article__image">
-      {% if article.image_url %}<img src="{{ article.image_url }}" alt="{{ article.image_alt }}" loading="lazy">{% endif %}
+      {% if article.image_url %}<img src="{{ article.image_url }}" alt="{{ article.image_alt }}" loading="lazy"
+           style="object-position: {{ article.image_position }}">{% endif %}
     </div>
     <p class="lst-article__meta">
       <span class="lst-tag lst-tag--{{ article.theme }}">{{ article.etiquette_affichee }}</span>

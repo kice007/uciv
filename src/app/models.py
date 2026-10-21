@@ -4,7 +4,7 @@ from django.db import models
 from django.templatetags.static import static
 from django.urls import reverse
 
-from .validators import valider_document, valider_image
+from .validators import valider_document, valider_image, valider_position_image
 
 class Convention(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
@@ -119,6 +119,10 @@ class Article(Convention):
                                          validators=valider_image)
     image_alt = models.CharField('texte alternatif de l\'image', max_length=200, blank=True)
     image_legende = models.CharField('légende de l\'image', max_length=200, blank=True)
+    image_position = models.CharField(
+        'cadrage de l\'image', max_length=40, default='center', validators=[valider_position_image],
+        help_text="Zone qui reste visible quand l'image est recadrée. Ex. « center 20% » (plus haut), « 60% center » "
+                  "(plus à droite).")
 
     class Meta:
         verbose_name = 'article'

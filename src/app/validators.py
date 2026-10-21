@@ -4,10 +4,16 @@ Les fichiers de `/media/` sont servis depuis le domaine du site : un HTML ou un 
 exécuter du code. On n'accepte donc que des formats de documents et d'images sans script.
 """
 from django.core.exceptions import ValidationError
-from django.core.validators import FileExtensionValidator
+from django.core.validators import FileExtensionValidator, RegexValidator
 from django.utils.deconstruct import deconstructible
 
 TAILLE_MAX = 10 * 1024 * 1024  # 10 Mo, comme la limite de Nginx
+
+_POSITION = r'(left|center|right|top|bottom|\d{1,3}%)'
+# Cadrage d'une image : un ou deux mots-clés ou pourcentages (valeur de object-position), rien d'autre.
+valider_position_image = RegexValidator(
+    regex=rf'^{_POSITION}( {_POSITION})?$',
+    message="Cadrage invalide. Exemples : « center », « center 20% », « 60% center ».")
 
 EXTENSIONS_IMAGES = ['jpg', 'jpeg', 'png', 'webp', 'gif']
 EXTENSIONS_DOCUMENTS = ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'odt', 'ods', 'odp', 'zip',

@@ -179,7 +179,7 @@ class ArticleAdmin(UcivAdmin):
         ('Contenu', {'fields': ('titre', 'slug', ('categorie', 'etiquette'), 'chapo', 'corps')}),
         ('Repères', {'fields': (('auteur', 'temps_lecture'), 'meta')}),
         ('Publication', {'fields': ('publish', 'a_la_une', 'histoire', 'date_publication', 'theme')}),
-        ('Image', {'fields': ('image_televersee', 'image_alt', 'image_legende', 'image')}),
+        ('Image', {'fields': ('image_televersee', 'image_alt', 'image_legende', 'image_position', 'image')}),
     )
     labels = {
         'titre': 'Titre', 'slug': "Adresse de l'article (slug)", 'categorie': 'Catégorie', 'etiquette': 'Étiquette',
@@ -187,6 +187,7 @@ class ArticleAdmin(UcivAdmin):
         'meta': 'Repère', 'publish': 'Publié', 'a_la_une': 'À la une', 'histoire': 'Nos histoires',
         'date_publication': 'Date de publication', 'theme': "Couleur de l'étiquette",
         'image_televersee': 'Image principale', 'image_alt': 'Texte alternatif', 'image_legende': 'Légende',
+        'image_position': "Cadrage de l'image",
         'image': 'Image du site (chemin statique)',
     }
     aides = {
@@ -197,6 +198,8 @@ class ArticleAdmin(UcivAdmin):
         'publish': 'Visible sur le site.', 'a_la_une': "Grand article en tête de la page Actualités.",
         'histoire': 'Affiché dans Notre impact.', 'image_televersee': 'JPG ou PNG, 10 Mo maximum.',
         'image': "Ex. app/assets/img/groupe-nb.webp ; ignoré si une image est téléversée.",
+        'image_position': "Zone qui reste visible quand l'image est recadrée (cartes, article). "
+                          "« center » par défaut ; « center 20% » montre le haut, « 60% center » plutôt la droite.",
     }
 
     @admin.display(description='Histoire', boolean=True, ordering='histoire')

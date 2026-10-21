@@ -14,7 +14,7 @@
     {% if une %}
       <article class="lst-une" data-reveal>
         <a href="{% url 'app:article' une.slug %}">
-          <div class="lst-une__image">{% if une.image_url %}<img src="{{ une.image_url }}" alt="{{ une.image_alt }}">{% endif %}</div>
+          <div class="lst-une__image">{% if une.image_url %}<img src="{{ une.image_url }}" alt="{{ une.image_alt }}" style="object-position: {{ une.image_position }}">{% endif %}</div>
           <div class="lst-une__texte">
             <p class="lst-une__tags">
               <span class="lst-tag lst-tag--encre">À la une</span>

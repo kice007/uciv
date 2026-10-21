@@ -30,7 +30,8 @@
   <div class="conteneur art-corps__cadre">
     {% if article.image_url %}
       <figure class="art-corps__image" data-reveal="image">
-        <img src="{{ article.image_url }}" alt="{{ article.image_alt }}" fetchpriority="high">
+        <img src="{{ article.image_url }}" alt="{{ article.image_alt }}" fetchpriority="high"
+             style="object-position: {{ article.image_position }}">
         {% if article.image_legende %}<figcaption>{{ article.image_legende }}</figcaption>{% endif %}
       </figure>
     {% endif %}

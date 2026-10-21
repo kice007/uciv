@@ -35,7 +35,7 @@ def _carte_article(article):
     return {
         'categorie': article.etiquette_affichee, 'theme': article.theme, 'meta': article.meta,
         'titre': article.titre, 'chapo': article.chapo, 'image_url': article.image_url,
-        'image_alt': article.image_alt, 'position': 'center', 'detouree': False,
+        'image_alt': article.image_alt, 'position': article.image_position, 'detouree': False,
         'url': reverse('app:article', args=[article.slug]),
     }
 

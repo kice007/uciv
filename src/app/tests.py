@@ -59,6 +59,12 @@ class UcivLeadershipPageTests(TestCase):
         response = self.client.get(reverse('app:home'))
         self.assertContains(response, reverse('app:uciv_leadership'))
 
+    def test_lancement_montre_les_deux_affiches(self):
+        reponse = self.client.get(reverse('app:uciv_leadership'))
+        self.assertContains(reponse, 'affiche-leadership-orange.webp')
+        self.assertContains(reponse, 'affiche-leadership-jaune.webp')
+
+
 class QuiSommesNousPageTests(TestCase):
     def test_page_renders(self):
         response = self.client.get(reverse('app:qui_sommes_nous'))
@@ -1448,6 +1454,18 @@ class MiseAJourOctobreTests(TestCase):
     def test_laureate_story_and_testimonial(self):
         self.assertContains(self.client.get(reverse('app:go_du_digital')), 'Leticia BOSSON')
         self.assertContains(self.client.get(reverse('app:impact')), 'Leticia BOSSON, Reine du Digital')
+        histoire = Article.objects.get(slug='histoire-la-laureate-de-la-reine-du-digital')
+        self.assertTrue(histoire.chapo.startswith('Leticia BOSSON'))
+        self.assertNotIn('[Nom de la lauréate]', histoire.chapo)
+        self.assertEqual(histoire.image, 'app/assets/img/leticia-bosson.webp')
+        actualite = Article.objects.get(slug='la-reine-du-digital-le-parcours-d-une-laureate')
+        self.assertEqual(actualite.image, 'app/assets/img/leticia-bosson.webp')
+        self.assertIn('Leticia BOSSON', actualite.titre)
+        self.assertTrue(actualite.chapo.startswith('Leticia BOSSON'))
+        reponse = self.client.get(reverse('app:actualites'))
+        self.assertContains(reponse, 'Leticia BOSSON')
+        self.assertContains(reponse, 'leticia-bosson.webp')
+        self.assertContains(self.client.get(actualite.get_absolute_url()), 'Leticia BOSSON')
 
     def test_empty_testimonials_are_hidden(self):
         self.assertNotContains(self.client.get(reverse('app:experience_lab')), 'id="temoignages"')
@@ -1497,3 +1515,27 @@ class MiseAJourOctobreTests(TestCase):
                 statut = self.client.get(lien).status_code
                 self.assertIn(statut, (200, 301, 302), f'{lien} (depuis {page}) : {statut}')
         self.assertGreater(len(vus), 30)
+
+
+class CadrageImagesTests(TestCase):
+    """Les images d'articles sont recadrées sur les visages (champ image_position)."""
+
+    def test_photos_existantes_sont_cadrees(self):
+        cadrages = dict(Article.objects.values_list('image', 'image_position'))
+        self.assertEqual(cadrages['app/assets/img/partenariat-paipro.webp'], 'center 10%')
+        self.assertNotEqual(cadrages['app/assets/img/volontaires-terrain.webp'], 'center')
+
+    def test_cadrage_applique_aux_cartes_et_a_l_article(self):
+        article = Article.objects.get(image='app/assets/img/partenariat-paipro.webp')
+        self.assertContains(self.client.get(reverse('app:actualites')), 'object-position: center 10%')
+        self.assertContains(self.client.get(article.get_absolute_url()), 'object-position: center 10%')
+        self.assertContains(self.client.get(reverse('app:home')), 'object-position: center 10%')
+
+    def test_cadrage_invalide_refuse(self):
+        from django.core.exceptions import ValidationError
+        from .validators import valider_position_image
+        for valeur in ('center', 'center 20%', '60% center', 'top'):
+            valider_position_image(valeur)
+        for valeur in ('center; background:red', 'url(x)', '20px 10px', ''):
+            with self.assertRaises(ValidationError):
+                valider_position_image(valeur)
