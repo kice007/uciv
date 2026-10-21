@@ -26,6 +26,13 @@ Documents liés : [PLAN.md](PLAN.md) (ce qu'il faut construire),
 ## Ce qui est fait
 
 
+### Boutons du bandeau d'accueil (21 octobre 2026)
+- **Forme du logo dans les sections** : les anneaux et demi-cercles décoratifs des sections prennent la forme du logo des bandeaux (`forme-uciv.svg` en masque CSS, section 29 de `main.css`) : appels à l'action (`np-appel__anneau`), vision de l'accueil, inscriptions Go du Digital / Experience Lab / programmes Leadership, cartes de Notre impact, coordonnées du contact, « Une question ? » des pages légales et « Pourquoi rejoindre » de Leadership. Même position et même teinte qu'avant, forme pleine au lieu d'un anneau. Également : la carte « Notre vision » et la citation de Qui sommes-nous ? (et de Notre impact), anneaux posés en `::before`. Les anciens anneaux `::before` des bandeaux en mobile (Opportunités, Engagement, Partenaires, Go du Digital, Contact, article) doublaient la forme du logo : supprimés. Non modifiés : les pages d'erreur (404, 429, désinscription). Test `FormeLogoSectionsTests`.
+- Accueil, section « Nos programmes » : la carte UCIV Leadership utilise la photo de couverture détourée `leadership-couverture` (quatre membres du réseau, fond transparent sur le jaune de la carte) à la place de `groupe-nb`. Test `CarteLeadershipAccueilTests`.
+- **Correctif** : sur grand écran, le bloc décoratif de la photo (`.hero__visuel`) recouvrait tout le bandeau et avalait les clics : les deux boutons ne s'ouvraient pas. Il ne capte plus les clics (`pointer-events: none`) et le texte passe au-dessus (`z-index: 2`). Vérifié par un clic réel dans Chrome à 1920, 1536, 1440, 1280, 1100, 768 et 390 px, et aucun lien bloqué sur les 16 pages principales.
+- « Je veux m'engager » mène à la page `/engagement/` ; « Découvrir UCIV » mène à `/qui-sommes-nous/` (il ne faisait que défiler vers la section « Pourquoi UCIV ? » de l'accueil). Test `BoutonsHeroAccueilTests`.
+- UCIV Leadership : « Découvrir nos programmes » du bandeau défile vers la section « Les programmes d'UCIV Leadership » (`#programmes-du-reseau`) au lieu d'ouvrir la page Nos programmes. Test `BoutonProgrammesLeadershipTests`.
+
 ### Cadrage des images d'articles (21 octobre 2026)
 - Les cartes et les pages d'article recadraient toutes les photos au centre, ce qui coupait des visages. Le modèle `Article` a un nouveau champ **`image_position`** (valeur de `object-position`, « center » par défaut, validée : mots-clés ou pourcentages seulement), modifiable dans l'administration (section Image, « Cadrage de l'image »).
 - Il est appliqué partout : cartes d'actualités, article à la une, cartes de l'accueil, « Nos histoires » et image de la page de l'article.

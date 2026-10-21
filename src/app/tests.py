@@ -1539,3 +1539,58 @@ class CadrageImagesTests(TestCase):
         for valeur in ('center; background:red', 'url(x)', '20px 10px', ''):
             with self.assertRaises(ValidationError):
                 valider_position_image(valeur)
+
+
+class BoutonsHeroAccueilTests(TestCase):
+    """Les deux boutons du bandeau d'accueil mènent à des pages, pas à une ancre de la page."""
+
+    def test_boutons_du_bandeau(self):
+        html = self.client.get(reverse('app:home')).content.decode()
+        bandeau = html[html.index('hero__cta'):html.index('hero__parcours')]
+        self.assertIn(f'href="{reverse("app:engagement")}"', bandeau)
+        self.assertIn("Je veux m'engager", bandeau)
+        self.assertIn(f'href="{reverse("app:qui_sommes_nous")}"', bandeau)
+        self.assertNotRegex(bandeau, r'<a [^>]*href="#')
+
+    def test_le_decor_du_bandeau_ne_recouvre_pas_les_boutons(self):
+        """Sur grand écran le bloc de la photo s'étend sur tout le bandeau : il doit laisser passer les clics."""
+        from pathlib import Path
+        from django.conf import settings
+        css = (Path(settings.BASE_DIR) / 'static' / 'app' / 'assets' / 'css' / 'main.css').read_text(encoding='utf-8')
+        bloc = css[css.index('.hero__visuel {' + chr(10) + '    --k: 1'):]
+        bloc = bloc[:bloc.index('}')]
+        self.assertIn('pointer-events: none', bloc)
+        self.assertIn('.hero__texte { position: absolute; z-index: 2;', css)
+
+
+class BoutonProgrammesLeadershipTests(TestCase):
+    def test_decouvrir_nos_programmes_mene_a_la_section_du_reseau(self):
+        html = self.client.get(reverse('app:uciv_leadership')).content.decode()
+        self.assertIn('href="#programmes-du-reseau">Découvrir nos programmes</a>', html)
+        self.assertIn('id="programmes-du-reseau"', html)
+
+
+class CarteLeadershipAccueilTests(TestCase):
+    def test_la_carte_leadership_utilise_la_photo_de_couverture(self):
+        html = self.client.get(reverse('app:home')).content.decode()
+        carte = html[html.index('programmes__cartes'):]
+        self.assertIn('leadership-couverture.webp', carte)
+        self.assertNotIn('groupe-nb.webp', carte[:carte.index('</ul>')])
+
+
+class FormeLogoSectionsTests(TestCase):
+    """Les anneaux décoratifs des sections prennent la forme du logo (comme les bandeaux)."""
+
+    def test_les_anneaux_des_sections_utilisent_le_masque_du_logo(self):
+        from pathlib import Path
+        from django.conf import settings
+        statique = Path(settings.BASE_DIR) / 'static' / 'app' / 'assets'
+        css = (statique / 'css' / 'main.css').read_text(encoding='utf-8')
+        bloc = css[css.index('/* 29. Forme du logo dans les sections'):]
+        for classe in ('vision__anneau', 'lead-pourquoi__anneau', 'np-appel__anneau', 'gd-inscriptions__disque',
+                       'imp-carte__anneau', 'con-coord__anneau', 'leg-question__anneau'):
+            self.assertIn('.' + classe, bloc, classe)
+        self.assertIn('mask: url("../img/forme-uciv.svg")', bloc)
+        self.assertIn('.qs-vision::before, .qs-citation::before', bloc)
+        self.assertIn('.eng-hero::before', bloc)
+        self.assertTrue((statique / 'img' / 'forme-uciv.svg').exists())
