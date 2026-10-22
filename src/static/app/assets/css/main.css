@@ -2726,11 +2726,11 @@ button { font: inherit; color: inherit; cursor: pointer; }
 
 /* Page 404 : visuel « 4 ● 4 » (anneau jaune, disque orange), texte, liens utiles */
 .err { position: relative; overflow: hidden; }
-.err__anneau { left: 280px; top: -80px; width: 200px; aspect-ratio: 1; background: radial-gradient(circle closest-side, transparent 74%, var(--vert) 74.6%); }
+.err__anneau { left: 280px; top: -80px; width: 150px; background: var(--vert); }
 .err__grille { position: relative; display: flex; flex-direction: column; gap: 28px; padding-block: 40px 56px; }
 .err__visuel { position: relative; width: 350px; max-width: 100%; height: 250px; }
 .err__visuel > * { position: absolute; }
-.err__jaune { left: 103px; top: 12px; width: 170px; aspect-ratio: 1; background: radial-gradient(circle closest-side, transparent 80%, var(--jaune) 80.6%); }
+.err__jaune { left: 124px; top: 12px; width: 128px; background: var(--jaune); }
 .err__disque { left: 126px; top: 35px; width: 124px; aspect-ratio: 1; background: var(--orange); }
 .err__chiffre { top: 0; font-family: var(--f-titre); font-weight: 800; font-size: 180px; line-height: 1; letter-spacing: -5px; color: var(--encre); }
 .err__chiffre--g { left: 4px; }
@@ -2748,10 +2748,10 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .err__liens ul { display: flex; flex-wrap: wrap; gap: 8px; }
 .err__liens a { display: inline-block; padding: 10px 18px; border-radius: 999px; box-shadow: inset 0 0 0 1px rgba(23, 18, 12, .2); font-size: 14px; font-weight: 600; line-height: 1.2; transition: background-color 160ms ease, color 160ms ease; }
 @media (min-width: 900px) {
-  .err__anneau { left: auto; right: -110px; top: -150px; width: 320px; }
+  .err__anneau { left: auto; right: -110px; top: -150px; width: 240px; }
   .err__grille { display: grid; grid-template-columns: minmax(0, 600px) minmax(0, 640px); justify-content: space-between; align-items: start; gap: 40px; min-height: 760px; padding-block: 112px 64px; }
   .err__visuel { order: 2; width: 640px; height: 560px; margin-top: -16px; }
-  .err__jaune { left: 190px; top: 40px; width: 330px; }
+  .err__jaune { left: 231px; top: 40px; width: 248px; }
   .err__disque { left: 235px; top: 85px; width: 240px; }
   .err__chiffre { top: 20px; font-size: 340px; letter-spacing: -10px; }
   .err__chiffre--g { left: 20px; }
@@ -2790,7 +2790,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .err__picto { display: grid; place-items: center; left: 160px; top: 69px; width: 56px; height: 56px; color: var(--blanc); }
 .err__picto .icon { width: 100%; height: 100%; stroke-width: 1.75; }
 .err--desinscription .err__note { left: 96px; }
-.err--fait .err__anneau { background: radial-gradient(circle closest-side, transparent 74%, var(--orange) 74.6%); }
+.err--fait .err__anneau { background: var(--orange); }
 .err--fait .err__disque { background: var(--vert); }
 .err--fait .err__note { color: var(--orange-fonce); }
 .err__info { display: flex; align-items: center; gap: 10px; padding-top: 16px; color: var(--texte); font-size: 14px; line-height: 1.5; }
@@ -3218,3 +3218,20 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .qs-citation::before { background: rgba(255, 255, 255, .12); }
 /* Bandeaux en mobile : l'ancien anneau (::before) doublait la forme du logo posée par {% formes_hero %} */
 .ph::before, .eng-hero::before, .par-hero::before, .gd-hero::before, .art-hero::before, .con-hero::before { display: none; }
+
+/* 30. Pages d'erreur (404, 429, désinscription) : les anneaux prennent la forme du logo ---------------------------------
+   L'anneau de la page et celui qui entoure le « 0 » orange deviennent la forme du logo (même masque que les bandeaux). Le disque orange,
+   qui fait le « 0 » de « 404 », reste un disque. Position, couleur et hauteur sont celles des anciens anneaux (voir les règles .err__* plus haut). */
+.err__anneau, .err__jaune {
+  height: auto; aspect-ratio: 236.25 / 313.61; border-radius: 0;
+  -webkit-mask: url("../img/forme-uciv.svg") center / 100% 100% no-repeat;
+  mask: url("../img/forme-uciv.svg") center / 100% 100% no-repeat;
+}
+
+/* 31. Bandeau Partenaires en tablette (720 à 899 px) ---------------------------------------------------------------------
+   Le bandeau est empilé jusqu'à 899 px, mais les formes du bureau (grande forme crème à droite) restaient posées : le titre et le paragraphe
+   blancs passaient dessus et devenaient illisibles. Dans cette plage on utilise la forme translucide des écrans étroits, comme en mobile. */
+@media (min-width: 720px) and (max-width: 899px) {
+  .par-hero .formes-uciv--desktop { display: none; }
+  .par-hero .formes-uciv--mobile { --u: calc(100vw / 390); display: block; width: 100%; }
+}

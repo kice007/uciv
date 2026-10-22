@@ -1671,3 +1671,37 @@ class LoaderLeadershipTests(TestCase):
         self.assertIn('@media (min-width:720px){.uciv-loader--leadership .ull{width:min(72vw,680px)}}', css)
         # sortie : le panneau monte (mêmes règles que le loader du site) ; le loader Leadership n'a pas de rideau orange
         self.assertIn('.uciv-loader.is-leaving .uciv-loader__panel{animation:ul-curtain', css)
+
+
+class FormesPagesErreurEtTabletteTests(TestCase):
+    """Anneaux des pages d'erreur remplacés par la forme du logo ; bandeau Partenaires lisible en tablette."""
+
+    def css(self):
+        from pathlib import Path
+        from django.conf import settings
+        return (Path(settings.BASE_DIR) / 'static' / 'app' / 'assets' / 'css' / 'main.css').read_text(encoding='utf-8')
+
+    def test_anneaux_des_pages_d_erreur_prennent_la_forme_du_logo(self):
+        bloc = self.css()
+        bloc = bloc[bloc.index('/* 30. Pages d'+"'"+'erreur'):]
+        bloc = bloc[:bloc.index('}')]
+        self.assertIn('.err__anneau, .err__jaune', bloc)
+        self.assertIn('mask: url("../img/forme-uciv.svg")', bloc)
+        # plus de dégradé en anneau sur ces deux éléments
+        css = self.css()
+        for regle in ('.err__anneau {', '.err__jaune {'):
+            ligne = css[css.index(regle):].split(chr(10))[0]
+            self.assertNotIn('radial-gradient', ligne, regle)
+
+    def test_pages_d_erreur_s_affichent(self):
+        reponse = self.client.get('/page-qui-n-existe-pas/')
+        self.assertEqual(reponse.status_code, 404)
+        self.assertContains(reponse, 'err__anneau', status_code=404)
+        self.assertContains(reponse, 'err__jaune', status_code=404)
+
+    def test_bandeau_partenaires_utilise_la_forme_translucide_en_tablette(self):
+        css = self.css()
+        bloc = css[css.index('/* 31. Bandeau Partenaires en tablette'):]
+        self.assertIn('@media (min-width: 720px) and (max-width: 899px)', bloc)
+        self.assertIn('.par-hero .formes-uciv--desktop { display: none; }', bloc)
+        self.assertIn('.par-hero .formes-uciv--mobile', bloc)
