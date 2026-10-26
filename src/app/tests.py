@@ -206,9 +206,13 @@ class EngagementPageTests(TestCase):
     @override_settings(EMAIL_HOST='smtp.exemple.test', CONTACT_EMAIL='equipe@exemple.test')
     def test_team_is_notified_by_email(self):
         self.client.post(reverse('app:engagement'), self.donnees())
-        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(len(mail.outbox), 2)   # notification à l'équipe, puis accusé de réception au visiteur
         self.assertEqual(mail.outbox[0].to, ['equipe@exemple.test'])
         self.assertIn('Aya Konan', mail.outbox[0].alternatives[0][0])
+        self.assertEqual(mail.outbox[1].to, ['aya@exemple.com'])
+        self.assertEqual(mail.outbox[1].reply_to, ['equipe@exemple.test'])
+        self.assertIn('Bonjour Aya Konan', mail.outbox[1].alternatives[0][0])
+        self.assertIn('Disponible le week-end.', mail.outbox[1].alternatives[0][0])   # rappel du message
 
 class PartenairesPageTests(TestCase):
     def donnees(self, **extra):
@@ -250,8 +254,10 @@ class PartenairesPageTests(TestCase):
     @override_settings(EMAIL_HOST='smtp.exemple.test', CONTACT_EMAIL='equipe@exemple.test')
     def test_team_is_notified_by_email(self):
         self.client.post(reverse('app:partenaires'), self.donnees())
-        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(len(mail.outbox), 2)
         self.assertEqual(mail.outbox[0].to, ['equipe@exemple.test'])
+        self.assertEqual(mail.outbox[1].to, ['yao@test.ci'])
+        self.assertIn('votre proposition de partenariat', mail.outbox[1].alternatives[0][0])
 
     def test_home_links_to_page(self):
         response = self.client.get(reverse('app:home'))
@@ -296,8 +302,11 @@ class ContactPageTests(TestCase):
     @override_settings(EMAIL_HOST='smtp.exemple.test', CONTACT_EMAIL='equipe@exemple.test')
     def test_team_is_notified_by_email(self):
         self.client.post(reverse('app:contact'), self.donnees())
-        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(len(mail.outbox), 2)
         self.assertEqual(mail.outbox[0].reply_to, ['awa@exemple.ci'])
+        self.assertEqual(mail.outbox[1].to, ['awa@exemple.ci'])
+        self.assertEqual(mail.outbox[1].reply_to, ['equipe@exemple.test'])
+        self.assertIn('Bonjour, une question.', mail.outbox[1].alternatives[0][0])
 
     def test_footer_links_to_page(self):
         response = self.client.get(reverse('app:home'))
@@ -1705,3 +1714,101 @@ class FormesPagesErreurEtTabletteTests(TestCase):
         self.assertIn('@media (min-width: 720px) and (max-width: 899px)', bloc)
         self.assertIn('.par-hero .formes-uciv--desktop { display: none; }', bloc)
         self.assertIn('.par-hero .formes-uciv--mobile', bloc)
+
+
+class ConfigurationEmailTests(TestCase):
+    """Envoi d'e-mails : expéditeur, commande de test et script de configuration du serveur."""
+
+    def test_expediteur_est_default_from_email(self):
+        from core.utils import send_customize_email
+        with override_settings(DEFAULT_FROM_EMAIL='equipe@exemple.ci'):
+            self.assertTrue(send_customize_email("Sujet", ['dest@exemple.ci'], 'emails/newsletter_bienvenue.html',
+                                                 {'lien_desinscription': 'https://exemple.ci/x/'}))
+        self.assertEqual(mail.outbox[0].from_email, 'equipe@exemple.ci')
+
+    def test_delai_smtp_borne(self):
+        from django.conf import settings
+        self.assertGreater(settings.EMAIL_TIMEOUT, 0)   # sans délai, un SMTP muet bloquerait un worker
+        self.assertFalse(settings.EMAIL_USE_SSL and settings.EMAIL_USE_TLS)
+
+    @override_settings(EMAIL_HOST='smtp.exemple.test', EMAIL_HOST_USER='envoi@exemple.ci',
+                       EMAIL_HOST_PASSWORD='secret-a-ne-jamais-afficher', DEFAULT_FROM_EMAIL='envoi@exemple.ci')
+    def test_commande_tester_email_envoie_et_ne_montre_pas_le_mot_de_passe(self):
+        from io import StringIO
+        from django.core.management import call_command
+        sortie = StringIO()
+        call_command('tester_email', 'test@exemple.ci', stdout=sortie)
+        self.assertEqual(mail.outbox[0].to, ['test@exemple.ci'])
+        self.assertEqual(mail.outbox[0].from_email, 'envoi@exemple.ci')
+        texte = sortie.getvalue()
+        self.assertIn('smtp.exemple.test', texte)
+        self.assertNotIn('secret-a-ne-jamais-afficher', texte)
+
+    @override_settings(EMAIL_HOST='', CONTACT_EMAIL='equipe@exemple.ci')
+    def test_commande_tester_email_refuse_sans_serveur(self):
+        from django.core.management import call_command
+        from django.core.management.base import CommandError
+        with self.assertRaisesMessage(CommandError, 'EMAIL_HOST est vide'):
+            call_command('tester_email')
+        self.assertEqual(len(mail.outbox), 0)
+
+    @override_settings(EMAIL_HOST='smtp.exemple.test')
+    def test_commande_tester_email_remonte_l_erreur_du_serveur(self):
+        import smtplib
+        from unittest import mock
+        from django.core.management import call_command
+        from django.core.management.base import CommandError
+        erreur = smtplib.SMTPAuthenticationError(535, b'Username and Password not accepted')
+        with mock.patch('app.management.commands.tester_email.send_mail', side_effect=erreur):
+            with self.assertRaisesMessage(CommandError, 'SMTPAuthenticationError'):
+                call_command('tester_email', 'test@exemple.ci')
+
+    def test_script_de_configuration_ne_contient_aucun_secret(self):
+        from pathlib import Path
+        from django.conf import settings
+        script = Path(settings.BASE_DIR).parent / 'deploy' / 'configurer_email.sh'
+        texte = script.read_text(encoding='utf-8')
+        self.assertIn('read -r -s', texte)               # mot de passe saisi sans affichage
+        self.assertIn('uciv-manage tester_email', texte)
+        self.assertIn('chmod 600', texte)
+        self.assertIn('smtp.hostinger.com', texte)        # adresse professionnelle du domaine (Hostinger)
+        self.assertIn('smtp-relay.brevo.com', texte)      # service d'envoi avec expéditeur @uciv.org, sans boîte mail
+        # chaque option annoncée par le menu (1 à 4) a son bloc de saisie, et il y a un seul serveur par option
+        for choix, serveur in (('1', 'smtp-relay.brevo.com'), ('2', 'smtp.hostinger.com'), ('3', 'smtp.gmail.com')):
+            self.assertIn('elif [ "${CHOIX}" = "%s" ]' % choix if choix != '1' else 'if [ "${CHOIX}" = "1" ]', texte)
+            self.assertIn('HOTE=%s;' % serveur, texte)
+        self.assertIn('elif [ "${CHOIX}" = "4" ]', texte)
+        self.assertIn('CONTACT_EMAIL', texte)
+        self.assertNotRegex(texte, r'EMAIL_HOST_PASSWORD=[^%\s]')   # jamais de valeur écrite en dur
+
+    def test_bienvenue_newsletter_repond_a_l_equipe(self):
+        """L'adresse d'envoi n'a pas de boîte : une réponse au message de bienvenue doit aller à CONTACT_EMAIL."""
+        with override_settings(EMAIL_HOST='smtp.exemple.test', CONTACT_EMAIL='equipe@exemple.ci',
+                               DEFAULT_FROM_EMAIL='contact@exemple.ci'):
+            self.client.post(reverse('app:newsletter_inscription'), {'email': 'nouveau@exemple.ci'})
+        bienvenue = [m for m in mail.outbox if m.to == ['nouveau@exemple.ci']]
+        self.assertEqual(len(bienvenue), 1)
+        self.assertEqual(bienvenue[0].from_email, 'contact@exemple.ci')
+        self.assertEqual(bienvenue[0].reply_to, ['equipe@exemple.ci'])
+
+    @override_settings(EMAIL_HOST='smtp.exemple.test', CONTACT_EMAIL='equipe@exemple.ci',
+                       DEFAULT_FROM_EMAIL='UCIV <noreply@exemple.ci>')
+    def test_accuse_envoye_depuis_noreply_une_seule_fois_par_heure_et_par_adresse(self):
+        donnees = {'nom': 'Awa Traoré', 'email': 'Awa@Exemple.ci', 'telephone': '', 'organisation': '',
+                   'objet': 'Presse-média', 'message': 'Première question.'}
+        self.client.post(reverse('app:contact'), donnees)
+        self.client.post(reverse('app:contact'), {**donnees, 'email': 'awa@exemple.ci', 'message': 'Seconde question.'})
+        # deux notifications à l'équipe, mais un seul accusé pour la même adresse (casse ignorée)
+        self.assertEqual(len([m for m in mail.outbox if m.to == ['equipe@exemple.ci']]), 2)
+        accuses = [m for m in mail.outbox if m.to != ['equipe@exemple.ci']]
+        self.assertEqual(len(accuses), 1)
+        self.assertEqual(accuses[0].from_email, 'UCIV <noreply@exemple.ci>')
+
+    @override_settings(EMAIL_HOST='smtp.exemple.test', CONTACT_EMAIL='equipe@exemple.ci')
+    def test_echec_de_l_accuse_ne_bloque_pas_la_prochaine_tentative(self):
+        from unittest import mock
+        from core import utils
+        with mock.patch.object(utils, 'send_customize_email', return_value=False):
+            self.assertFalse(utils.envoyer_accuse_reception('x@exemple.ci', 'Sujet', 'emails/accuse_reception.html', {}))
+        with mock.patch.object(utils, 'send_customize_email', return_value=True):
+            self.assertTrue(utils.envoyer_accuse_reception('x@exemple.ci', 'Sujet', 'emails/accuse_reception.html', {}))

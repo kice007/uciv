@@ -168,7 +168,14 @@ EMAIL_HOST = config('EMAIL_HOST', default='')
 EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
 EMAIL_PORT = config('EMAIL_PORT', default=587, cast=int)
-EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=True, cast=bool)
+# Port 587 : STARTTLS (EMAIL_USE_TLS) ; port 465 : SSL direct (EMAIL_USE_SSL). Les deux s'excluent.
+EMAIL_USE_SSL = config('EMAIL_USE_SSL', default=False, cast=bool)
+EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=True, cast=bool) and not EMAIL_USE_SSL
+# Sans délai, un serveur SMTP qui ne répond pas bloquerait un worker Gunicorn (et la page du formulaire) indéfiniment.
+EMAIL_TIMEOUT = config('EMAIL_TIMEOUT', default=10, cast=int)
+# Adresse d'expéditeur : celle de la connexion SMTP par défaut ; à renseigner si le fournisseur impose un autre identifiant de connexion.
+DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='') or EMAIL_HOST_USER or 'webmaster@localhost'
+SERVER_EMAIL = DEFAULT_FROM_EMAIL
 CONTACT_EMAIL = config('CONTACT_EMAIL', default='organisationuciv@gmail.com')
 
 # Sécurité production

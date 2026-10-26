@@ -18,7 +18,7 @@ from django.utils import timezone
 from django.utils.http import url_has_allowed_host_and_scheme, urlencode
 from django.views.decorators.http import require_POST
 
-from core.utils import send_customize_email
+from core.utils import envoyer_accuse_reception, send_customize_email
 
 from . import content
 from . import seo as referencement
@@ -123,6 +123,11 @@ def engagement(request):
                     [settings.CONTACT_EMAIL], 'emails/engagement.html', {'soumission': soumission},
                     reply_to=[soumission.email],
                 )
+                envoyer_accuse_reception(
+                    soumission.email, 'Nous avons bien reçu votre demande d\'engagement — UCIV',
+                    'emails/accuse_reception.html',
+                    {'soumission': soumission, 'demande': 'votre demande d\'engagement'},
+                )
             messages.success(request, content.ENGAGEMENT['merci'])
             return redirect(reverse('app:engagement') + '#formulaire')
     else:
@@ -146,6 +151,11 @@ def partenaires(request):
                     [settings.CONTACT_EMAIL], 'emails/partenariat.html', {'soumission': soumission},
                     reply_to=[soumission.email],
                 )
+                envoyer_accuse_reception(
+                    soumission.email, 'Nous avons bien reçu votre proposition de partenariat — UCIV',
+                    'emails/accuse_reception.html',
+                    {'soumission': soumission, 'demande': 'votre proposition de partenariat'},
+                )
             messages.success(request, content.PAGE_PARTENAIRES['merci'])
             return redirect(reverse('app:partenaires') + '#proposer')
     else:
@@ -168,6 +178,11 @@ def contact(request):
                     f'Message de contact : {soumission.objet} — {soumission.nom}',
                     [settings.CONTACT_EMAIL], 'emails/contact.html', {'soumission': soumission},
                     reply_to=[soumission.email],
+                )
+                envoyer_accuse_reception(
+                    soumission.email, 'Nous avons bien reçu votre message — UCIV',
+                    'emails/accuse_reception.html',
+                    {'soumission': soumission, 'demande': 'votre message'},
                 )
             messages.success(request, content.CONTACT['merci'])
             return redirect(reverse('app:contact') + '#ecrire')
@@ -387,7 +402,8 @@ def newsletter_inscription(request):
     if settings.EMAIL_HOST:
         lien = request.build_absolute_uri(reverse('app:newsletter_desinscription', args=[abonne.jeton]))
         send_customize_email("Bienvenue dans la lettre d'information d'UCIV", [abonne.email],
-                             'emails/newsletter_bienvenue.html', {'lien_desinscription': lien})
+                             'emails/newsletter_bienvenue.html', {'lien_desinscription': lien},
+                             reply_to=[settings.CONTACT_EMAIL])
     request.session['newsletter'] = {'etat': 'reussie'}
     return redirect(retour)
 
