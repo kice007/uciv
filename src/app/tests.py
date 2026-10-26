@@ -1812,3 +1812,47 @@ class ConfigurationEmailTests(TestCase):
             self.assertFalse(utils.envoyer_accuse_reception('x@exemple.ci', 'Sujet', 'emails/accuse_reception.html', {}))
         with mock.patch.object(utils, 'send_customize_email', return_value=True):
             self.assertTrue(utils.envoyer_accuse_reception('x@exemple.ci', 'Sujet', 'emails/accuse_reception.html', {}))
+
+
+class StyleDesEmailsTests(TestCase):
+    """Cadre commun des e-mails : charte UCIV, adresse de l'équipe visible, version texte brut."""
+
+    GABARITS = {
+        'emails/contact.html': {'soumission': {'nom': 'Awa', 'email': 'awa@exemple.ci', 'telephone': '', 'organisation': '',
+                                               'objet': 'Autre', 'message': 'Bonjour.'}},
+        'emails/engagement.html': {'soumission': {'nom': 'Aya', 'email': 'aya@exemple.ci', 'telephone': '', 'competences': '',
+                                                  'message': 'Disponible.'}},
+        'emails/partenariat.html': {'soumission': {'nom': 'Yao', 'organisation': 'Test', 'email': 'yao@exemple.ci', 'telephone': '',
+                                                   'type_collaboration': 'Sponsoring', 'message': 'Soutien.'}},
+        'emails/accuse_reception.html': {'soumission': {'nom': 'Awa', 'message': 'Bonjour.'}, 'demande': 'votre message'},
+        'emails/newsletter_bienvenue.html': {'lien_desinscription': 'https://uciv.org/newsletter/desinscription/abc123/'},
+    }
+
+    @override_settings(CONTACT_EMAIL='organisationuciv@gmail.com', SITE_URL='https://uciv.org')
+    def test_chaque_email_affiche_l_adresse_de_l_equipe_et_la_charte(self):
+        from django.template.loader import render_to_string
+        from core.utils import contexte_email
+        for gabarit, ctx in self.GABARITS.items():
+            html = render_to_string(gabarit, contexte_email(ctx))
+            self.assertIn('href="mailto:organisationuciv@gmail.com"', html, gabarit)
+            self.assertIn('Écrire directement à l\'équipe', html, gabarit)
+            self.assertIn('https://uciv.org/static/app/assets/img/logo-uciv.png', html, gabarit)   # logo en adresse absolue
+            for couleur in ('#E17F1C', '#0C3322', '#FBF5EA'):
+                self.assertIn(couleur, html, f'{gabarit} {couleur}')
+
+    @override_settings(EMAIL_HOST='smtp.exemple.test', CONTACT_EMAIL='equipe@exemple.ci')
+    def test_les_messages_ont_une_version_texte_brut(self):
+        from core.utils import send_customize_email
+        self.assertTrue(send_customize_email('Sujet', ['dest@exemple.ci'], 'emails/newsletter_bienvenue.html',
+                                             {'lien_desinscription': 'https://uciv.org/newsletter/desinscription/abc123/'}))
+        message = mail.outbox[0]
+        self.assertNotIn('<', message.body)                                   # pas de balises
+        self.assertIn('equipe@exemple.ci', message.body)                      # l'adresse de l'équipe figure aussi en texte
+        self.assertIn('https://uciv.org/newsletter/desinscription/abc123/', message.body)   # lien de désinscription lisible
+        self.assertNotIn('display:none', message.body)                        # texte d'aperçu masqué non recopié
+
+    def test_texte_brut_remplace_les_liens_par_texte_et_adresse(self):
+        from core.utils import texte_brut
+        texte = texte_brut('<p>Lisez <a href="https://uciv.org/actualites/">nos actualités</a> ou écrivez à '
+                           '<a href="mailto:a@b.ci">a@b.ci</a>.</p><a href="https://uciv.org"><img src="x.png" alt=""></a>')
+        self.assertEqual(texte, 'Lisez nos actualités (https://uciv.org/actualites/) ou écrivez à a@b.ci.')

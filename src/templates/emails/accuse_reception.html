@@ -1,7 +1,12 @@
-<p>Bonjour {{ soumission.nom }},</p>
-<p>Nous avons bien reçu {{ demande }} et nous vous remercions de votre intérêt pour Une Côte d'Ivoire Volontaire (UCIV).
+{% extends "emails/_base.html" %}
+{% block titre_page %}Nous avons bien reçu {{ demande }}{% endblock %}
+{% block apercu %}Merci {{ soumission.nom }}, nous avons bien reçu {{ demande }}.{% endblock %}
+{% block titre %}Bien reçu, <em style="font-family:Georgia,'Times New Roman',serif;font-weight:normal;font-size:1.1em;color:#E17F1C;">merci !</em>{% endblock %}
+{% block contenu %}
+<p style="margin:0 0 14px 0;">Bonjour {{ soumission.nom }},</p>
+<p style="margin:0 0 14px 0;">Nous avons bien reçu {{ demande }} et nous vous remercions de votre intérêt pour Une Côte d'Ivoire Volontaire (UCIV).
 Notre équipe vous répondra dès que possible.</p>
-<p><strong>Rappel de votre message :</strong></p>
-<p>{{ soumission.message|linebreaksbr }}</p>
-<p>Ceci est un message automatique. Si vous souhaitez ajouter une précision, répondez simplement à cet e-mail : votre réponse parviendra à l'équipe.</p>
-<p>À bientôt,<br>L'équipe UCIV</p>
+{% include "emails/_message.html" with libelle="Rappel de votre message" message=soumission.message %}
+<p style="margin:22px 0 14px 0;">Ceci est un message automatique. Si vous souhaitez ajouter une précision, répondez simplement à cet e-mail : votre réponse parviendra à l'équipe.</p>
+<p style="margin:0;">À bientôt,<br><strong style="color:#17120C;">L'équipe UCIV</strong></p>
+{% endblock %}

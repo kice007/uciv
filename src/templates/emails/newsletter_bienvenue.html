@@ -1,6 +1,22 @@
-<p>Bonjour,</p>
-<p>Merci de votre inscription à la lettre d'information d'Une Côte d'Ivoire Volontaire (UCIV).
+{% extends "emails/_base.html" %}
+{% block titre_page %}Bienvenue dans la lettre d'information d'UCIV{% endblock %}
+{% block apercu %}Merci de votre inscription : programmes, activités, opportunités et parcours de jeunes engagés.{% endblock %}
+{% block titre %}Bienvenue <em style="font-family:Georgia,'Times New Roman',serif;font-weight:normal;font-size:1.1em;color:#E17F1C;">dans la communauté.</em>{% endblock %}
+{% block contenu %}
+<p style="margin:0 0 14px 0;">Bonjour,</p>
+<p style="margin:0 0 14px 0;">Merci de votre inscription à la lettre d'information d'Une Côte d'Ivoire Volontaire (UCIV).
 Vous recevrez nos prochaines actualités : programmes, activités, opportunités et parcours de jeunes engagés.</p>
-<p>Vous pouvez vous désinscrire à tout moment en suivant ce lien :<br>
-<a href="{{ lien_desinscription }}">{{ lien_desinscription }}</a></p>
-<p>À bientôt,<br>L'équipe UCIV</p>
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:22px 0 6px 0;">
+  <tr>
+    <td bgcolor="#E17F1C" style="background-color:#E17F1C;border-radius:999px;">
+      <a href="{{ site_url }}/actualites/" style="display:inline-block;padding:14px 26px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:15px;font-weight:bold;color:#FFFFFF;text-decoration:none;">Voir les actualités</a>
+    </td>
+  </tr>
+</table>
+<p style="margin:22px 0 0 0;">À bientôt,<br><strong style="color:#17120C;">L'équipe UCIV</strong></p>
+{% endblock %}
+{% block pied_extra %}
+<p style="margin:20px 0 0 0;padding-top:16px;border-top:1px solid #1F4A38;font-size:13px;line-height:1.6;color:#CFE0D6;">
+  Vous pouvez vous désinscrire à tout moment : <a href="{{ lien_desinscription }}" style="color:#F7C548;text-decoration:underline;">se désinscrire</a>
+</p>
+{% endblock %}

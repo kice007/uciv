@@ -1,10 +1,16 @@
-<p>Nouvelle proposition de partenariat reçue sur le site UCIV.</p>
-<ul>
-  <li><strong>Nom :</strong> {{ soumission.nom }}</li>
-  <li><strong>Organisation :</strong> {{ soumission.organisation }}</li>
-  <li><strong>E-mail :</strong> {{ soumission.email }}</li>
-  <li><strong>Téléphone :</strong> {{ soumission.telephone|default:"—" }}</li>
-  <li><strong>Type de collaboration :</strong> {{ soumission.type_collaboration }}</li>
-</ul>
-<p><strong>Présentation et idée :</strong></p>
-<p>{{ soumission.message|linebreaksbr }}</p>
+{% extends "emails/_base.html" %}
+{% block titre_page %}Proposition de partenariat — {{ soumission.organisation }}{% endblock %}
+{% block apercu %}{{ soumission.organisation }} propose un partenariat : {{ soumission.type_collaboration }}.{% endblock %}
+{% block titre %}Nouvelle proposition <em style="font-family:Georgia,'Times New Roman',serif;font-weight:normal;font-size:1.1em;color:#E17F1C;">de partenariat.</em>{% endblock %}
+{% block contenu %}
+<p style="margin:0 0 20px 0;">Nouvelle proposition de partenariat reçue sur le site UCIV.</p>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+  {% include "emails/_ligne.html" with libelle="Nom" valeur=soumission.nom %}
+  {% include "emails/_ligne.html" with libelle="Organisation" valeur=soumission.organisation %}
+  {% include "emails/_ligne.html" with libelle="E-mail" valeur=soumission.email %}
+  {% include "emails/_ligne.html" with libelle="Téléphone" valeur=soumission.telephone %}
+  {% include "emails/_ligne.html" with libelle="Collaboration" valeur=soumission.type_collaboration %}
+</table>
+{% include "emails/_message.html" with libelle="Présentation et idée" message=soumission.message %}
+{% include "emails/_repondre.html" with nom=soumission.nom email=soumission.email objet="Votre proposition de partenariat avec UCIV" %}
+{% endblock %}
