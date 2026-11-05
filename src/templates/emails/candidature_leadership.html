@@ -1,0 +1,40 @@
+{% extends "emails/_base.html" %}
+{% block titre_page %}Votre candidature à UCIV Leadership{% endblock %}
+{% block apercu %}Merci pour votre candidature. Il reste une étape : votre vidéo d'1 minute sur WhatsApp.{% endblock %}
+{% block titre %}Votre candidature <em style="font-family:Georgia,'Times New Roman',serif;font-weight:normal;font-size:1.1em;color:#E17F1C;">à UCIV Leadership.</em>{% endblock %}
+{% block contenu %}
+<p style="margin:0 0 14px 0;">Bonjour {{ soumission.nom }},</p>
+<p style="margin:0 0 14px 0;">Merci d'avoir candidaté à UCIV Leadership. Nous sommes heureux de l'intérêt que vous portez à notre réseau.</p>
+<p style="margin:0 0 22px 0;">Le réseau est lancé, et nous choisissons maintenant ses premiers membres. Nous cherchons des personnes motivées, disponibles et prêtes à s'investir dans des projets concrets. Voici la suite.</p>
+
+<p style="margin:0 0 8px 0;font-size:18px;font-weight:bold;color:#17120C;">1. Choisissez votre pôle</p>
+<p style="margin:0 0 10px 0;">UCIV Leadership compte trois pôles :</p>
+<ul style="margin:0 0 22px 0;padding-left:20px;">
+  <li style="margin:0 0 10px 0;"><strong>Projet universitaire (étudiants)</strong> : avec une équipe, vous réalisez un projet utile sur votre campus, de janvier à juin 2027. 5 000 FCFA à l'adhésion, puis 1 000 FCFA par mois.</li>
+  <li style="margin:0 0 10px 0;"><strong>Cercle des leaders (professionnels et leaders qui portent un projet)</strong> : une rencontre par mois, un binôme pour avancer ensemble, des compétences partagées et des projets menés en commun. 10 000 FCFA à l'adhésion, puis 3 000 FCFA par mois.</li>
+  <li style="margin:0;"><strong>Jeunes porteurs d'idée</strong> : en un mois, vous transformez votre idée en projet et vous la présentez devant un jury. 5 000 FCFA à l'adhésion, puis 2 000 FCFA par mois.</li>
+</ul>
+
+<p style="margin:0 0 8px 0;font-size:18px;font-weight:bold;color:#17120C;">2. Votre vidéo de présentation (obligatoire)</p>
+<p style="margin:0 0 10px 0;">Avant le <strong>lundi 30 novembre 2026</strong>, envoyez-nous une vidéo d'1 minute maximum. Dites-nous simplement :</p>
+<ul style="margin:0 0 12px 0;padding-left:20px;">
+  <li style="margin:0 0 6px 0;">qui vous êtes (nom et prénom) et le pôle qui vous intéresse ;</li>
+  <li style="margin:0 0 6px 0;">pourquoi vous voulez rejoindre UCIV Leadership ;</li>
+  <li style="margin:0 0 6px 0;">ce que vous pouvez apporter : compétences, talents, expériences ;</li>
+  <li style="margin:0;">le temps dont vous disposez vraiment pour les activités et les projets.</li>
+</ul>
+<p style="margin:0 0 22px 0;">Envoyez la vidéo sur WhatsApp au <a href="https://wa.me/2250787561766" style="color:#1B7A43;font-weight:bold;">07 87 56 17 66</a>.</p>
+
+<p style="margin:0 0 8px 0;font-size:18px;font-weight:bold;color:#17120C;">3. À quoi servent vos contributions</p>
+<p style="margin:0 0 22px 0;">Le droit d'adhésion et la cotisation mensuelle font vivre le réseau : la logistique, les rencontres, les formations et les projets collectifs. Tout est géré en toute transparence. Ce n'est pas un paiement pour obtenir un emploi ou une mission rémunérée.</p>
+
+<p style="margin:0 0 8px 0;font-size:18px;font-weight:bold;color:#17120C;">4. Ce que nous voulons construire</p>
+<p style="margin:0 0 22px 0;">UCIV Leadership est un cadre pour apprendre, collaborer, développer ses compétences et mener des projets qui changent concrètement les choses. Nous cherchons des personnes prêtes à s'impliquer avec sérieux, régularité et sens des responsabilités.</p>
+
+<p style="margin:0 0 22px 0;">Envoyez-nous votre vidéo avant le <strong>lundi 30 novembre 2026</strong> pour que nous puissions étudier votre candidature.</p>
+
+<p style="margin:0 0 18px 0;">Nous avons hâte de faire votre connaissance. Merci encore, et à très bientôt.</p>
+<p style="margin:0;">UCIV Leadership<br>
+<em style="font-family:Georgia,'Times New Roman',serif;color:#E17F1C;">S'engager aujourd'hui pour transformer demain.</em><br>
+<strong style="color:#17120C;">Une Côte d'Ivoire Volontaire (UCIV) – AGIR POUR LE PAYS</strong></p>
+{% endblock %}

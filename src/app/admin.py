@@ -345,10 +345,14 @@ class MessageAdmin(admin.ModelAdmin):
 
 @admin.register(SoumissionEngagement)
 class SoumissionEngagementAdmin(MessageAdmin):
-    list_display = ('nom', 'email', 'telephone', 'choix', 'created_at', 'statut')
-    list_filter = ('publish', 'choix', 'created_at')
-    search_fields = ('nom', 'email', 'telephone', 'message')
+    list_display = ('nom', 'email', 'telephone', 'choix', 'pole_affiche', 'created_at', 'statut')
+    list_filter = ('publish', 'choix', 'pole', 'created_at')
+    search_fields = ('nom', 'email', 'telephone', 'structure', 'message')
     readonly_fields = ('created_at', 'update_at')
+
+    @admin.display(description='Pôle', ordering='pole')
+    def pole_affiche(self, objet):
+        return objet.get_pole_display()
 
 
 @admin.register(SoumissionPartenariat)
@@ -402,8 +406,11 @@ def messages_recus():
         })
 
     for o in SoumissionEngagement.objects.all():
-        ajouter(o, 'engagement', 'Engagement', o.nom, f"Je veux m'engager · {o.get_choix_display()}",
-                [('Je souhaite', o.get_choix_display()), ('Compétences', o.competences)])
+        details = [('Je souhaite', o.get_choix_display()), ('Pôle', o.get_pole_display()),
+                   ('Université / structure', o.structure), ('Compétences', o.competences)]
+        if o.choix == 'leadership':
+            details.append(('Conditions acceptées', 'Oui' if o.conditions_acceptees else 'Non'))
+        ajouter(o, 'engagement', 'Engagement', o.nom, f"Je veux m'engager · {o.get_choix_display()}", details)
     for o in SoumissionPartenariat.objects.all():
         ajouter(o, 'partenariat', 'Partenariat', f'{o.organisation} · {o.nom}', f'Partenariat · {o.type_collaboration}',
                 [('Organisation', o.organisation), ('Type de collaboration', o.type_collaboration)],

@@ -41,9 +41,9 @@ URL_INSCRIPTION_PROGRAMME = lazy(lambda: reverse('app:contact') + '?objet=Progra
 # --- Éléments communs à toutes les pages ----------------------------------
 
 ANNONCE = {
-    'date': '24 octobre 2026',
-    'texte': "Lancement d'UCIV Leadership : conférence au format TEDx à l'American Corner.",
-    'texte_court': "Lancement d'UCIV Leadership",
+    'date': 'Candidatures ouvertes',
+    'texte': "Jusqu'au lundi 30 novembre 2026 pour rejoindre UCIV Leadership.",
+    'texte_court': "Jusqu'au 30 novembre 2026",
     'lien_label': 'Rejoindre UCIV Leadership',
     'url': URL_REJOINDRE_LEADERSHIP,
 }
@@ -323,12 +323,12 @@ PARTENAIRES = [
 LEADERSHIP = {
     'url_rejoindre': URL_REJOINDRE_LEADERSHIP,
     'chapo': "UCIV Leadership est le réseau des leaders et futurs leaders d'Une Côte "
-             "d'Ivoire Volontaire : un cadre où des jeunes triés sur le volet se "
-             "forment, se connectent et passent à l'action ensemble.",
+             "d'Ivoire Volontaire. Trois pôles pour grandir et agir ensemble : Projet "
+             "universitaire, Cercle des leaders et Jeunes porteurs d'idée.",
     'reperes': [
+        {'label': 'Candidatures', 'valeur': "Jusqu'au 30 novembre 2026"},
+        {'label': 'Trois pôles', 'valeur': "Étudiants, professionnels, porteurs d'idée"},
         {'label': 'Cohorte pionnière', 'valeur': '30 à 50 membres'},
-        {'label': 'Sélection', 'valeur': 'Pitch vidéo, puis entretien collectif'},
-        {'label': 'Lancement', 'valeur': '24 octobre 2026 · American Corner'},
     ],
     'vision': "Faire émerger une génération de jeunes capables de prendre des "
               "initiatives, d'assumer des responsabilités",
@@ -344,19 +344,43 @@ LEADERSHIP = {
         "l'engagement citoyen",
         "l'action collective",
     ],
-    'reseau_intro': "Le réseau est mixte, sélectif et exigeant. Un système de points "
-                    "d'engagement suit la contribution de chaque membre et conditionne "
-                    "son maintien.",
-    'etapes': [
-        {'titre': 'Pitch vidéo',
-         'texte': "Les candidats sont d'abord recrutés sur pitch vidéo."},
-        {'titre': 'Entretien collectif',
-         'texte': 'Deuxième étape de la sélection, en groupe.'},
-        {'titre': 'Membre Aspirant',
-         'texte': "Les nouveaux arrivants passent d'abord par une période d'essai."},
-        {'titre': 'Membre du réseau',
-         'texte': "Les points d'engagement conditionnent le maintien dans le réseau."},
+    'rejoindre_intro': "Rejoins un réseau sélectif de jeunes leaders et futurs leaders qui "
+                       "veulent grandir et agir ensemble. Choisis le pôle qui te correspond :",
+    'poles': [
+        {'nom': 'Projet universitaire', 'icone': 'graduation-cap',
+         'pour': 'Pour les étudiants des universités sélectionnées.',
+         'texte': "Avec ton équipe, tu réalises un projet utile sur ton campus, de janvier "
+                  "à juin 2027. On te forme et on t'accompagne à chaque étape.",
+         'adhesion': '5 000 FCFA', 'cotisation': '1 000 FCFA / mois'},
+        {'nom': 'Cercle des leaders', 'icone': 'crown',
+         'pour': 'Pour les professionnels et les leaders qui portent un projet.',
+         'texte': "Une rencontre par mois, un binôme pour avancer ensemble, des compétences "
+                  "partagées et des projets menés en commun.",
+         'adhesion': '10 000 FCFA', 'cotisation': '3 000 FCFA / mois'},
+        {'nom': "Jeunes porteurs d'idée", 'icone': 'presentation',
+         'pour': "Tu as une idée, mais pas encore de projet ?",
+         'texte': "En un mois, on t'aide à la clarifier, à la construire et à la présenter "
+                  "devant un jury.",
+         'adhesion': '5 000 FCFA', 'cotisation': '2 000 FCFA / mois'},
     ],
+    'candidater_titre': 'Comment candidater',
+    'candidater': [
+        {'titre': 'Remplis le formulaire',
+         'texte': "Choisis « Rejoindre UCIV Leadership » et ton pôle, puis envoie le formulaire."},
+        {'titre': 'Envoie ta vidéo',
+         'texte': "Envoie-nous avant le lundi 30 novembre 2026 une vidéo d'1 minute maximum "
+                  "sur WhatsApp au 07 87 56 17 66. Dis-nous qui tu es, quel pôle tu choisis, "
+                  "pourquoi tu veux rejoindre UCIV Leadership, ce que tu peux apporter et le "
+                  "temps dont tu disposes vraiment."},
+        {'titre': 'On revient vers toi',
+         'texte': "Notre équipe regarde ta candidature et revient vers toi."},
+    ],
+    'date_limite': 'lundi 30 novembre 2026',
+    'whatsapp': '07 87 56 17 66',
+    'url_whatsapp': 'https://wa.me/2250787561766',
+    'contribution': "Ce que tu paies fait vivre le réseau : la logistique, les rencontres, les "
+                    "formations et les projets collectifs. Tout est géré en toute transparence. "
+                    "Ce n'est pas un paiement pour obtenir un emploi ou une mission rémunérée.",
     'pourquoi_titre': "Le leadership ne commence pas nécessairement avec un titre.",
     'pourquoi_suite': "Il commence avec la capacité à prendre des initiatives, servir, "
                       "proposer des solutions et agir.",
@@ -907,10 +931,15 @@ ENGAGEMENT = {
                    'Gestion de projet', 'Numérique', 'Développement web'],
          'url': URL_COMPETENCES},
     ],
-    'formulaire_texte': "Il existe une place pour ton engagement au sein d'UCIV. "
-                        "L'équipe revient vers toi pour la suite.",
+    'formulaire_texte': "Il existe une place pour ton engagement au sein d'UCIV. Si tu veux "
+                        "rejoindre UCIV Leadership, choisis ton pôle et confirme les conditions "
+                        "d'adhésion : l'équipe revient vers toi pour la suite.",
     'merci': "Merci ! Ta demande a bien été envoyée. L'équipe revient vers toi pour "
              "la suite.",
+    'merci_leadership': "Merci, on a bien reçu ta candidature ! Il reste une dernière étape : "
+                        "envoie-nous ta vidéo d'1 minute sur WhatsApp au 07 87 56 17 66 avant "
+                        "le lundi 30 novembre 2026. Tu trouveras aussi les détails dans l'e-mail "
+                        "que tu vas recevoir.",
 }
 
 # --- Page Partenaires -------------------------------------------------------

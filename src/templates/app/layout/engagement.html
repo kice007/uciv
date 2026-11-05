@@ -117,6 +117,24 @@
         {% for erreur in form.choix.errors %}<p class="eng-erreur">{{ erreur }}</p>{% endfor %}
       </fieldset>
 
+      <div class="eng-leadership">
+        <div class="eng-groupe">
+          <label class="eng-label" for="id_pole">Mon pôle <span>(obligatoire pour UCIV Leadership)</span></label>
+          <select class="eng-champ eng-champ--select" id="id_pole" name="pole">
+            {% for valeur, libelle in form.pole.field.choices %}
+              <option value="{{ valeur }}"{% if form.pole.value == valeur %} selected{% endif %}>{{ libelle }}</option>
+            {% endfor %}
+          </select>
+          {% for erreur in form.pole.errors %}<p class="eng-erreur">{{ erreur }}</p>{% endfor %}
+        </div>
+
+        <div class="eng-groupe">
+          <label class="eng-label" for="id_structure">Mon université ou ma structure</label>
+          <input class="eng-champ" type="text" id="id_structure" name="structure" placeholder="Ex. Université Félix Houphouët-Boigny" value="{{ form.structure.value|default:'' }}">
+          {% for erreur in form.structure.errors %}<p class="eng-erreur">{{ erreur }}</p>{% endfor %}
+        </div>
+      </div>
+
       <fieldset class="eng-groupe">
         <legend class="eng-label">Mes domaines de compétences <span>(facultatif)</span></legend>
         <div class="eng-options">
@@ -136,6 +154,15 @@
         {% for erreur in form.message.errors %}<p class="eng-erreur">{{ erreur }}</p>{% endfor %}
       </div>
 
+      <div class="eng-groupe eng-leadership">
+        <label class="eng-option eng-option--conditions">
+          <input type="checkbox" name="conditions" value="on"{% if form.conditions.value %} checked{% endif %}>
+          <span class="eng-option__case">{% include "app/includes/_icon.html" with name="check" %}</span>
+          <span>J'ai lu les conditions d'adhésion et de cotisation de mon pôle.</span>
+        </label>
+        {% for erreur in form.conditions.errors %}<p class="eng-erreur">{{ erreur }}</p>{% endfor %}
+      </div>
+
       <div class="eng-form__bas">
         <p>Tes données servent uniquement à te recontacter. <a href="{% url 'app:confidentialite' %}">Voir la politique de confidentialité.</a></p>
         <button class="btn btn--vert" type="submit">
@@ -143,6 +170,11 @@
           <span class="btn__rond">{% include "app/includes/_icon.html" with name="arrow-right" %}</span>
         </button>
       </div>
+
+      <p class="eng-form__video eng-leadership-only">
+        Ta candidature n'est complète qu'avec ta vidéo d'1 minute, à envoyer sur WhatsApp au
+        <a href="{{ lead.url_whatsapp }}">{{ lead.whatsapp }}</a>.
+      </p>
     </form>
   </div>
 </section>

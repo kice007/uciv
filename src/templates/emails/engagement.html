@@ -9,6 +9,11 @@
   {% include "emails/_ligne.html" with libelle="E-mail" valeur=soumission.email %}
   {% include "emails/_ligne.html" with libelle="Téléphone" valeur=soumission.telephone %}
   {% include "emails/_ligne.html" with libelle="Souhaite" valeur=soumission.get_choix_display %}
+  {% if soumission.choix == 'leadership' %}
+    {% include "emails/_ligne.html" with libelle="Pôle" valeur=soumission.get_pole_display %}
+    {% include "emails/_ligne.html" with libelle="Université / structure" valeur=soumission.structure %}
+    {% include "emails/_ligne.html" with libelle="Conditions acceptées" valeur="Oui" %}
+  {% endif %}
   {% include "emails/_ligne.html" with libelle="Compétences" valeur=soumission.competences %}
 </table>
 {% include "emails/_message.html" with libelle="Message" message=soumission.message %}

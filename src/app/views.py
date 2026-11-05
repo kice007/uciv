@@ -112,27 +112,39 @@ def engagement(request):
         form = EngagementForm(request.POST)
         if form.is_valid():
             donnees = form.cleaned_data
+            candidature = donnees['choix'] == 'leadership'
             soumission = SoumissionEngagement.objects.create(
                 nom=donnees['nom'], email=donnees['email'], telephone=donnees['telephone'],
-                choix=donnees['choix'], competences=', '.join(donnees['competences']),
-                message=donnees['message'],
+                choix=donnees['choix'], pole=donnees['pole'], structure=donnees['structure'],
+                conditions_acceptees=donnees['conditions'],
+                competences=', '.join(donnees['competences']), message=donnees['message'],
             )
             if settings.EMAIL_HOST:
+                sujet = (f"Nouvelle candidature UCIV Leadership : {soumission.nom}" if candidature
+                         else f"Nouvelle demande d'engagement : {soumission.nom}")
                 send_customize_email(
-                    f"Nouvelle demande d'engagement : {soumission.nom}",
-                    [settings.CONTACT_EMAIL], 'emails/engagement.html', {'soumission': soumission},
+                    sujet, [settings.CONTACT_EMAIL], 'emails/engagement.html', {'soumission': soumission},
                     reply_to=[soumission.email],
                 )
-                envoyer_accuse_reception(
-                    soumission.email, 'Nous avons bien reçu votre demande d\'engagement — UCIV',
-                    'emails/accuse_reception.html',
-                    {'soumission': soumission, 'demande': 'votre demande d\'engagement'},
-                )
-            messages.success(request, content.ENGAGEMENT['merci'])
+                if candidature:
+                    envoyer_accuse_reception(
+                        soumission.email, 'Votre candidature à UCIV Leadership : il reste une étape',
+                        'emails/candidature_leadership.html', {'soumission': soumission},
+                        categorie='candidature-leadership',
+                    )
+                else:
+                    envoyer_accuse_reception(
+                        soumission.email, 'Nous avons bien reçu votre demande d\'engagement — UCIV',
+                        'emails/accuse_reception.html',
+                        {'soumission': soumission, 'demande': 'votre demande d\'engagement'},
+                    )
+            messages.success(request, content.ENGAGEMENT['merci_leadership' if candidature else 'merci'])
             return redirect(reverse('app:engagement') + '#formulaire')
     else:
         form = EngagementForm(initial={'choix': request.GET.get('choix')})
-    return render(request, 'app/layout/engagement.html', {'eng': content.ENGAGEMENT, 'form': form})
+    return render(request, 'app/layout/engagement.html', {
+        'eng': content.ENGAGEMENT, 'form': form, 'lead': content.LEADERSHIP,
+    })
 
 
 @limiter('partenariat', 5, 10 * 60)

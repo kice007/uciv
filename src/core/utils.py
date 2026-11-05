@@ -60,14 +60,16 @@ def send_customize_email(subject: str, receivers: list, template: str, context: 
         return False
 
 
-def envoyer_accuse_reception(destinataire: str, sujet: str, template: str, contexte: dict) -> bool:
+def envoyer_accuse_reception(destinataire: str, sujet: str, template: str, contexte: dict,
+                             categorie: str = 'accuse') -> bool:
     """Accusé de réception envoyé à la personne qui a rempli un formulaire.
 
     Les réponses vont à CONTACT_EMAIL (l'adresse d'envoi est une adresse « noreply »). Pour qu'on ne puisse pas se servir d'un formulaire
-    pour inonder la boîte d'un tiers en saisissant son adresse, une même adresse ne reçoit qu'un accusé par heure ; la notification à
-    l'équipe, elle, part toujours. Retourne True si le message est parti.
+    pour inonder la boîte d'un tiers en saisissant son adresse, une même adresse ne reçoit qu'un accusé par heure et par catégorie ;
+    la notification à l'équipe, elle, part toujours. Une catégorie distincte (ex. « candidature-leadership ») évite qu'un formulaire
+    rempli juste avant bloque l'e-mail de candidature. Retourne True si le message est parti.
     """
-    cle = 'accuse:' + hashlib.sha256(destinataire.strip().lower().encode('utf-8')).hexdigest()
+    cle = categorie + ':' + hashlib.sha256(destinataire.strip().lower().encode('utf-8')).hexdigest()
     if not cache.add(cle, 1, 3600):
         return False
     envoye = send_customize_email(sujet, [destinataire], template, contexte, reply_to=[settings.CONTACT_EMAIL])

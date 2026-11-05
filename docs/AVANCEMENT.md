@@ -1,7 +1,7 @@
 ﻿# Avancement du projet UCIV
 
 Point de reprise : ce qui est fait, ce qui ne l'est pas, et par où continuer.
-Dernière mise à jour : 20 octobre 2026.
+Dernière mise à jour : 5 novembre 2026.
 
 Documents liés : [PLAN.md](PLAN.md) (ce qu'il faut construire),
 [ARCHITECTURE.md](ARCHITECTURE.md) (structure), [CLAUDE.md](../CLAUDE.md) (règles agents),
@@ -25,6 +25,15 @@ Documents liés : [PLAN.md](PLAN.md) (ce qu'il faut construire),
 
 ## Ce qui est fait
 
+
+### UCIV Leadership : trois pôles et candidature (5 novembre 2026)
+- **Page Leadership recentrée sur l'adhésion** : les trois pôles (Projet universitaire, Cercle des leaders, Jeunes porteurs d'idée) remplacent l'ancien bloc « Intégrer le réseau » en quatre étapes. Chaque pôle indique son public, son fonctionnement et ses conditions (5 000 FCFA + 1 000 FCFA/mois ; 10 000 FCFA + 3 000 FCFA/mois ; 5 000 FCFA + 2 000 FCFA/mois).
+- **Comment candidater** : trois étapes (formulaire, vidéo d'1 minute sur WhatsApp au 07 87 56 17 66, retour de l'équipe), une note sur l'usage des contributions et un bouton « Candidater » vers le formulaire. **Date limite retenue partout : lundi 30 novembre 2026** (le document source indiquait aussi le 31 octobre 2026, déjà passé).
+- **Bandeau d'annonce** : « Candidatures ouvertes — Jusqu'au lundi 30 novembre 2026 pour rejoindre UCIV Leadership. ». La section de lancement du 24 octobre 2026 et la FAQ correspondante restent en place comme historique.
+- **Formulaire d'engagement** : nouveaux champs **pôle**, **université ou structure** et case **« J'ai lu les conditions d'adhésion et de cotisation de mon pôle »**, obligatoires (pôle et case) uniquement pour « Rejoindre UCIV Leadership » ; les autres choix les ignorent et le serveur les vide. Le libellé du téléphone devient « Téléphone (WhatsApp) ». Les champs de candidature sont masqués en CSS (`:has()`) hors Leadership ; la validation serveur reste la référence.
+- **Après l'envoi** : message dédié qui rappelle la vidéo WhatsApp et la date limite, **e-mail dédié** `emails/candidature_leadership.html` (pôles, tarifs, vidéo, contributions), notification à l'équipe avec pôle / structure / conditions. L'accusé de candidature utilise sa propre catégorie de limitation (`candidature-leadership`) : un accusé générique récent ne le bloque pas.
+- **Base** : champs `pole`, `structure` et `conditions_acceptees` sur `SoumissionEngagement` (migration `0015_soumissionengagement_conditions_acceptees_and_more`) ; administration (colonne et filtre pôle, recherche par structure, détail des messages reçus).
+- Tests : `CandidatureLeadershipTests` et mises à jour de `UcivLeadershipPageTests`, `RejoindreLeadershipTests` et `StyleDesEmailsTests`.
 
 ### Configuration des e-mails (26 octobre 2026)
 - **État constaté** : le code sait envoyer (notification à l'équipe pour contact / engagement / partenariat vers `CONTACT_EMAIL`, bienvenue à un nouvel abonné), mais `/etc/uciv/uciv.env` n'a aucune variable `EMAIL_*` et le serveur n'a pas de service mail : **aucun e-mail ne part en production**, les messages restent consultables dans l'administration. Le serveur peut joindre `smtp.gmail.com` en sortie (587 et 465 vérifiés).

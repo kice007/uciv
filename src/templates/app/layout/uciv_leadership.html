@@ -109,32 +109,61 @@
   </div>
 </section>
 
-{# ---------------------------------------------------- Intégrer le réseau #}
-<section class="section section--blanc lead-reseau">
+{# ---------------------------------------------------- Rejoindre le réseau #}
+<section class="section section--blanc lead-reseau" id="rejoindre">
   <div class="conteneur">
     <div class="entete-section" data-reveal>
       <div>
-        <p class="surtitre">Intégrer le réseau</p>
-        <h2 class="titre titre--52">Un réseau sélectif, <em>où chaque membre contribue.</em></h2>
+        <p class="surtitre">Rejoindre UCIV Leadership</p>
+        <h2 class="titre titre--52">Choisis le pôle <em>qui te correspond.</em></h2>
       </div>
-      <p class="texte">{{ leadership.reseau_intro }}</p>
+      <p class="texte">{{ leadership.rejoindre_intro }}</p>
     </div>
-    <ol class="lead-etapes">
-      {% for etape in leadership.etapes %}
-        <li class="lead-etape{% if forloop.last %} lead-etape--final{% endif %}" data-reveal style="--i: {{ forloop.counter0 }}">
-          <div class="lead-etape__haut">
-            <span class="lead-etape__num">0{{ forloop.counter }}</span>
-            {% if forloop.last %}
-              {% include "app/includes/_icon.html" with name="flag" %}
-            {% else %}
-              {% include "app/includes/_icon.html" with name="arrow-right" %}
-            {% endif %}
-          </div>
-          <h3>{{ etape.titre }}</h3>
-          <p>{{ etape.texte }}</p>
+
+    <ul class="lead-poles">
+      {% for pole in leadership.poles %}
+        <li class="lead-pole" data-reveal style="--i: {{ forloop.counter0 }}">
+          <span class="lead-pole__icone">{% include "app/includes/_icon.html" with name=pole.icone %}</span>
+          <h3>{{ pole.nom }}</h3>
+          <p class="lead-pole__pour">{{ pole.pour }}</p>
+          <p class="lead-pole__texte">{{ pole.texte }}</p>
+          <dl class="lead-pole__tarifs">
+            <div><dt>Adhésion</dt><dd>{{ pole.adhesion }}</dd></div>
+            <div><dt>Cotisation</dt><dd>{{ pole.cotisation }}</dd></div>
+          </dl>
         </li>
       {% endfor %}
-    </ol>
+    </ul>
+
+    <div class="lead-candidater">
+      <h3 class="lead-candidater__titre" data-reveal>{{ leadership.candidater_titre }}</h3>
+      <ol class="lead-etapes lead-etapes--3">
+        {% for etape in leadership.candidater %}
+          <li class="lead-etape{% if forloop.last %} lead-etape--final{% endif %}" data-reveal style="--i: {{ forloop.counter0 }}">
+            <div class="lead-etape__haut">
+              <span class="lead-etape__num">0{{ forloop.counter }}</span>
+              {% if forloop.last %}
+                {% include "app/includes/_icon.html" with name="flag" %}
+              {% else %}
+                {% include "app/includes/_icon.html" with name="arrow-right" %}
+              {% endif %}
+            </div>
+            <h3>{{ etape.titre }}</h3>
+            <p>{{ etape.texte }}</p>
+          </li>
+        {% endfor %}
+      </ol>
+
+      <p class="lead-contribution" data-reveal>
+        <span class="lead-contribution__picto">{% include "app/includes/_icon.html" with name="info" %}</span>
+        <span>{{ leadership.contribution }}</span>
+      </p>
+
+      <a class="btn btn--encre lead-candidater__cta" href="{{ leadership.url_rejoindre }}" data-reveal>
+        <span>Candidater</span>
+        <span class="btn__rond">{% include "app/includes/_icon.html" with name="arrow-right" %}</span>
+      </a>
+    </div>
   </div>
 </section>
 

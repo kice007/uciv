@@ -24,10 +24,19 @@ class SoumissionEngagement(Convention):
         ('competences', 'Proposer mes compétences'),
     ]
 
+    POLES = [
+        ('projet-universitaire', 'Projet universitaire'),
+        ('cercle-des-leaders', 'Cercle des leaders'),
+        ('jeune-porteur-idee', "Jeune porteur d'idée"),
+    ]
+
     nom = models.CharField('nom et prénom', max_length=120)
     email = models.EmailField('adresse e-mail')
     telephone = models.CharField('téléphone', max_length=30, blank=True)
     choix = models.CharField('souhaite', max_length=20, choices=CHOIX)
+    pole = models.CharField('pôle', max_length=30, choices=POLES, blank=True)
+    structure = models.CharField('université ou structure', max_length=160, blank=True)
+    conditions_acceptees = models.BooleanField('conditions acceptées', default=False)
     competences = models.TextField('domaines de compétences', blank=True)
     message = models.TextField('ce qu\'il ou elle veut apporter', blank=True)
 

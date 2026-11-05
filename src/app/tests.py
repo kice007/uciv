@@ -45,13 +45,25 @@ class UcivLeadershipPageTests(TestCase):
         response = self.client.get(reverse('app:uciv_leadership'))
         self.assertContains(response, 'Un réseau. Un engagement.')
         self.assertContains(response, '30 à 50 membres')
-        self.assertContains(response, 'Membre Aspirant')
+        self.assertContains(response, 'Projet universitaire')
+        self.assertContains(response, "Cercle des leaders")
+        self.assertContains(response, "Jeunes porteurs")
         self.assertContains(response, 'cinq engagements')
         self.assertContains(response, 'Conférence de lancement')
 
+    def test_page_shows_the_three_poles_and_their_conditions(self):
+        response = self.client.get(reverse('app:uciv_leadership'))
+        self.assertContains(response, '5 000 FCFA')
+        self.assertContains(response, '10 000 FCFA')
+        self.assertContains(response, '3 000 FCFA / mois')
+        self.assertContains(response, '2 000 FCFA / mois')
+        self.assertContains(response, '30 novembre 2026')
+        self.assertContains(response, '07 87 56 17 66')
+
     def test_launch_date_is_24_october(self):
         response = self.client.get(reverse('app:uciv_leadership'))
-        self.assertContains(response, '24 octobre 2026 · American Corner')
+        self.assertContains(response, '24 octobre 2026')
+        self.assertContains(response, 'American Corner')
         self.assertContains(response, 'Heure à confirmer')
         self.assertContains(self.client.get(reverse('app:home')), '24 octobre 2026')
 
@@ -1409,7 +1421,7 @@ class RejoindreLeadershipTests(TestCase):
 
     def test_programme_page_has_no_dead_join_button(self):
         html = self.client.get(reverse('app:uciv_leadership')).content.decode()
-        self.assertEqual(self.nombre('uciv_leadership'), self.nombre('contact') + 2)   # + les deux boutons de la page
+        self.assertEqual(self.nombre('uciv_leadership'), self.nombre('contact') + 3)   # + les trois boutons de la page
         self.assertNotIn('href="#lancement"', html)
 
     def test_form_opens_with_the_leadership_option_checked(self):
@@ -1429,6 +1441,76 @@ class RejoindreLeadershipTests(TestCase):
     def test_form_section_exists_as_anchor_target(self):
         html = self.client.get(reverse('app:engagement')).content.decode()
         self.assertEqual(html.count('id="formulaire"'), 1)
+
+    def test_announcement_bar_shows_open_applications(self):
+        html = self.client.get(reverse('app:home')).content.decode()
+        self.assertIn('Candidatures ouvertes', html)
+        self.assertIn('30 novembre 2026', html)
+
+
+class CandidatureLeadershipTests(TestCase):
+    """Formulaire de candidature UCIV Leadership : champs conditionnels, enregistrement, message et e-mail dédiés."""
+
+    DONNEES = {
+        'nom': 'Aya Konan', 'email': 'aya@exemple.ci', 'telephone': '07 87 56 17 66',
+        'choix': 'leadership', 'pole': 'projet-universitaire', 'structure': 'Université Félix Houphouët-Boigny',
+        'conditions': 'on', 'competences': ['Communication'], 'message': 'Disponible le week-end.',
+    }
+
+    def test_leadership_requires_a_pole_and_the_conditions(self):
+        reponse = self.client.post(reverse('app:engagement'), {
+            'nom': 'Aya Konan', 'email': 'aya@exemple.ci', 'choix': 'leadership',
+        })
+        self.assertEqual(reponse.status_code, 200)
+        self.assertIn('pole', reponse.context['form'].errors)
+        self.assertIn('conditions', reponse.context['form'].errors)
+        self.assertEqual(SoumissionEngagement.objects.count(), 0)
+
+    def test_leadership_saves_the_pole_structure_and_conditions(self):
+        reponse = self.client.post(reverse('app:engagement'), self.DONNEES)
+        self.assertRedirects(reponse, reverse('app:engagement') + '#formulaire', fetch_redirect_response=False)
+        soumission = SoumissionEngagement.objects.get()
+        self.assertEqual(soumission.choix, 'leadership')
+        self.assertEqual(soumission.pole, 'projet-universitaire')
+        self.assertEqual(soumission.structure, 'Université Félix Houphouët-Boigny')
+        self.assertTrue(soumission.conditions_acceptees)
+
+    def test_other_choices_ignore_the_leadership_fields(self):
+        self.client.post(reverse('app:engagement'), {
+            'nom': 'Aya Konan', 'email': 'aya@exemple.ci', 'choix': 'volontaire',
+            'pole': 'cercle-des-leaders', 'structure': 'Une entreprise', 'conditions': 'on',
+        })
+        soumission = SoumissionEngagement.objects.get()
+        self.assertEqual(soumission.pole, '')
+        self.assertEqual(soumission.structure, '')
+        self.assertFalse(soumission.conditions_acceptees)
+
+    @override_settings(EMAIL_HOST='smtp.exemple.test', CONTACT_EMAIL='equipe@exemple.ci',
+                       DEFAULT_FROM_EMAIL='UCIV <noreply@exemple.ci>')
+    def test_a_leadership_candidate_receives_the_dedicated_email(self):
+        self.client.post(reverse('app:engagement'), self.DONNEES)
+        accuses = [m for m in mail.outbox if m.to == ['aya@exemple.ci']]
+        self.assertEqual(len(accuses), 1)
+        self.assertEqual(accuses[0].subject, 'Votre candidature à UCIV Leadership : il reste une étape')
+        texte = accuses[0].body
+        self.assertIn('30 novembre 2026', texte)
+        self.assertIn('07 87 56 17 66', texte)
+        self.assertIn('Projet universitaire', texte)
+
+    @override_settings(EMAIL_HOST='smtp.exemple.test', CONTACT_EMAIL='equipe@exemple.ci')
+    def test_a_recent_generic_acknowledgement_does_not_block_the_leadership_email(self):
+        from core import utils
+        self.assertTrue(utils.envoyer_accuse_reception(
+            'aya@exemple.ci', 'Accusé générique', 'emails/accuse_reception.html', {}))
+        self.assertTrue(utils.envoyer_accuse_reception(
+            'aya@exemple.ci', 'Candidature', 'emails/candidature_leadership.html', {'soumission': {'nom': 'Aya'}},
+            categorie='candidature-leadership'))
+
+    def test_the_page_confirms_the_video_step_after_submission(self):
+        reponse = self.client.post(reverse('app:engagement'), self.DONNEES, follow=True)
+        self.assertContains(reponse, 'on a bien reçu ta candidature')
+        self.assertContains(reponse, '30 novembre 2026')
+        self.assertContains(reponse, '07 87 56 17 66')
 
 
 class MiseAJourOctobreTests(TestCase):
@@ -1825,6 +1907,7 @@ class StyleDesEmailsTests(TestCase):
         'emails/partenariat.html': {'soumission': {'nom': 'Yao', 'organisation': 'Test', 'email': 'yao@exemple.ci', 'telephone': '',
                                                    'type_collaboration': 'Sponsoring', 'message': 'Soutien.'}},
         'emails/accuse_reception.html': {'soumission': {'nom': 'Awa', 'message': 'Bonjour.'}, 'demande': 'votre message'},
+        'emails/candidature_leadership.html': {'soumission': {'nom': 'Aya'}},
         'emails/newsletter_bienvenue.html': {'lien_desinscription': 'https://uciv.org/newsletter/desinscription/abc123/'},
     }
 

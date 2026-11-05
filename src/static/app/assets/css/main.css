@@ -939,6 +939,37 @@ button { font: inherit; color: inherit; cursor: pointer; }
 @media (min-width: 720px) { .lead-etapes { grid-template-columns: repeat(2, 1fr); } }
 @media (min-width: 1100px) { .lead-etapes { grid-template-columns: repeat(4, 1fr); gap: 20px; } .lead-etape { min-height: 260px; } }
 
+/* Pôles d'adhésion */
+.lead-poles { display: grid; gap: 18px; }
+.lead-pole {
+  display: flex; flex-direction: column; gap: 14px; padding: 28px;
+  border-radius: var(--rayon); background: var(--creme);
+}
+.lead-pole__icone { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%; background: var(--jaune); color: var(--encre); }
+.lead-pole__icone .icon { width: 24px; height: 24px; }
+.lead-pole h3 { font-family: var(--f-titre); font-weight: 800; font-size: 24px; line-height: 1.1; letter-spacing: -.02em; }
+.lead-pole__pour { color: var(--orange-fonce); font-size: 14px; font-weight: 700; line-height: 1.4; }
+.lead-pole__texte { color: var(--texte); font-size: 15px; line-height: 1.55; }
+.lead-pole__tarifs { display: flex; flex-wrap: wrap; gap: 10px 24px; margin-top: auto; padding-top: 18px; border-top: 1px solid var(--filet); }
+.lead-pole__tarifs div { display: flex; flex-direction: column; gap: 2px; }
+.lead-pole__tarifs dt { color: var(--texte); font-size: 11px; font-weight: 700; letter-spacing: 1.4px; text-transform: uppercase; }
+.lead-pole__tarifs dd { font-family: var(--f-titre); font-size: 18px; font-weight: 800; letter-spacing: -.02em; }
+@media (min-width: 720px) { .lead-poles { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1100px) { .lead-poles { grid-template-columns: repeat(3, 1fr); gap: 20px; } }
+
+/* Comment candidater */
+.lead-candidater { margin-top: 56px; }
+.lead-candidater__titre { font-family: var(--f-titre); font-weight: 800; font-size: clamp(26px, 2.4vw, 34px); line-height: 1.1; letter-spacing: -.02em; }
+.lead-candidater .lead-etapes { margin-top: 24px; }
+@media (min-width: 1100px) { .lead-etapes--3 { grid-template-columns: repeat(3, 1fr); } }
+.lead-contribution {
+  display: flex; align-items: flex-start; gap: 14px; margin-top: 24px; padding: 20px 22px;
+  border-radius: 18px; background: var(--creme); color: var(--texte); font-size: 14.5px; line-height: 1.55;
+}
+.lead-contribution__picto { display: grid; place-items: center; flex: none; width: 38px; height: 38px; border-radius: 50%; background: var(--orange); color: var(--blanc); }
+.lead-contribution__picto .icon { width: 18px; height: 18px; }
+.lead-candidater__cta { margin-top: 24px; }
+
 /* Pourquoi rejoindre */
 .lead-pourquoi { overflow: hidden; }
 .lead-pourquoi__grille { position: relative; display: grid; gap: 32px; }
@@ -1671,7 +1702,15 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .eng-note { display: flex; align-items: center; gap: 14px; margin-top: 24px; padding: 22px; border-radius: 20px; background: var(--creme); font-size: 15.5px; font-weight: 600; line-height: 1.4; }
 .eng-note__picto { display: grid; place-items: center; flex: none; width: 44px; height: 44px; border-radius: 50%; background: var(--orange); color: var(--blanc); }
 .eng-form { display: flex; flex-direction: column; gap: 22px; padding: 28px 22px; border-radius: var(--rayon-lg); background: var(--creme); }
+.eng-leadership { display: flex; flex-direction: column; gap: 22px; }
+/* Les champs de candidature ne concernent que UCIV Leadership. Sans :has(), ils restent visibles ;
+   le serveur les ignore de toute façon pour les autres choix. */
+.eng-form:not(:has(input[name="choix"][value="leadership"]:checked)) .eng-leadership,
+.eng-form:not(:has(input[name="choix"][value="leadership"]:checked)) .eng-leadership-only { display: none; }
+.eng-form__video { margin: 0; padding: 18px 22px; border-radius: 18px; background: var(--jaune); color: var(--encre); font-size: 14px; font-weight: 600; line-height: 1.5; }
+.eng-form__video a { text-decoration: underline; }
 .eng-groupe { display: flex; flex-direction: column; gap: 10px; min-width: 0; margin: 0; padding: 0; border: 0; }
+.eng-champ--select { cursor: pointer; }
 .eng-ligne { display: grid; gap: 22px; }
 .eng-label { padding: 0; font-size: 14px; font-weight: 700; }
 .eng-label span { color: var(--texte); font-weight: 400; }
@@ -2517,6 +2556,10 @@ button { font: inherit; color: inherit; cursor: pointer; }
   .lead-mission__label { line-height: 16px; }
   .lead-etape { gap: 8px; min-height: 0; }
   .lead-etape__haut { margin-bottom: 14px; }
+  .lead-pole { padding: 24px; }
+  .lead-pole__tarifs { gap: 10px 20px; }
+  .lead-candidater { margin-top: 40px; }
+  .lead-candidater__titre { font-size: 26px; line-height: 29px; }
   .lead-theme { padding-block: 56px; }
   .lead-lancement .surtitre { margin-bottom: 24px; }
   .lead-infos { gap: 8px; margin: 24px 0 34px; }
