@@ -56,8 +56,8 @@ NAVIGATION = [
         'enfants': [
             {'label': 'Les Go du Digital', 'url': URL_GO},
             {'label': 'UCIV Leadership', 'url': URL_LEADERSHIP},
-            {'label': "De la vision à l'action", 'url': URL_VISION_ACTION, 'niveau': 2},
-            {'label': 'Les RH ont la parole', 'url': URL_RH_PAROLE, 'niveau': 2},
+            {'label': "De la vision à l'action", 'url': URL_VISION_ACTION},
+            {'label': 'Les RH ont la parole', 'url': URL_RH_PAROLE},
             {'label': 'Experience Lab', 'url': URL_EXPERIENCE},
         ],
     },
@@ -404,24 +404,6 @@ LEADERSHIP = {
     ],
     'image': 'app/assets/img/leadership-couverture.webp',
     'image_alt': 'Quatre membres du réseau UCIV Leadership, bras croisés, en tenue professionnelle.',
-    'programmes_intro': "Au sein du réseau, UCIV Leadership organise des programmes pour clarifier son "
-                        "ambition et se rapprocher du monde professionnel.",
-    'programmes': [
-        {'nom': "De la vision à l'action", 'etiquette': 'Ambition · Leadership',
-         'accroche': 'Transformer ses ambitions en actions concrètes.',
-         'texte': "Un programme pour clarifier sa vision, développer un état d'esprit orienté vers l'action "
-                  "et construire son plan d'action.",
-         'image': 'app/assets/img/vision-action-groupe.webp',
-         'image_alt': "Les participants du programme « De la vision à l'action » en photo de groupe.",
-         'url': URL_VISION_ACTION},
-        {'nom': 'Les RH ont la parole', 'etiquette': 'Employabilité · Recrutement',
-         'accroche': 'Comprendre les attentes des recruteurs pour mieux préparer son avenir professionnel.',
-         'texte': "Des panels et des échanges directs avec des spécialistes des ressources humaines : "
-                  "recrutement, CV, entretiens.",
-         'image': 'app/assets/img/rh-parole-groupe.webp',
-         'image_alt': "Les participants de « Les RH ont la parole » réunis dans un jardin.",
-         'url': URL_RH_PAROLE},
-    ],
     'temoignages': {
         'titre': 'Ils en parlent', 'suite': 'le mieux.',
         'intro': 'Paroles de membres du réseau UCIV Leadership.',
@@ -429,7 +411,8 @@ LEADERSHIP = {
     },
     'theme': "« S'engager aujourd'hui",
     'theme_suite': 'pour transformer demain. »',
-    'lancement_infos': ['24 octobre 2026', 'American Corner', 'Heure à confirmer'],
+    'lancement_infos': ['24 octobre 2026', 'British Corner · UFHB'],
+    'url_lancement_facebook': 'https://www.facebook.com/share/p/1FExXfSpSo/',
 }
 
 # --- Page Qui sommes-nous ? -------------------------------------------------
@@ -537,10 +520,6 @@ NOS_PROGRAMMES = {
             'image': 'app/assets/img/groupe-nb.webp',
             'image_alt': 'Quatre jeunes leaders souriants, en tenue professionnelle.',
             'detouree': True,
-            'sous_programmes': [
-                {'label': "De la vision à l'action", 'url': URL_VISION_ACTION},
-                {'label': 'Les RH ont la parole', 'url': URL_RH_PAROLE},
-            ],
         },
         {
             'theme': 'vert',
@@ -780,10 +759,10 @@ for _groupe in EQUIPE['groupes']:
         for n, (nom, role, fichier) in enumerate(_groupe['membres'])
     ]
 
-# --- Programmes d'UCIV Leadership (une page par programme, même gabarit) ------------
-# Textes transmis par UCIV (octobre 2026). Clé = slug de l'URL /programmes/uciv-leadership/<slug>/.
+# --- Programmes d'UCIV (une page par programme, même gabarit) -----------------------
+# Textes transmis par UCIV (octobre 2026). Clé = programme de l'URL correspondante.
 
-PROGRAMMES_LEADERSHIP = {
+PROGRAMMES_UCIV = {
     'de-la-vision-a-l-action': {
         'nom': "De la vision à l'action", 'fond': 'profond', 'formes_cle': 'vision_action',
         'titre': 'De la vision', 'suite': "à l'action.",
@@ -891,7 +870,7 @@ PROGRAMMES_LEADERSHIP = {
         'inscriptions_titre': 'Prépare ton entrée', 'inscriptions_suite': 'dans le monde du travail.',
     },
 }
-for _slug, _programme in PROGRAMMES_LEADERSHIP.items():
+for _slug, _programme in PROGRAMMES_UCIV.items():
     _programme.update(
         slug=_slug,
         url_inscription=URL_INSCRIPTION_PROGRAMME,
@@ -1007,7 +986,7 @@ CONTACT = {
 _F_CREME, _F_JAUNE, _F_VERT, _F_ORANGE = 'var(--creme)', 'var(--jaune)', 'var(--vert)', 'var(--orange)'
 _F_BLANC = 'var(--blanc)'
 _F_MOBILE = [(280, -110, 181, 240, 0, 'rgba(255, 255, 255, .15)')]
-_F_HAUT_DROITE = (1184, -180, 331, 440, 0, _F_JAUNE)    # Experience Lab et programmes d'UCIV Leadership
+_F_HAUT_DROITE = (1184, -180, 331, 440, 0, _F_JAUNE)    # Experience Lab et programmes d'UCIV
 
 FORMES_HEROS = {
     'home': {'desktop': [(1595.9, 355, 603, 901, 262, _F_CREME), (-90, 580, 226, 300, 0, _F_VERT)]},
@@ -1141,7 +1120,7 @@ ARTICLE_PAGE = {
 # `fil` : fil d'Ariane des données structurées (libellé, nom d'URL ; None = page courante).
 # `type` : type de page pour le balisage schema.org (voir app/seo.py).
 
-LANCEMENT_LEADERSHIP = {'date': '2026-10-24', 'lieu': 'American Corner', 'ville': 'Abidjan'}
+LANCEMENT_LEADERSHIP = {'date': '2026-10-24', 'lieu': 'British Corner · UFHB', 'ville': 'Abidjan'}
 IMAGE_PAR_DEFAUT = 'app/assets/img/og-defaut.jpg'
 
 _ACC = ('Accueil', 'home')
@@ -1167,8 +1146,8 @@ SEO_PAGES = {
     },
     'nos_programmes': {
         'titre': 'Nos programmes — Go du Digital, Leadership, Experience Lab',
-        'description': "Les Go du Digital, UCIV Leadership et Experience Lab : trois programmes pour apprendre en "
-                       "agissant, avec formation pratique, mise en situation réelle et suivi.",
+        'description': "Découvrez les programmes d'UCIV, dont Les Go du Digital, « De la vision à l'action » et "
+                       "« Les RH ont la parole », ainsi que le réseau UCIV Leadership et ses trois pôles.",
         'type': 'programmes', 'fil': [_ACC, ('Nos programmes', None)],
     },
     'go_du_digital': {
@@ -1181,7 +1160,7 @@ SEO_PAGES = {
     'uciv_leadership': {
         'titre': 'UCIV Leadership — Le réseau des futurs jeunes leaders',
         'description': "UCIV Leadership, le réseau sélectif des jeunes leaders : formations, mentorat et projets à fort "
-                       "impact. Lancement le 24 octobre 2026 à l'American Corner.",
+                       "impact. Lancement le 24 octobre 2026 au British Corner de l'UFHB.",
         'type': 'evenement', 'fil': [_ACC, ('Nos programmes', 'nos_programmes'), ('UCIV Leadership', None)],
         'image': 'app/assets/img/og-leadership.jpg',
     },
@@ -1194,22 +1173,20 @@ SEO_PAGES = {
         'image': 'app/assets/img/og-experience-lab.jpg',
     },
     'vision_action': {
-        'titre': "De la vision à l'action — Programme UCIV Leadership",
-        'description': "De la vision à l'action, programme d'UCIV Leadership : clarifier son ambition, surmonter "
+        'titre': "De la vision à l'action — Programme UCIV",
+        'description': "De la vision à l'action, programme d'UCIV : clarifier son ambition, surmonter "
                        "ses doutes et construire un plan d'action concret.",
         'type': 'cours',
-        'fil': [_ACC, ('Nos programmes', 'nos_programmes'), ('UCIV Leadership', 'uciv_leadership'),
-                ("De la vision à l'action", None)],
+        'fil': [_ACC, ('Nos programmes', 'nos_programmes'), ("De la vision à l'action", None)],
         'cours': {'nom': "De la vision à l'action", 'public': 'Jeunes'},
         'image': 'app/assets/img/og-vision-action.jpg',
     },
     'rh_parole': {
-        'titre': "Les RH ont la parole — Programme d'UCIV Leadership",
-        'description': "Les RH ont la parole, programme d'UCIV Leadership : échanger avec des recruteurs pour "
+        'titre': "Les RH ont la parole — Programme UCIV",
+        'description': "Les RH ont la parole, programme d'UCIV : échanger avec des recruteurs pour "
                        "comprendre le recrutement et réussir son CV et ses entretiens.",
         'type': 'cours',
-        'fil': [_ACC, ('Nos programmes', 'nos_programmes'), ('UCIV Leadership', 'uciv_leadership'),
-                ('Les RH ont la parole', None)],
+        'fil': [_ACC, ('Nos programmes', 'nos_programmes'), ('Les RH ont la parole', None)],
         'cours': {'nom': 'Les RH ont la parole', 'public': 'Étudiants, jeunes diplômés et chercheurs d\'emploi'},
         'image': 'app/assets/img/og-rh-parole.jpg',
     },
@@ -1292,9 +1269,8 @@ FAQ = {
         ("Où se trouve UCIV et comment la contacter ?",
          "UCIV est basée à Abidjan (04 BP 2087 Abidjan, Côte d'Ivoire). On peut l'appeler au +225 07 87 56 17 66 ou "
          "au +225 07 07 722 078, ou écrire à organisationuciv@gmail.com."),
-        ("Quelle est la prochaine grande date d'UCIV ?",
-         "La prochaine grande date d'UCIV est le 24 octobre 2026 : le lancement du réseau UCIV Leadership, lors "
-         "d'une conférence au format TEDx à l'American Corner d'Abidjan. L'heure sera confirmée sur le site."),
+        ("Quand a eu lieu le lancement d'UCIV Leadership ?",
+         "Le lancement a eu lieu le 24 octobre 2026 au British Corner de l'UFHB, à Abidjan."),
     ],
     'qui_sommes_nous': [
         ("Qu'est-ce qu'UCIV ?",
@@ -1372,11 +1348,10 @@ FAQ = {
          "La sélection se fait en deux étapes : un pitch vidéo, puis un entretien collectif. Les nouveaux arrivants "
          "sont d'abord membres aspirants, puis deviennent membres du réseau. Un système de points d'engagement suit "
          "la contribution de chaque membre et conditionne son maintien."),
-        ("Quand a lieu le lancement d'UCIV Leadership ?",
-         "Le lancement a lieu le 24 octobre 2026 à l'American Corner d'Abidjan, avec une conférence au format TEDx. "
-         "L'heure reste à confirmer."),
-        ("Combien de membres compte la cohorte pionnière ?",
-         "La cohorte pionnière réunit entre 30 et 50 membres. Le réseau est mixte, sélectif et exigeant."),
+        ("Quand a eu lieu le lancement de UCIV Leadership ?",
+         "Le lancement a eu lieu le 24 octobre au British Corner à UFH."),
+        ("Combien comportera la cohorte pionnière ?",
+         "La cohorte pionnière comportera entre 30 et 50 membres. Le réseau est mixte, sélectif et exigeant."),
         ("Qu'apporte UCIV Leadership à ses membres ?",
          "Le réseau fait circuler en priorité entre ses membres les bonnes opportunités, notamment en matière "
          "d'emploi, de financement et de formations."),
@@ -1399,7 +1374,7 @@ FAQ = {
     ],
     'vision_action': [
         ("Qu'est-ce que « De la vision à l'action » ?",
-         "« De la vision à l'action » est un programme d'UCIV Leadership qui encourage les jeunes à clarifier leurs "
+         "« De la vision à l'action » est un programme d'UCIV qui encourage les jeunes à clarifier leurs "
          "ambitions, à développer leur potentiel et à passer concrètement à l'action pour construire leur avenir."),
         ("Quels sont les objectifs de « De la vision à l'action » ?",
          "Le programme aide les jeunes à clarifier leur vision, à développer un état d'esprit orienté vers "
@@ -1412,7 +1387,7 @@ FAQ = {
     ],
     'rh_parole': [
         ("Qu'est-ce que « Les RH ont la parole » ?",
-         "« Les RH ont la parole » est une initiative d'UCIV Leadership qui permet aux jeunes d'échanger "
+         "« Les RH ont la parole » est un programme d'UCIV qui permet aux jeunes d'échanger "
          "directement avec des spécialistes des ressources humaines, à travers des panels, des échanges "
          "interactifs et des témoignages de professionnels."),
         ("Qu'apprend-on pendant le programme ?",
@@ -1508,7 +1483,7 @@ FAQ = {
 # Blocs d'une section : {'p': texte}, {'fiche': [(libellé, valeur), …]},
 # {'liste': [point, …]}, {'encadre': texte}.
 
-LEGAL_MAJ = '[jj/mm/aaaa]'
+LEGAL_MAJ = '6 novembre 2026'
 
 LEGAL_DOCUMENTS = [
     {'cle': 'mentions', 'label': 'Mentions légales', 'url': URL_MENTIONS, 'icone': 'scale',
@@ -1541,7 +1516,7 @@ LEGAL = {
             "obligatoires, en toute transparence."),
         'sections': [
             {'titre': 'Éditeur du site', 'blocs': [
-                {'p': "Le site uciv.ci [adresse à confirmer] est édité par Une Côte d'Ivoire "
+                {'p': "Le site https://uciv.org est édité par Une Côte d'Ivoire "
                       "Volontaire (UCIV), initiative citoyenne constituée en association de droit "
                       "ivoirien [forme juridique à confirmer]."},
                 {'fiche': [
@@ -1557,9 +1532,9 @@ LEGAL = {
             ]},
             {'titre': 'Hébergement', 'blocs': [
                 {'fiche': [
-                    ('Hébergeur', "[Nom de l'hébergeur]"),
-                    ('Adresse', "[Adresse postale de l'hébergeur]"),
-                    ('Site web', '[www.hebergeur.com]'),
+                    ('Hébergeur', 'Hostinger'),
+                    ('Adresse', 'Hostinger International Ltd., 61 Lordou Vironos Street, 6023 Larnaca'),
+                    ('Site web', 'https://www.hostinger.com/'),
                 ]},
             ]},
             {'titre': 'Conception et réalisation', 'blocs': [
@@ -1635,8 +1610,8 @@ LEGAL = {
             {'titre': 'Destinataires', 'blocs': [
                 {'p': "Seuls les membres de l'équipe UCIV chargés du suivi des demandes accèdent à "
                       "vos données. Elles peuvent être partagées avec un partenaire d'un programme "
-                      "uniquement avec votre accord préalable. Notre hébergeur [Nom de "
-                      "l'hébergeur] assure leur stockage technique."},
+                      "uniquement avec votre accord préalable. Notre hébergeur Hostinger assure "
+                      "leur stockage technique."},
             ]},
             {'titre': 'Durée de conservation', 'blocs': [
                 {'fiche': [

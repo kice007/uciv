@@ -63,8 +63,8 @@ class UcivLeadershipPageTests(TestCase):
     def test_launch_date_is_24_october(self):
         response = self.client.get(reverse('app:uciv_leadership'))
         self.assertContains(response, '24 octobre 2026')
-        self.assertContains(response, 'American Corner')
-        self.assertContains(response, 'Heure à confirmer')
+        self.assertContains(response, 'British Corner')
+        self.assertContains(response, 'En savoir plus')
         self.assertContains(self.client.get(reverse('app:home')), '24 octobre 2026')
 
     def test_home_links_to_leadership(self):
@@ -73,8 +73,8 @@ class UcivLeadershipPageTests(TestCase):
 
     def test_lancement_montre_les_deux_affiches(self):
         reponse = self.client.get(reverse('app:uciv_leadership'))
-        self.assertContains(reponse, 'affiche-leadership-orange.webp')
-        self.assertContains(reponse, 'affiche-leadership-jaune.webp')
+        self.assertContains(reponse, 'lancement_UCIV_leadership_2.webp')
+        self.assertContains(reponse, 'lancement_UCIV_leadership_1.webp')
 
 
 class QuiSommesNousPageTests(TestCase):
@@ -832,7 +832,7 @@ class ReferencementTests(TestCase):
         evenement = next(json.loads(b) for b in re.findall(r'<script type="application/ld\+json">(.*?)</script>', html, re.S)
                          if '"Event"' in b)
         self.assertEqual(evenement['startDate'], '2026-10-24')
-        self.assertEqual(evenement['location']['name'], 'American Corner')
+        self.assertEqual(evenement['location']['name'], 'British Corner · UFHB')
 
     def test_programs_declare_courses(self):
         for nom in ('go_du_digital', 'experience_lab'):
@@ -971,8 +971,8 @@ class GeoTests(TestCase):
 
     def test_faq_facts_match_site_data(self):
         faq_lead = dict(content.FAQ['uciv_leadership'])
-        self.assertIn('24 octobre 2026', faq_lead["Quand a lieu le lancement d'UCIV Leadership ?"])
-        self.assertIn('30 et 50', faq_lead['Combien de membres compte la cohorte pionnière ?'])
+        self.assertIn('24 octobre au British Corner à UFH', faq_lead['Quand a eu lieu le lancement de UCIV Leadership ?'])
+        self.assertIn('30 et 50', faq_lead['Combien comportera la cohorte pionnière ?'])
         faq_contact = ' '.join(dict(content.FAQ['contact']).values())
         for coordonnee in ('+225 07 87 56 17 66', '+225 07 07 722 078', 'organisationuciv@gmail.com', '04 BP 2087'):
             self.assertIn(coordonnee, faq_contact)
@@ -1032,7 +1032,8 @@ class PagesLegalesTests(TestCase):
 
     def test_texte_a_completer_signale(self):
         response = self.client.get(reverse('app:mentions_legales'))
-        self.assertContains(response, '<span class="a-completer">[Nom de l&#x27;hébergeur]</span>', html=False)
+        self.assertContains(response, 'https://uciv.org')
+        self.assertContains(response, 'Hostinger')
 
     def test_pied_de_page_relie_les_pages_legales(self):
         response = self.client.get(reverse('app:home'))
@@ -1526,12 +1527,18 @@ class MiseAJourOctobreTests(TestCase):
             self.assertContains(response, 'Notre conviction')
             self.assertContains(response, '/contact/?objet=Programme#ecrire')
 
-    def test_leadership_programmes_are_linked(self):
+    def test_uciv_programmes_are_separate_from_leadership_poles(self):
         urls = [reverse('app:vision_action'), reverse('app:rh_parole')]
-        for nom in ('uciv_leadership', 'nos_programmes', 'home'):
+        for nom in ('nos_programmes', 'home'):
             html = self.client.get(reverse('app:' + nom)).content.decode()
             for url in urls:
                 self.assertIn(f'href="{url}"', html, f'{url} absent de {nom}')
+        html_leadership = self.client.get(reverse('app:uciv_leadership')).content.decode()
+        section_poles = html_leadership.split('id="programmes-du-reseau"', 1)[1].split('</section>', 1)[0]
+        for url in urls:
+            self.assertNotIn(f'href="{url}"', section_poles, f'{url} ne doit pas figurer parmi les pôles')
+        for pole in ('Projet universitaire', 'Cercle des leaders', "Jeunes porteurs d'idée"):
+            self.assertIn(pole, section_poles)
 
     def test_key_figures_are_published(self):
         self.assertEqual(Indicateur.objects.get(libelle='Jeunes mobilisés').valeur_affichee, '+1 800')

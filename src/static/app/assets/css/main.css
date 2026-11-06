@@ -772,6 +772,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
   padding-top: 24px; border-top: 1px solid rgba(255, 255, 255, .15);
   color: rgba(255, 255, 255, .6); font-size: 13.5px;
 }
+.pied__bas-liens { display: flex; flex-direction: column; gap: 18px; }
 .pied__reseaux, .pied__mentions { display: flex; flex-wrap: wrap; gap: 10px 22px; }
 .pied__reseaux { gap: 10px; }
 .pied__reseaux a { display: block; padding: 8px 16px; border: 1px solid rgba(255, 255, 255, .25); border-radius: 999px; color: var(--blanc); font-weight: 600; transition: background-color 200ms ease, color 200ms ease; }
@@ -780,7 +781,8 @@ button { font: inherit; color: inherit; cursor: pointer; }
   .pied { padding-block: 96px 36px; }
   .pied__accroche { flex-direction: row; align-items: flex-end; justify-content: space-between; padding-bottom: 64px; }
   .pied__colonnes { grid-template-columns: 1fr 1fr; gap: 48px 32px; padding-block: 64px; }
-  .pied__bas { flex-direction: row; align-items: center; justify-content: space-between; }
+  .pied__bas { align-items: stretch; }
+  .pied__bas-liens { flex-direction: row; align-items: center; justify-content: space-between; }
 }
 @media (min-width: 1100px) {
   .pied__colonnes { grid-template-columns: 280px repeat(3, minmax(0, 1fr)) 300px; }
@@ -947,13 +949,13 @@ button { font: inherit; color: inherit; cursor: pointer; }
 }
 .lead-pole__icone { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%; background: var(--jaune); color: var(--encre); }
 .lead-pole__icone .icon { width: 24px; height: 24px; }
-.lead-pole h3 { font-family: var(--f-titre); font-weight: 800; font-size: 24px; line-height: 1.1; letter-spacing: -.02em; }
+.lead-pole h3 { color: var(--encre); font-family: var(--f-titre); font-weight: 800; font-size: 24px; line-height: 1.1; letter-spacing: -.02em; }
 .lead-pole__pour { color: var(--orange-fonce); font-size: 14px; font-weight: 700; line-height: 1.4; }
 .lead-pole__texte { color: var(--texte); font-size: 15px; line-height: 1.55; }
 .lead-pole__tarifs { display: flex; flex-wrap: wrap; gap: 10px 24px; margin-top: auto; padding-top: 18px; border-top: 1px solid var(--filet); }
 .lead-pole__tarifs div { display: flex; flex-direction: column; gap: 2px; }
-.lead-pole__tarifs dt { color: var(--texte); font-size: 11px; font-weight: 700; letter-spacing: 1.4px; text-transform: uppercase; }
-.lead-pole__tarifs dd { font-family: var(--f-titre); font-size: 18px; font-weight: 800; letter-spacing: -.02em; }
+.lead-pole__tarifs dt { color: var(--encre); font-size: 11px; font-weight: 700; letter-spacing: 1.4px; text-transform: uppercase; }
+.lead-pole__tarifs dd { color: var(--encre); font-family: var(--f-titre); font-size: 18px; font-weight: 800; letter-spacing: -.02em; }
 @media (min-width: 720px) { .lead-poles { grid-template-columns: repeat(2, 1fr); } }
 @media (min-width: 1100px) { .lead-poles { grid-template-columns: repeat(3, 1fr); gap: 20px; } }
 
@@ -1008,11 +1010,12 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .lead-infos { display: flex; flex-wrap: wrap; gap: 10px; margin: 28px 0 32px; }
 .lead-infos li { padding: 10px 18px; border-radius: 999px; box-shadow: inset 0 0 0 1.5px var(--filet); font-size: 14px; font-weight: 600; }
 .lead-infos .lead-infos__principale { background: var(--encre); color: var(--blanc); box-shadow: none; }
-.lead-lancement__visuel { position: relative; max-width: 520px; width: 100%; aspect-ratio: 520 / 420; margin-inline: auto; }
-/* Deux affiches qui se chevauchent, légèrement inclinées (cotes de la maquette : cadre 520 x 420) */
+.lead-lancement__facebook { margin-left: 8px; }
+.lead-lancement__visuel { position: relative; max-width: 520px; width: 100%; aspect-ratio: 520 / 560; margin-inline: auto; }
+/* Deux photos de l'événement présentées en diptyque. */
 .lead-lancement__visuel img { position: absolute; height: auto; object-fit: cover; border-radius: 24px; box-shadow: 0 18px 40px rgba(14, 40, 25, .16); }
-.lead-lancement__premiere { left: 0; top: 5.48%; width: 52.5%; aspect-ratio: 273 / 357; transform: rotate(4deg); }
-.lead-lancement__seconde { left: 44.42%; top: 2.38%; width: 55.58%; aspect-ratio: 289 / 384; transform: rotate(-3deg); }
+.lead-lancement__premiere { left: 0; top: 7%; width: 52%; aspect-ratio: 3 / 4; transform: rotate(-3deg); }
+.lead-lancement__seconde { left: 47%; top: 12%; width: 52%; aspect-ratio: 3 / 4; transform: rotate(3deg); }
 .lead-lancement__disque { z-index: -1; right: -28px; bottom: -28px; width: 70%; aspect-ratio: 1; background: var(--jaune); opacity: .5; }
 @media (min-width: 900px) {
   .lead-lancement__grille { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(40px, 6vw, 96px); }
@@ -2386,7 +2389,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
   .pied__liens ul { gap: 14px; }
   .pied__liens li { line-height: 20px; }
   .lettre { padding: 28px; }
-  .pied__bas { gap: 20px; }
+  .pied__bas, .pied__bas-liens { gap: 20px; }
   .pied__bas p, .pied__reseaux a, .pied__mentions li { line-height: 17px; }
   .pied__mentions { flex-direction: column; gap: 22px; }
 
@@ -2871,11 +2874,8 @@ button { font: inherit; color: inherit; cursor: pointer; }
 }
 
 /* 28. Mise à jour d'octobre 2026 (consignes UCIV) ---------------------------------------------
-   Témoignages, galerie, programmes d'UCIV Leadership, photos des partenaires, équipe par rôle,
+   Témoignages, galerie, pôles d'UCIV Leadership, photos des partenaires, équipe par rôle,
    pages « De la vision à l'action » et « Les RH ont la parole », recherche. Valeurs de la maquette (1440 / 390 px). */
-
-/* Menu : programmes rattachés à UCIV Leadership, en retrait */
-.sousmenu .est-sous-programme a, .menu-mobile__sous .est-sous-programme a { padding-left: 32px; font-size: .94em; }
 
 /* UCIV Leadership : nouvelle couverture (photo détourée 780 x 414 collée au bas du hero) et plaque du logo */
 .lead-hero__logo { width: 230px; padding: 16px 20px; border-radius: 18px; background: var(--vert-profond); }
@@ -2954,45 +2954,8 @@ button { font: inherit; color: inherit; cursor: pointer; }
   .galerie__photo--bas { grid-column: span 3; height: min(20.8vw, 300px); }
 }
 
-/* UCIV Leadership : « Les programmes d'UCIV Leadership » */
-.lead-programmes__liste { display: grid; gap: 24px; }
-.lead-prog__lien {
-  display: flex; flex-direction: column; height: 100%; overflow: hidden; border-radius: var(--rayon-lg);
-  background: var(--creme); color: var(--encre); transition: transform 200ms var(--ease-out);
-}
-.lead-prog__lien:active { transform: scale(.99); }
-.lead-prog__visuel { display: block; height: 220px; }
-.lead-prog__visuel img { width: 100%; height: 100%; object-fit: cover; object-position: center 30%; }
-.lead-prog__texte { display: flex; flex: 1; flex-direction: column; align-items: flex-start; gap: 16px; padding: 28px 24px 32px; }
-.lead-prog__tag {
-  padding: 6px 12px; border-radius: 999px; background: var(--jaune);
-  font-size: 11px; font-weight: 700; letter-spacing: 1.4px; text-transform: uppercase;
-}
-.lead-prog__nom { font-family: var(--f-titre); font-weight: 800; font-size: clamp(28px, 2.4vw, 34px); letter-spacing: -.8px; line-height: 1.05; }
-.lead-prog__accroche { font-family: var(--f-accent); font-style: italic; font-size: clamp(20px, 1.7vw, 24px); line-height: 1.2; color: var(--orange-fonce); }
-.lead-prog__desc { color: var(--texte); font-size: 16px; line-height: 1.6; }
-.lead-prog .lien-fleche { margin-top: auto; padding-top: 8px; color: var(--vert-profond); }
-@media (min-width: 900px) {
-  .lead-programmes__liste { grid-template-columns: 1fr 1fr; }
-  .lead-prog__visuel { height: 320px; }
-  .lead-prog__texte { padding: 36px 40px 40px; }
-}
-@media (hover: hover) and (pointer: fine) {
-  .lead-prog__lien:hover .lien-fleche .icon { transform: translateX(3px); }
-}
-
-/* Nos programmes : programmes rattachés à UCIV Leadership */
-.np-sous { margin-top: 20px; }
-.np-sous__label { color: var(--orange-fonce); font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; }
-.np-sous__liens { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
-.np-sous__liens a {
-  display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 999px;
-  box-shadow: inset 0 0 0 1px rgba(23, 18, 12, .2); font-size: 14px; font-weight: 700;
-  transition: background-color 200ms ease;
-}
-.np-sous__liens .icon { width: 16px; height: 16px; }
-.np-sous + .btn { margin-top: 28px; }
-@media (hover: hover) and (pointer: fine) { .np-sous__liens a:hover { background: var(--creme); } }
+/* UCIV Leadership : ses trois pôles */
+.lead-candidater--seul { margin-top: 0; }
 
 /* Partenaires : photo de la collaboration, nom en dessous */
 .carte-partenaire--photo { gap: 0; padding: 0; overflow: hidden; }
@@ -3041,7 +3004,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
   .eq-groupe--ambassadrices .texte { max-width: 420px; }
 }
 
-/* Pages des programmes d'UCIV Leadership */
+/* Pages des programmes d'UCIV */
 .pl-hero--profond { background: var(--vert-profond); }
 .titre em.pl-vert { color: var(--vert); }
 .pl-apropos__grille { display: grid; gap: 28px; }
@@ -3167,7 +3130,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
   .np-hero__chapo { max-width: calc(600 * var(--u)); }
   .np-hero__note { left: calc(1010 * var(--u)); top: calc(300 * var(--u)); rotate: -8deg; font-size: calc(46 * var(--u)); }
 
-  /* Les Go du Digital, Experience Lab, programmes d'UCIV Leadership : 640 de haut, photo ronde 480 en (790, 120).
+  /* Les Go du Digital, Experience Lab, programmes d'UCIV : 640 de haut, photo ronde 480 en (790, 120).
      Le bloc visuel (540) commence en (760, 90) ; note ancrée à (10, -34) ou (40, -34) de ce bloc, 5°. */
   .gd-hero__grille { min-height: calc(640 * var(--u)); }
   .gd-hero__note { left: calc(40 * var(--u)); top: calc(-34 * var(--u)); rotate: -5deg; font-size: calc(40 * var(--u)); }

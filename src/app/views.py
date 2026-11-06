@@ -76,8 +76,8 @@ def uciv_leadership(request):
 
 
 def programme_leadership(request, cle):
-    """Page d'un programme d'UCIV Leadership (« De la vision à l'action », « Les RH ont la parole »)."""
-    return render(request, 'app/layout/programme_leadership.html', {'pl': content.PROGRAMMES_LEADERSHIP[cle]})
+    """Page d'un programme d'UCIV (« De la vision à l'action », « Les RH ont la parole »)."""
+    return render(request, 'app/layout/programme_leadership.html', {'pl': content.PROGRAMMES_UCIV[cle]})
 
 
 def qui_sommes_nous(request):

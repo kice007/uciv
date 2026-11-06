@@ -80,46 +80,16 @@
   </div>
 </section>
 
-{# ------------------------------------------------- Programmes du réseau #}
+{# ----------------------------------------------------- Pôles du réseau #}
 <section class="section section--sombre lead-programmes" id="programmes-du-reseau">
   <div class="conteneur">
     <div class="entete-section" data-reveal>
       <div>
-        <p class="surtitre surtitre--jaune">Les programmes d'UCIV Leadership</p>
-        <h2 class="titre titre--52 titre--clair">Deux rendez-vous <em>pour passer à l'action.</em></h2>
+        <p class="surtitre surtitre--jaune">UCIV Leadership</p>
+        <h2 class="titre titre--52 titre--clair">Trois pôles <em>pour grandir et agir.</em></h2>
       </div>
-      <p class="texte texte--clair">{{ leadership.programmes_intro }}</p>
+      <p class="texte texte--clair">{{ leadership.rejoindre_intro }}</p>
     </div>
-    <ul class="lead-programmes__liste">
-      {% for p in leadership.programmes %}
-        <li class="lead-prog" data-reveal style="--i: {{ forloop.counter0 }}">
-          <a class="lead-prog__lien" href="{{ p.url }}">
-            <span class="lead-prog__visuel"><img src="{% static p.image %}" alt="{{ p.image_alt }}" loading="lazy"></span>
-            <span class="lead-prog__texte">
-              <span class="lead-prog__tag">{{ p.etiquette }}</span>
-              <span class="lead-prog__nom">{{ p.nom }}</span>
-              <span class="lead-prog__accroche">{{ p.accroche }}</span>
-              <span class="lead-prog__desc">{{ p.texte }}</span>
-              <span class="lien-fleche">Découvrir le programme{% include "app/includes/_icon.html" with name="arrow-right" %}</span>
-            </span>
-          </a>
-        </li>
-      {% endfor %}
-    </ul>
-  </div>
-</section>
-
-{# ---------------------------------------------------- Rejoindre le réseau #}
-<section class="section section--blanc lead-reseau" id="rejoindre">
-  <div class="conteneur">
-    <div class="entete-section" data-reveal>
-      <div>
-        <p class="surtitre">Rejoindre UCIV Leadership</p>
-        <h2 class="titre titre--52">Choisis le pôle <em>qui te correspond.</em></h2>
-      </div>
-      <p class="texte">{{ leadership.rejoindre_intro }}</p>
-    </div>
-
     <ul class="lead-poles">
       {% for pole in leadership.poles %}
         <li class="lead-pole" data-reveal style="--i: {{ forloop.counter0 }}">
@@ -134,8 +104,14 @@
         </li>
       {% endfor %}
     </ul>
+  </div>
+</section>
 
-    <div class="lead-candidater">
+{# ---------------------------------------------------- Rejoindre le réseau #}
+<section class="section section--blanc lead-reseau" id="rejoindre">
+  <div class="conteneur">
+    <div class="lead-candidater lead-candidater--seul">
+      <p class="surtitre" data-reveal>Rejoindre UCIV Leadership</p>
       <h3 class="lead-candidater__titre" data-reveal>{{ leadership.candidater_titre }}</h3>
       <ol class="lead-etapes lead-etapes--3">
         {% for etape in leadership.candidater %}
@@ -229,13 +205,17 @@
         <span>Rejoindre UCIV Leadership</span>
         <span class="btn__rond">{% include "app/includes/_icon.html" with name="arrow-right" %}</span>
       </a>
+      <a class="btn btn--encre lead-lancement__facebook" href="{{ leadership.url_lancement_facebook }}" target="_blank" rel="noopener noreferrer">
+        <span>En savoir plus</span>
+        <span class="btn__rond">{% include "app/includes/_icon.html" with name="arrow-right" %}</span>
+      </a>
     </div>
     <div class="lead-lancement__visuel" data-reveal="image">
       <span class="forme lead-lancement__disque" aria-hidden="true"></span>
-      <img class="lead-lancement__premiere" src="{% static 'app/assets/img/affiche-leadership-orange.webp' %}" width="1400" height="1560"
-           loading="lazy" alt="Affiche d'UCIV Leadership : un jeune homme en costume, « Un leader n'attend pas le pouvoir pour agir ».">
-      <img class="lead-lancement__seconde" src="{% static 'app/assets/img/affiche-leadership-jaune.webp' %}" width="1400" height="1561"
-           loading="lazy" alt="Affiche d'UCIV Leadership : une jeune femme lève les poings, « Un mois à retenir : octobre 2026 ».">
+      <img class="lead-lancement__premiere" src="{% static 'app/assets/img/lancement_UCIV_leadership_2.webp' %}" width="1400" height="2100"
+           loading="lazy" alt="Un intervenant s'exprime devant les participants au lancement d'UCIV Leadership au British Corner.">
+      <img class="lead-lancement__seconde" src="{% static 'app/assets/img/lancement_UCIV_leadership_1.webp' %}" width="1400" height="2100"
+           loading="lazy" alt="Une participante assiste au lancement d'UCIV Leadership au British Corner.">
     </div>
   </div>
 </section>

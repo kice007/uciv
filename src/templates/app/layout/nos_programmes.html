@@ -73,14 +73,6 @@
           <h2>{{ p.titre }}</h2>
           <p class="np-programme__accroche">{{ p.accroche }}</p>
           <p class="texte">{{ p.texte }}</p>
-          {% if p.sous_programmes %}
-            <div class="np-sous">
-              <p class="np-sous__label">Au sein du réseau</p>
-              <ul class="np-sous__liens">
-                {% for sp in p.sous_programmes %}<li><a href="{{ sp.url }}">{{ sp.label }}{% include "app/includes/_icon.html" with name="arrow-up-right" %}</a></li>{% endfor %}
-              </ul>
-            </div>
-          {% endif %}
           <a class="btn btn--{{ p.bouton }}" href="{{ p.url }}">
             <span>{{ p.lien_label }}</span>
             <span class="btn__rond">{% include "app/includes/_icon.html" with name="arrow-right" %}</span>

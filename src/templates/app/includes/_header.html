@@ -29,7 +29,7 @@
             {% if item.enfants %}
               <ul class="sousmenu">
                 {% for enfant in item.enfants %}
-                  <li{% if enfant.niveau == 2 %} class="est-sous-programme"{% endif %}><a href="{{ enfant.url }}">{{ enfant.label }}</a></li>
+                  <li><a href="{{ enfant.url }}">{{ enfant.label }}</a></li>
                 {% endfor %}
               </ul>
             {% endif %}
@@ -72,7 +72,7 @@
             {% if item.enfants %}
               <ul class="menu-mobile__sous">
                 {% for enfant in item.enfants %}
-                  <li{% if enfant.niveau == 2 %} class="est-sous-programme"{% endif %}><a href="{{ enfant.url }}">{{ enfant.label }}</a></li>
+                  <li><a href="{{ enfant.url }}">{{ enfant.label }}</a></li>
                 {% endfor %}
               </ul>
             {% endif %}

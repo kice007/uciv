@@ -78,17 +78,19 @@
     </div>
 
     <div class="pied__bas">
-      <p>© {% now "Y" %} Une Côte d'Ivoire Volontaire (UCIV)</p>
-      <ul class="pied__reseaux">
-        {% for reseau in reseaux %}
-          <li><a href="{{ reseau.url }}" target="_blank" rel="noopener">{{ reseau.label }}</a></li>
-        {% endfor %}
-      </ul>
-      <ul class="pied__mentions">
-        {% for mention in mentions %}
-          <li><a href="{{ mention.url }}">{{ mention.label }}</a></li>
-        {% endfor %}
-      </ul>
+      <div class="pied__bas-liens">
+        <ul class="pied__mentions">
+          {% for mention in mentions %}
+            <li><a href="{{ mention.url }}">{{ mention.label }}</a></li>
+          {% endfor %}
+        </ul>
+        <ul class="pied__reseaux">
+          {% for reseau in reseaux %}
+            <li><a href="{{ reseau.url }}" target="_blank" rel="noopener">{{ reseau.label }}</a></li>
+          {% endfor %}
+        </ul>
+      </div>
+      <p class="pied__copyright">© {% now "Y" %} Une Côte d'Ivoire Volontaire (UCIV)</p>
     </div>
   </div>
 </footer>

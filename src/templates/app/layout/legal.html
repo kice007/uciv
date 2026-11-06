@@ -41,7 +41,7 @@
             {% elif bloc.fiche %}
               <dl class="leg-fiche">
                 {% for libelle, valeur in bloc.fiche %}
-                  <div><dt>{{ libelle }}</dt><dd>{{ valeur|crochets }}</dd></div>
+                  <div><dt>{{ libelle }}</dt><dd>{% if libelle == 'Site web' %}<a href="{{ valeur }}" target="_blank" rel="noopener noreferrer">{{ valeur }}</a>{% else %}{{ valeur|crochets }}{% endif %}</dd></div>
                 {% endfor %}
               </dl>
             {% elif bloc.liste %}
