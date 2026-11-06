@@ -1010,7 +1010,9 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .lead-infos { display: flex; flex-wrap: wrap; gap: 10px; margin: 28px 0 32px; }
 .lead-infos li { padding: 10px 18px; border-radius: 999px; box-shadow: inset 0 0 0 1.5px var(--filet); font-size: 14px; font-weight: 600; }
 .lead-infos .lead-infos__principale { background: var(--encre); color: var(--blanc); box-shadow: none; }
-.lead-lancement__facebook { margin-left: 8px; }
+.lead-lancement__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.lead-lancement__actions .btn { justify-content: space-between; }
+.lead-lancement__actions .btn > span:first-child { white-space: normal; }
 .lead-lancement__visuel { position: relative; max-width: 520px; width: 100%; aspect-ratio: 520 / 560; margin-inline: auto; }
 /* Deux photos de l'événement présentées en diptyque. */
 .lead-lancement__visuel img { position: absolute; height: auto; object-fit: cover; border-radius: 24px; box-shadow: 0 18px 40px rgba(14, 40, 25, .16); }
@@ -2567,6 +2569,8 @@ button { font: inherit; color: inherit; cursor: pointer; }
   .lead-lancement .surtitre { margin-bottom: 24px; }
   .lead-infos { gap: 8px; margin: 24px 0 34px; }
   .lead-infos li { padding-block: 8px; }
+  .lead-lancement__actions { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .lead-lancement__actions .btn { width: fit-content; max-width: 100%; min-height: 56px; }
   .lead-lancement__visuel { aspect-ratio: 350 / 283; max-width: 350px; }
   .lead-lancement__visuel img { border-radius: 16px; }
   .lead-lancement__premiere { top: 5.3%; width: 52.57%; aspect-ratio: 184 / 240; }

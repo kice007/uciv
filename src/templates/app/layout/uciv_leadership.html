@@ -201,14 +201,16 @@
           <li{% if forloop.first %} class="lead-infos__principale"{% endif %}>{{ info }}</li>
         {% endfor %}
       </ul>
-      <a class="btn btn--encre" href="{{ leadership.url_rejoindre }}">
-        <span>Rejoindre UCIV Leadership</span>
-        <span class="btn__rond">{% include "app/includes/_icon.html" with name="arrow-right" %}</span>
-      </a>
-      <a class="btn btn--encre lead-lancement__facebook" href="{{ leadership.url_lancement_facebook }}" target="_blank" rel="noopener noreferrer">
-        <span>En savoir plus</span>
-        <span class="btn__rond">{% include "app/includes/_icon.html" with name="arrow-right" %}</span>
-      </a>
+      <div class="lead-lancement__actions">
+        <a class="btn btn--encre" href="{{ leadership.url_rejoindre }}">
+          <span>Rejoindre UCIV Leadership</span>
+          <span class="btn__rond">{% include "app/includes/_icon.html" with name="arrow-right" %}</span>
+        </a>
+        <a class="btn btn--encre lead-lancement__facebook" href="{{ leadership.url_lancement_facebook }}" target="_blank" rel="noopener noreferrer">
+          <span>En savoir plus</span>
+          <span class="btn__rond">{% include "app/includes/_icon.html" with name="arrow-right" %}</span>
+        </a>
+      </div>
     </div>
     <div class="lead-lancement__visuel" data-reveal="image">
       <span class="forme lead-lancement__disque" aria-hidden="true"></span>
