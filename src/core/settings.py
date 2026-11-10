@@ -57,6 +57,7 @@ LOCAL_APPS = [
 INSTALLED_APPS = DJANGO_APPS + LOCAL_APPS
 
 MIDDLEWARE = [
+    'app.mesure.MesureMiddleware',   # en premier : voit aussi les erreurs 400 des middlewares suivants
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -65,6 +66,9 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+# Mesure d'audience sans cookie et suivi des attaques (voir app/mesure.py) ; MESURE_ACTIVE=False les désactive.
+MESURE_ACTIVE = config('MESURE_ACTIVE', default=True, cast=bool)
 
 ROOT_URLCONF = 'core.urls'
 

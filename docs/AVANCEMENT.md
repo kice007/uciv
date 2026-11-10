@@ -1,7 +1,7 @@
 ﻿# Avancement du projet UCIV
 
 Point de reprise : ce qui est fait, ce qui ne l'est pas, et par où continuer.
-Dernière mise à jour : 5 novembre 2026.
+Dernière mise à jour : 10 novembre 2026.
 
 Documents liés : [PLAN.md](PLAN.md) (ce qu'il faut construire),
 [ARCHITECTURE.md](ARCHITECTURE.md) (structure), [CLAUDE.md](../CLAUDE.md) (règles agents),
@@ -20,10 +20,22 @@ Documents liés : [PLAN.md](PLAN.md) (ce qu'il faut construire),
 | Formulaires | 4 faits : engagement, partenariat, contact, lettre d'information (pied de page) |
 | Responsive mobile (390 px) | **Fait pour les 15 pages**, aligné sur les écrans « … — Mobile » de la maquette ; tablette déduite (720–1099 px) |
 | Dashboard de l'équipe | **Maquette faite et validée** (desktop et mobile, branche `feature/dashboard`) ; implémentation pas commencée |
+| Statistiques et sécurité (back-office) | **Faites, pas encore en ligne** : visites, temps passé, provenances, appareils, attaques vues par le site |
 | Documentation | Faite (voir ci-dessus) |
 | Mise en ligne | **En ligne sur https://uciv.org** (19 octobre 2026) ; compte administrateur et durcissement du serveur à faire |
 
 ## Ce qui est fait
+
+### Statistiques de visites et suivi des attaques (10 novembre 2026, pas encore commité)
+- **Mesure d'audience sans cookie ni service tiers** (`app/mesure.py`, middleware placé en premier de `MIDDLEWARE`) : pages vues, visiteurs, provenance (domaine seulement), appareil. Le visiteur est un code anonyme (SHA-256 de l'IP, du navigateur, du jour et de `SECRET_KEY`) qui change chaque jour : l'IP n'est pas conservée. Ne sont pas comptés : robots, équipe connectée, administration, fichiers, personnes avec Do Not Track ou Global Privacy Control. Plafond de 600 pages par visiteur et par jour.
+- **Temps passé** : `main.js` (section 8) envoie le temps visible de l'onglet avec `navigator.sendBeacon` vers `/mesure/duree/` (vue `mesure_duree`, POST seulement, même origine, plafonné à 30 min par page et 120 envois par IP et par 10 min).
+- **Attaques** (`EvenementSecurite`, avec adresse IP, 90 jours) : sondes (WordPress, `.env`, phpMyAdmin… sur des adresses 404), tentatives d'injection (détectées aussi encodées en URL), trop de demandes (429), champs pièges remplis, échecs de connexion à l'administration (l'identifiant saisi n'est jamais enregistré), requêtes refusées 400/403. Au plus 30 événements par IP et par heure.
+- **Deux pages dans le back-office**, menu « Suivi » : *Statistiques* (`/back-office/app/visite/`) et *Sécurité* (`/back-office/app/evenementsecurite/`), lecture seule, périodes 7 / 30 / 90 jours (`app/statistiques.py`, `templates/admin/uciv/`, styles dans `admin.css`).
+- **Conservation** : commande `purger_statistiques` (visites 395 jours, événements 90 jours), lancée chaque jour par `/etc/cron.d/uciv-purge` que crée `deploy/deployer.sh`. `MESURE_ACTIVE=False` désactive tout.
+- **Politique de confidentialité** : nouvelle section « Mesure d'audience » et paragraphe sur l'enregistrement des attaques (à faire relire par UCIV).
+- **Limite assumée** : le tableau ne voit pas les attaques contre le serveur lui-même (SSH, scan de ports) ; elles se bloquent avec fail2ban et le pare-feu (non installés, en attente de l'accord d'UCIV).
+- Migration `0016_mesure_audience_securite`. Tests : `MesureAudienceTests`, `TempsPasseTests`, `SuiviDesAttaquesTests`, `PagesStatistiquesAdminTests`, `PurgeDesStatistiquesTests` (suite complète : 258 tests).
+- Deux tests déjà en échec sur le dernier commit corrigés au passage (apostrophes échappées dans un test ; descriptions SEO de Nos programmes et UCIV Leadership ramenées à 160 caractères).
 
 
 ### UCIV Leadership : trois pôles et candidature (5 novembre 2026)
@@ -380,6 +392,8 @@ Quatre branches empilées, chacune partie de la précédente, fusionnées en une
    production (migrations `0010` et `0011`). À confirmer avec UCIV : logo Leadership, Emmanuel Fieni Kouassi (retiré
    de l'équipe, pas de photo), prénom de « Goho Auxane », 4ᵉ partenaire, logos des partenaires, témoignages des
    autres programmes, dates des 2 nouveaux programmes.
+
+0bis. **Mettre en ligne les statistiques** : commiter, pousser et redéployer (applique la migration `0016` et le cron de purge). Ensuite : durcir le serveur (fail2ban, pare-feu `ufw`, SSH par clé seulement après test de connexion par clé depuis un second terminal), et remplacer la clé SMTP Brevo exposée dans une conversation.
 
 1. **Créer le compte administrateur** sur le serveur : `ssh -t uciv-vps uciv-manage createsuperuser` (les migrations sont appliquées, les 4 branches fusionnées).
 2. **Implémenter le dashboard de l'équipe** à partir de la maquette validée (nouvelle branche partie de `feature/dashboard`) : connexion, tableau de bord, gestion des articles, opportunités, ressources et chiffres d'impact, messages reçus, abonnés.

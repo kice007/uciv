@@ -819,3 +819,49 @@ body.uciv-admin .titles-and-tools:not(:has(h1, h2)) { display: none; }
 
 @media (min-width: 768px) { .retour--mobile { display: none; } }
 @media (max-width: 599px) { .tb__chiffres { gap: 12px; } }
+
+
+/* Statistiques et Sécurité : chiffres, graphique en barres, classements --------------------------------------------------- */
+.stats__chiffres { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; margin-bottom: 20px; }
+.stats__graphique { margin-bottom: 20px; }
+.stats__legende { display: flex; align-items: center; gap: 8px; margin: 0; color: var(--uciv-texte); font-size: 13px; }
+.pastille-couleur { display: inline-block; width: 10px; height: 10px; border-radius: 50%; }
+.pastille-couleur--orange { background: var(--uciv-orange); }
+.pastille-couleur--vert { margin-left: 10px; background: var(--uciv-vert); }
+.barres { display: flex; align-items: stretch; gap: 3px; height: 190px; margin-top: 12px; padding-bottom: 2px; border-bottom: 1px solid var(--uciv-trait); }
+.barres__col { position: relative; flex: 1 1 0; min-width: 0; }
+.barres__col:hover { background: var(--uciv-creme); }
+.barres__barre { position: absolute; bottom: 0; left: 50%; min-height: 2px; border-radius: 4px 4px 0 0; transform: translateX(-50%); }
+.barres__barre--orange { width: 78%; background: var(--uciv-orange); }
+.barres__barre--vert { width: 38%; background: var(--uciv-vert); }
+.barres__barre--fonce { width: 78%; background: var(--uciv-orange-fonce); }
+.barres__axe { display: flex; justify-content: space-between; margin: 8px 0 0; color: var(--uciv-texte); font-size: 12.5px; }
+.stats__rang { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 20px; align-items: start; margin-bottom: 20px; }
+.stats__colonne { display: grid; gap: 20px; }
+.carte__titre--espace { margin-top: 30px; }
+.rang { margin-bottom: 14px; }
+.rang:last-child { margin-bottom: 0; }
+.rang__ligne { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 6px; font-size: 14px; }
+.rang__nom { min-width: 0; overflow: hidden; color: var(--uciv-encre); font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
+.rang__valeur { flex: none; color: var(--uciv-texte); font-size: 13px; }
+.rang__piste { height: 8px; border-radius: 999px; background: var(--uciv-sable); overflow: hidden; }
+.rang__piste span { display: block; height: 100%; min-width: 3px; border-radius: 999px; background: var(--uciv-orange); }
+.ip { display: grid; gap: 2px; padding: 11px 0; border-top: 1px solid var(--uciv-trait); font-size: 14px; }
+.ip:first-of-type { border-top: 0; padding-top: 0; }
+.ip strong { color: var(--uciv-encre); font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 14px; }
+.ip span { color: var(--uciv-texte); font-size: 13px; }
+.ip__genres { color: var(--uciv-orange-fonce) !important; font-weight: 600; }
+.stats__journal-titre { margin: 0; padding: 22px 24px 14px; }
+.stats__table-defile { overflow-x: auto; }
+.stats__table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.stats__table th { padding: 10px 24px; background: var(--uciv-creme); color: var(--uciv-texte); font-size: 12.5px; font-weight: 700; letter-spacing: .6px; text-align: left; text-transform: uppercase; white-space: nowrap; }
+.stats__table td { padding: 11px 24px; border-top: 1px solid var(--uciv-trait); color: var(--uciv-encre); vertical-align: top; white-space: nowrap; }
+.stats__table .stats__chemin { max-width: 320px; overflow: hidden; text-overflow: ellipsis; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 13px; }
+@media (max-width: 1100px) {
+  .stats__chiffres { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .stats__rang { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 560px) {
+  .stats__chiffres { grid-template-columns: minmax(0, 1fr); }
+  .barres { height: 150px; gap: 1px; }
+}

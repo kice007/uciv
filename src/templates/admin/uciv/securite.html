@@ -1,0 +1,92 @@
+{% extends "admin/base_site.html" %}
+
+{# Sécurité : attaques et comportements suspects vus par le site (sondes, injections, trop de demandes, robots piégés, échecs de connexion). #}
+{% block bodyclass %}uciv-admin liste page-statistiques{% endblock %}
+{% block content_title %}{% endblock %}
+{% block content_subtitle %}{% endblock %}
+{% block object-tools %}{% endblock %}
+
+{% block content %}
+<header class="entete-page">
+  <div class="entete-page__textes">
+    <h1>Sécurité</h1>
+    <p>Les attaques vues par le site. Les adresses IP sont conservées 90 jours au plus.</p>
+  </div>
+</header>
+
+{% include "admin/uciv/_periodes.html" %}
+
+<section class="stats__chiffres" aria-label="Chiffres clés">
+  <article class="carte chiffre"><div class="chiffre__haut"><p>Événements</p></div><p class="chiffre__valeur">{{ total }}</p><p class="chiffre__sous">sur {{ jours }} jours</p></article>
+  <article class="carte chiffre"><div class="chiffre__haut"><p>Dernières 24 heures</p></div><p class="chiffre__valeur">{{ dernieres_24h }}</p><p class="chiffre__sous">attaques ou sondes</p></article>
+  <article class="carte chiffre"><div class="chiffre__haut"><p>Adresses distinctes</p></div><p class="chiffre__valeur">{{ adresses_distinctes }}</p><p class="chiffre__sous">sources différentes</p></article>
+  <article class="carte chiffre"><div class="chiffre__haut"><p>Types vus</p></div><p class="chiffre__valeur">{{ types|length }}</p><p class="chiffre__sous">sur 6 types surveillés</p></article>
+</section>
+
+<p class="bandeau"><svg class="a-ico"><use href="#a-alerte"/></svg>Ce tableau montre ce que voit le site. Il ne voit pas les attaques contre le serveur lui-même (connexions SSH, scan de ports) : elles se bloquent avec fail2ban et le pare-feu.</p>
+
+<section class="carte stats__graphique" aria-labelledby="se-jour">
+  <div class="carte__tete"><h2 class="carte__titre" id="se-jour">Événements par jour</h2></div>
+  {% if total %}
+    <div class="barres" role="img" aria-label="Événements de sécurité par jour">
+      {% for j in serie %}
+        <div class="barres__col" title="{{ j.date|date:'l j F' }} : {{ j.n }} événement{{ j.n|pluralize }}">
+          <span class="barres__barre barres__barre--fonce" style="height: {{ j.h }}%"></span>
+        </div>
+      {% endfor %}
+    </div>
+    <p class="barres__axe">{% for d in legende %}<span>{{ d|date:"j M" }}</span>{% endfor %}</p>
+  {% else %}
+    <p class="vide"><svg class="a-ico"><use href="#a-ok"/></svg>Aucun événement sur cette période.</p>
+  {% endif %}
+</section>
+
+<div class="stats__rang">
+  <section class="carte" aria-labelledby="se-types">
+    <h2 class="carte__titre" id="se-types">Types d'attaques</h2>
+    {% for t in types %}
+      <div class="rang">
+        <div class="rang__ligne"><span class="rang__nom">{{ t.libelle }}</span><span class="rang__valeur">{{ t.n }}</span></div>
+        <div class="rang__piste"><span style="width: {{ t.largeur }}%"></span></div>
+      </div>
+    {% empty %}<p class="vide">Rien à signaler.</p>{% endfor %}
+
+    <h2 class="carte__titre carte__titre--espace" id="se-cibles">Adresses les plus visées</h2>
+    {% for c in cibles %}
+      <div class="rang">
+        <div class="rang__ligne"><span class="rang__nom" title="{{ c.chemin }}">{{ c.chemin }}</span><span class="rang__valeur">{{ c.n }}</span></div>
+        <div class="rang__piste"><span style="width: {{ c.largeur }}%"></span></div>
+      </div>
+    {% empty %}<p class="vide">Rien à signaler.</p>{% endfor %}
+  </section>
+
+  <section class="carte" aria-labelledby="se-ip">
+    <h2 class="carte__titre" id="se-ip">Adresses les plus actives</h2>
+    {% for a in adresses %}
+      <div class="ip">
+        <strong>{{ a.ip }}</strong>
+        <span>{{ a.n }} événement{{ a.n|pluralize }} · dernier le {{ a.dernier|date:"j M à H:i" }}</span>
+        <span class="ip__genres">{{ a.genres }}</span>
+      </div>
+    {% empty %}<p class="vide">Rien à signaler.</p>{% endfor %}
+  </section>
+</div>
+
+<section class="liste__carte stats__journal" aria-labelledby="se-journal">
+  <h2 class="carte__titre stats__journal-titre" id="se-journal">Derniers événements</h2>
+  <div class="stats__table-defile">
+    <table class="stats__table">
+      <thead><tr><th>Date</th><th>Type</th><th>Adresse demandée</th><th>Détail</th><th>Adresse IP</th></tr></thead>
+      <tbody>
+        {% for e in derniers %}
+          <tr><td>{{ e.date|date:"j M H:i" }}</td><td>{{ e.get_type_display }}</td><td class="stats__chemin" title="{{ e.chemin }}">{{ e.chemin }}</td><td>{{ e.detail }}</td><td>{{ e.ip }}</td></tr>
+        {% empty %}
+          <tr><td colspan="5" class="vide">Aucun événement.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}
+
+{% block sidebar %}{% endblock %}

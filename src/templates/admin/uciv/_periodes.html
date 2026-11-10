@@ -1,0 +1,6 @@
+{# Choix de la période des pages Statistiques et Sécurité (?jours=7, 30 ou 90). #}
+<nav class="chips chips--seuls" aria-label="Période">
+  {% for p in periodes %}
+    <a class="chip{% if p == jours %} est-actif{% endif %}" href="?jours={{ p }}"{% if p == jours %} aria-current="true"{% endif %}>{{ p }} derniers jours</a>
+  {% endfor %}
+</nav>

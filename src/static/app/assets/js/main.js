@@ -6,6 +6,7 @@
  * 4. Points des carrousels à défilement horizontal
  * 5. Formulaires pas encore branchés
  * 6. Pastilles « Objet » du formulaire de contact
+ * 8. Temps passé sur la page (mesure d'audience sans cookie)
  * 7. Voile dès le clic sur un lien vers la page UCIV Leadership (son loader prend ensuite le relais)
  */
 (function () {
@@ -209,5 +210,29 @@
     window.addEventListener('pageshow', function (e) {
       if (e.persisted && voile) voile.style.opacity = '0';
     });
+  }
+
+  /* 8. Temps passé sur la page ------------------------------------------------ */
+  // Compte seulement le temps où l'onglet est visible, et l'envoie quand il se masque ou se ferme (app/mesure.py).
+  // Rien n'est envoyé si la personne demande à ne pas être suivie (Do Not Track, Global Privacy Control).
+  if (navigator.sendBeacon && navigator.doNotTrack !== '1' && !navigator.globalPrivacyControl) {
+    var visible = document.visibilityState === 'visible';
+    var depuis = Date.now();
+    var cumul = 0;
+
+    function envoyerDuree() {
+      if (visible) { cumul += Date.now() - depuis; }
+      depuis = Date.now();
+      var secondes = Math.round(cumul / 1000);
+      if (secondes < 1) { return; }
+      cumul = 0;
+      navigator.sendBeacon('/mesure/duree/', JSON.stringify({ p: window.location.pathname, s: secondes }));
+    }
+
+    document.addEventListener('visibilitychange', function () {
+      if (document.visibilityState === 'hidden') { envoyerDuree(); visible = false; }
+      else { visible = true; depuis = Date.now(); }
+    });
+    window.addEventListener('pagehide', envoyerDuree);
   }
 })();

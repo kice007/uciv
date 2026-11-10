@@ -3,6 +3,7 @@ import secrets
 from django.db import models
 from django.templatetags.static import static
 from django.urls import reverse
+from django.utils import timezone
 
 from .validators import valider_document, valider_image, valider_position_image
 
@@ -281,3 +282,53 @@ class Abonne(models.Model):
         """Adresse affichée sur la page de désinscription : « a••••@gmail.com »."""
         nom, _, domaine = self.email.partition('@')
         return f'{nom[:1]}••••@{domaine}'
+
+
+class Visite(models.Model):
+    """Une page vue (mesure d'audience sans cookie, voir app/mesure.py). Affichée dans Statistiques."""
+
+    APPAREILS = [('ordinateur', 'Ordinateur'), ('mobile', 'Mobile'), ('tablette', 'Tablette')]
+
+    date = models.DateTimeField('date', default=timezone.now, db_index=True)
+    chemin = models.CharField('page', max_length=300)
+    visiteur = models.CharField('code visiteur du jour', max_length=20, db_index=True,
+                                help_text="Anonyme : change chaque jour, ne permet pas de retrouver l'adresse IP.")
+    referent = models.CharField("provenance (domaine)", max_length=120, blank=True)
+    appareil = models.CharField(max_length=12, choices=APPAREILS, default='ordinateur')
+    duree = models.PositiveIntegerField('temps passé (secondes)', null=True, blank=True)
+
+    class Meta:
+        verbose_name = 'statistiques de visites'
+        verbose_name_plural = 'statistiques'
+        ordering = ['-date']
+        indexes = [models.Index(fields=['date', 'chemin'])]
+
+    def __str__(self):
+        return f'{self.chemin} ({self.date:%d/%m/%Y %H:%M})'
+
+
+class EvenementSecurite(models.Model):
+    """Une attaque ou un comportement suspect vu par le site (voir app/mesure.py). Affiché dans Sécurité, conservé 90 jours."""
+
+    TYPES = [
+        ('sonde', 'Sonde de robot'),
+        ('injection', "Tentative d'injection"),
+        ('limite', 'Trop de demandes (429)'),
+        ('piege', 'Robot piégé dans un formulaire'),
+        ('connexion', "Échec de connexion à l'administration"),
+        ('refus', 'Requête refusée (400 / 403)'),
+    ]
+
+    date = models.DateTimeField('date', default=timezone.now, db_index=True)
+    type = models.CharField(max_length=12, choices=TYPES, db_index=True)
+    chemin = models.CharField('adresse demandée', max_length=300, blank=True)
+    detail = models.CharField(max_length=200, blank=True)
+    ip = models.CharField('adresse IP', max_length=45, db_index=True)
+
+    class Meta:
+        verbose_name = 'événements de sécurité'
+        verbose_name_plural = 'sécurité'
+        ordering = ['-date']
+
+    def __str__(self):
+        return f'{self.get_type_display()} depuis {self.ip}'

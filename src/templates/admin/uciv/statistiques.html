@@ -1,0 +1,81 @@
+{% extends "admin/base_site.html" %}
+
+{# Statistiques de visites : pages vues, visiteurs, temps passé, pages les plus lues, provenances, appareils. Données : app/mesure.py. #}
+{% block bodyclass %}uciv-admin liste page-statistiques{% endblock %}
+{% block content_title %}{% endblock %}
+{% block content_subtitle %}{% endblock %}
+{% block object-tools %}{% endblock %}
+
+{% block content %}
+<header class="entete-page">
+  <div class="entete-page__textes">
+    <h1>Statistiques</h1>
+    <p>Qui visite le site et combien de temps. Mesure sans cookie : les robots, l'équipe connectée et les personnes qui refusent le suivi ne sont pas comptés.</p>
+  </div>
+</header>
+
+{% include "admin/uciv/_periodes.html" %}
+
+<section class="stats__chiffres" aria-label="Chiffres clés">
+  <article class="carte chiffre"><div class="chiffre__haut"><p>Pages vues</p></div><p class="chiffre__valeur">{{ vues }}</p><p class="chiffre__sous">dont {{ aujourdhui }} aujourd'hui</p></article>
+  <article class="carte chiffre"><div class="chiffre__haut"><p>Visiteurs</p></div><p class="chiffre__valeur">{{ visiteurs }}</p><p class="chiffre__sous">visiteurs uniques de chaque jour, additionnés</p></article>
+  <article class="carte chiffre"><div class="chiffre__haut"><p>Temps passé par page</p></div><p class="chiffre__valeur">{{ duree_moyenne }}</p><p class="chiffre__sous">moyenne sur {{ mesurees }} page{{ mesurees|pluralize }} mesurée{{ mesurees|pluralize }}</p></article>
+  <article class="carte chiffre"><div class="chiffre__haut"><p>Pages par visiteur</p></div><p class="chiffre__valeur">{{ pages_par_visiteur }}</p><p class="chiffre__sous">pages lues par visiteur et par jour</p></article>
+</section>
+
+<section class="carte stats__graphique" aria-labelledby="st-jour">
+  <div class="carte__tete">
+    <h2 class="carte__titre" id="st-jour">Visites par jour</h2>
+    <p class="stats__legende"><span class="pastille-couleur pastille-couleur--orange"></span>Pages vues <span class="pastille-couleur pastille-couleur--vert"></span>Visiteurs</p>
+  </div>
+  {% if vues %}
+    <div class="barres" role="img" aria-label="Pages vues et visiteurs par jour">
+      {% for j in serie %}
+        <div class="barres__col" title="{{ j.date|date:'l j F' }} : {{ j.vues }} page{{ j.vues|pluralize }} vue{{ j.vues|pluralize }}, {{ j.visiteurs }} visiteur{{ j.visiteurs|pluralize }}">
+          <span class="barres__barre barres__barre--orange" style="height: {{ j.h_vues }}%"></span>
+          <span class="barres__barre barres__barre--vert" style="height: {{ j.h_visiteurs }}%"></span>
+        </div>
+      {% endfor %}
+    </div>
+    <p class="barres__axe">{% for d in legende %}<span>{{ d|date:"j M" }}</span>{% endfor %}</p>
+  {% else %}
+    <p class="vide">Aucune visite enregistrée sur cette période. La mesure démarre dès que le site est en ligne avec ce module.</p>
+  {% endif %}
+</section>
+
+<div class="stats__rang">
+  <section class="carte" aria-labelledby="st-pages">
+    <h2 class="carte__titre" id="st-pages">Pages les plus lues</h2>
+    {% for p in pages %}
+      <div class="rang">
+        <div class="rang__ligne"><span class="rang__nom" title="{{ p.chemin }}">{{ p.chemin }}</span><span class="rang__valeur">{{ p.vues }} vue{{ p.vues|pluralize }} · {{ p.duree }}</span></div>
+        <div class="rang__piste"><span style="width: {{ p.largeur }}%"></span></div>
+      </div>
+    {% empty %}<p class="vide">Pas encore de données.</p>{% endfor %}
+  </section>
+
+  <div class="stats__colonne">
+    <section class="carte" aria-labelledby="st-prov">
+      <h2 class="carte__titre" id="st-prov">D'où viennent les visiteurs</h2>
+      {% for p in provenances %}
+        <div class="rang">
+          <div class="rang__ligne"><span class="rang__nom">{{ p.domaine }}</span><span class="rang__valeur">{{ p.vues }}</span></div>
+          <div class="rang__piste"><span style="width: {{ p.largeur }}%"></span></div>
+        </div>
+      {% empty %}<p class="vide">Pas encore de données.</p>{% endfor %}
+    </section>
+
+    <section class="carte" aria-labelledby="st-app">
+      <h2 class="carte__titre" id="st-app">Appareils</h2>
+      {% for a in appareils %}
+        <div class="rang">
+          <div class="rang__ligne"><span class="rang__nom">{{ a.nom }}</span><span class="rang__valeur">{{ a.part }} %</span></div>
+          <div class="rang__piste"><span style="width: {{ a.part }}%"></span></div>
+        </div>
+      {% empty %}<p class="vide">Pas encore de données.</p>{% endfor %}
+    </section>
+  </div>
+</div>
+{% endblock %}
+
+{% block sidebar %}{% endblock %}

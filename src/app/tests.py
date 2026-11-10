@@ -8,8 +8,8 @@ from django.contrib.auth.models import User
 
 from . import content
 from .models import (
-    Abonne, Article, Indicateur, Opportunite, Ressource, SoumissionContact, SoumissionEngagement,
-    SoumissionPartenariat,
+    Abonne, Article, EvenementSecurite, Indicateur, Opportunite, Ressource, SoumissionContact, SoumissionEngagement,
+    SoumissionPartenariat, Visite,
 )
 
 
@@ -1533,7 +1533,8 @@ class MiseAJourOctobreTests(TestCase):
             html = self.client.get(reverse('app:' + nom)).content.decode()
             for url in urls:
                 self.assertIn(f'href="{url}"', html, f'{url} absent de {nom}')
-        html_leadership = self.client.get(reverse('app:uciv_leadership')).content.decode()
+        from html import unescape
+        html_leadership = unescape(self.client.get(reverse('app:uciv_leadership')).content.decode())
         section_poles = html_leadership.split('id="programmes-du-reseau"', 1)[1].split('</section>', 1)[0]
         for url in urls:
             self.assertNotIn(f'href="{url}"', section_poles, f'{url} ne doit pas figurer parmi les pôles')
@@ -1946,3 +1947,355 @@ class StyleDesEmailsTests(TestCase):
         texte = texte_brut('<p>Lisez <a href="https://uciv.org/actualites/">nos actualités</a> ou écrivez à '
                            '<a href="mailto:a@b.ci">a@b.ci</a>.</p><a href="https://uciv.org"><img src="x.png" alt=""></a>')
         self.assertEqual(texte, 'Lisez nos actualités (https://uciv.org/actualites/) ou écrivez à a@b.ci.')
+
+
+NAVIGATEUR_MOBILE = 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 Mobile/15E148 Safari/604.1'
+NAVIGATEUR_BUREAU = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120.0 Safari/537.36'
+
+
+class MesureAudienceTests(TestCase):
+    """Pages vues sans cookie : ce qui est compté, ce qui ne l'est pas, et ce qui est conservé."""
+
+    def voir(self, chemin='/', agent=NAVIGATEUR_BUREAU, **extra):
+        return self.client.get(chemin, HTTP_USER_AGENT=agent, **extra)
+
+    def test_une_page_vue_est_enregistree_sans_adresse_ip(self):
+        self.voir('/', NAVIGATEUR_MOBILE)
+        visite = Visite.objects.get()
+        self.assertEqual((visite.chemin, visite.appareil), ('/', 'mobile'))
+        self.assertEqual(len(visite.visiteur), 20)
+        self.assertNotIn('127.0.0.1', visite.visiteur)
+        self.assertNotIn('ip', {champ.name for champ in Visite._meta.get_fields()})
+
+    def test_aucun_cookie_n_est_depose_par_la_mesure(self):
+        reponse = self.voir('/')
+        self.assertNotIn('sessionid', reponse.cookies)
+
+    def test_les_robots_et_l_absence_de_navigateur_ne_sont_pas_comptes(self):
+        for agent in ('', 'curl/8.0', 'Googlebot/2.1 (+http://www.google.com/bot.html)', 'python-requests/2.31',
+                      'Mozilla/5.0 HeadlessChrome/120'):
+            self.voir('/', agent)
+        self.assertFalse(Visite.objects.exists())
+
+    def test_do_not_track_et_global_privacy_control_sont_respectes(self):
+        self.voir('/', HTTP_DNT='1')
+        self.voir('/', HTTP_SEC_GPC='1')
+        self.assertFalse(Visite.objects.exists())
+
+    def test_l_equipe_connectee_n_est_pas_comptee(self):
+        self.client.force_login(User.objects.create_superuser('equipe', 'equipe@exemple.ci', 'mot-de-passe-solide'))
+        self.voir('/')
+        self.assertFalse(Visite.objects.exists())
+
+    def test_l_administration_et_les_fichiers_ne_sont_pas_comptes(self):
+        self.voir('/back-office/login/')
+        self.voir('/robots.txt')
+        self.voir('/sitemap.xml')
+        self.assertFalse(Visite.objects.exists())
+
+    def test_une_page_introuvable_n_est_pas_une_visite(self):
+        self.voir('/page-qui-n-existe-pas/')
+        self.assertFalse(Visite.objects.exists())
+
+    def test_seules_les_pages_demandees_en_lecture_sont_comptees(self):
+        self.client.post('/', HTTP_USER_AGENT=NAVIGATEUR_BUREAU)
+        self.assertFalse(Visite.objects.exists())
+
+    def test_la_provenance_garde_le_domaine_seulement(self):
+        self.voir('/', HTTP_REFERER='https://www.google.com/search?q=uciv&secret=1')
+        self.voir('/engagement/', HTTP_REFERER='http://testserver/')
+        self.voir('/contact/')
+        provenances = dict(Visite.objects.values_list('chemin', 'referent'))
+        self.assertEqual(provenances, {'/': 'google.com', '/engagement/': '', '/contact/': ''})
+
+    def test_le_code_visiteur_change_chaque_jour_et_selon_la_personne(self):
+        from datetime import date
+        from django.test import RequestFactory
+        from .mesure import code_visiteur
+        requete = RequestFactory().get('/', HTTP_USER_AGENT=NAVIGATEUR_BUREAU, REMOTE_ADDR='203.0.113.9')
+        autre = RequestFactory().get('/', HTTP_USER_AGENT=NAVIGATEUR_BUREAU, REMOTE_ADDR='203.0.113.10')
+        self.assertEqual(code_visiteur(requete, date(2026, 1, 1)), code_visiteur(requete, date(2026, 1, 1)))
+        self.assertNotEqual(code_visiteur(requete, date(2026, 1, 1)), code_visiteur(requete, date(2026, 1, 2)))
+        self.assertNotEqual(code_visiteur(requete, date(2026, 1, 1)), code_visiteur(autre, date(2026, 1, 1)))
+
+    @override_settings(MESURE_ACTIVE=False)
+    def test_la_mesure_peut_etre_desactivee(self):
+        self.voir('/')
+        self.voir('/wp-login.php')
+        self.assertFalse(Visite.objects.exists())
+        self.assertFalse(EvenementSecurite.objects.exists())
+
+    def test_une_erreur_de_mesure_ne_casse_jamais_la_page(self):
+        from unittest import mock
+        with mock.patch('app.mesure.Visite.objects.create', side_effect=RuntimeError('base indisponible')):
+            with self.assertLogs('app.mesure', level='ERROR'):
+                self.assertEqual(self.voir('/').status_code, 200)
+
+
+class TempsPasseTests(TestCase):
+    """Balise envoyée par main.js quand l'onglet se masque : le temps s'ajoute à la dernière visite de la page."""
+
+    def setUp(self):
+        super().setUp()
+        self.client.get('/', HTTP_USER_AGENT=NAVIGATEUR_BUREAU)
+
+    def envoyer(self, corps='{"p": "/", "s": 42}', **extra):
+        extra.setdefault('HTTP_USER_AGENT', NAVIGATEUR_BUREAU)
+        return self.client.post('/mesure/duree/', corps, content_type='text/plain', **extra)
+
+    def test_le_temps_est_ajoute_a_la_visite(self):
+        self.assertEqual(self.envoyer().status_code, 204)
+        self.assertEqual(Visite.objects.get().duree, 42)
+        self.envoyer('{"p": "/", "s": 18}')
+        self.assertEqual(Visite.objects.get().duree, 60)
+
+    def test_le_temps_est_plafonne_a_trente_minutes(self):
+        self.envoyer('{"p": "/", "s": 3600}')
+        self.envoyer('{"p": "/", "s": 3600}')
+        self.assertEqual(Visite.objects.get().duree, 1800)
+
+    def test_les_valeurs_absurdes_sont_ignorees(self):
+        for corps in ('{"p": "/", "s": 0}', '{"p": "/", "s": -5}', '{"p": "/", "s": 99999}', 'pas du json',
+                      '{"p": "/", "s": "abc"}', '[]', ''):
+            self.assertEqual(self.envoyer(corps).status_code, 204, corps)
+        self.assertIsNone(Visite.objects.get().duree)
+
+    def test_une_page_jamais_visitee_ne_cree_rien(self):
+        self.envoyer('{"p": "/autre/", "s": 30}')
+        self.assertEqual(Visite.objects.count(), 1)
+        self.assertIsNone(Visite.objects.get().duree)
+
+    def test_une_requete_venue_d_un_autre_site_est_ignoree(self):
+        self.envoyer(HTTP_SEC_FETCH_SITE='cross-site')
+        self.assertIsNone(Visite.objects.get().duree)
+
+    def test_do_not_track_est_respecte(self):
+        self.envoyer(HTTP_DNT='1')
+        self.assertIsNone(Visite.objects.get().duree)
+
+    def test_la_balise_n_accepte_que_post(self):
+        self.assertEqual(self.client.get('/mesure/duree/').status_code, 405)
+
+    def test_la_balise_est_limitee_par_adresse(self):
+        for _ in range(125):
+            self.envoyer('{"p": "/", "s": 1}')
+        self.assertEqual(Visite.objects.get().duree, 120)
+
+    def test_le_script_envoie_la_balise_sauf_si_le_suivi_est_refuse(self):
+        from pathlib import Path
+        from django.conf import settings
+        script = (Path(settings.BASE_DIR) / 'static/app/assets/js/main.js').read_text(encoding='utf-8')
+        self.assertIn("sendBeacon('/mesure/duree/'", script)
+        self.assertIn("doNotTrack !== '1'", script)
+        self.assertIn('globalPrivacyControl', script)
+
+
+class SuiviDesAttaquesTests(TestCase):
+    """Sondes, injections, 429, robots piégés, échecs de connexion et refus : enregistrés avec l'adresse IP."""
+
+    def evenements(self, type_):
+        return EvenementSecurite.objects.filter(type=type_)
+
+    def test_une_sonde_wordpress_est_enregistree_meme_pour_un_robot(self):
+        for chemin in ('/wp-login.php', '/.env', '/phpmyadmin/', '/xmlrpc.php', '/wp-includes/hp2.php'):
+            self.client.get(chemin)
+        self.assertEqual(self.evenements('sonde').count(), 5)
+        evenement = self.evenements('sonde').first()
+        self.assertEqual(evenement.ip, '127.0.0.1')
+        self.assertEqual(evenement.detail, 'GET 404')
+
+    def test_une_page_introuvable_ordinaire_n_est_pas_une_attaque(self):
+        self.client.get('/une-faute-de-frappe/')
+        self.assertFalse(EvenementSecurite.objects.exists())
+
+    def test_une_tentative_d_injection_est_enregistree_une_seule_fois(self):
+        self.client.get('/', {'q': 'union select 1,2'})
+        self.client.get('/', {'q': '<script>alert(1)</script>'})
+        self.client.get('/actualites/', {'f': '../../etc/passwd'})
+        self.client.get('/actualites/?f=%2e%2e%2f%2e%2e%2fetc%2fpasswd')
+        self.client.get('/?q=%253Cscript%253E')
+        self.assertEqual(self.evenements('injection').count(), 5)
+        self.assertFalse(self.evenements('sonde').exists())
+
+    def test_un_trop_grand_nombre_d_envois_est_enregistre(self):
+        for _ in range(7):
+            self.client.post('/contact/', {})
+        self.assertGreaterEqual(self.evenements('limite').count(), 1)
+        self.assertEqual(self.evenements('limite').first().chemin, '/contact/')
+
+    def test_un_champ_piege_rempli_est_enregistre(self):
+        self.client.post('/engagement/', {'site_web': 'http://spam.example'})
+        evenement = self.evenements('piege').get()
+        self.assertEqual(evenement.detail, 'formulaire /engagement/')
+
+    @override_settings(ALLOWED_HOSTS=['testserver'])
+    def test_un_hote_refuse_est_enregistre(self):
+        reponse = self.client.get('/', HTTP_HOST='pirate.example')
+        self.assertEqual(reponse.status_code, 400)
+        self.assertEqual(self.evenements('refus').count(), 1)
+
+    def test_un_echec_de_connexion_ne_garde_pas_l_identifiant_saisi(self):
+        User.objects.create_user('equipe', 'equipe@exemple.ci', 'mot-de-passe-solide')
+        self.client.post('/back-office/login/', {'username': 'equipe', 'password': 'faux'})
+        self.client.post('/back-office/login/', {'username': 'mot-de-passe-tape-ici', 'password': 'faux'})
+        details = sorted(self.evenements('connexion').values_list('detail', flat=True))
+        self.assertEqual(details, ['compte existant', 'compte inconnu'])
+        for evenement in EvenementSecurite.objects.all():
+            self.assertNotIn('mot-de-passe-tape-ici', evenement.chemin + evenement.detail)
+            self.assertNotIn('equipe', evenement.chemin + evenement.detail.replace('compte existant', ''))
+
+    def test_un_refus_dans_l_administration_n_est_pas_compte_comme_une_attaque(self):
+        self.client.force_login(User.objects.create_user('simple', 's@exemple.ci', 'mot-de-passe-solide', is_staff=True))
+        self.client.get('/back-office/app/visite/')
+        self.assertFalse(self.evenements('refus').exists())
+
+    def test_une_attaque_ne_remplit_pas_la_base(self):
+        for numero in range(45):
+            self.client.get(f'/wp-admin/{numero}.php')
+        self.assertEqual(EvenementSecurite.objects.count(), 30)
+
+    def test_les_adresses_viennent_de_nginx_en_production(self):
+        with override_settings(DEBUG=False):
+            self.client.get('/wp-login.php', HTTP_X_REAL_IP='203.0.113.77')
+        self.assertEqual(self.evenements('sonde').get().ip, '203.0.113.77')
+
+
+class PagesStatistiquesAdminTests(TestCase):
+    """Pages Statistiques et Sécurité du back-office : calculs, accès et affichage."""
+
+    def setUp(self):
+        super().setUp()
+        self.equipe = User.objects.create_superuser('equipe', 'equipe@exemple.ci', 'mot-de-passe-solide')
+
+    def visite(self, jours=0, **champs):
+        champs.setdefault('chemin', '/')
+        champs.setdefault('visiteur', 'v1')
+        return Visite.objects.create(date=timezone.now() - timezone.timedelta(days=jours), **champs)
+
+    def test_duree_texte(self):
+        from .statistiques import duree_texte
+        self.assertEqual(duree_texte(None), '—')
+        self.assertEqual(duree_texte(0), '—')
+        self.assertEqual(duree_texte(45), '45 s')
+        self.assertEqual(duree_texte(134), '2 min 14 s')
+        self.assertEqual(duree_texte(60), '1 min 00 s')
+
+    def test_periode_demandee(self):
+        from .statistiques import jours_demandes
+        self.assertEqual([jours_demandes(v) for v in ('7', '30', '90', '15', 'x', None, '-3')], [7, 30, 90, 30, 30, 30, 30])
+
+    def test_statistiques_de_visites(self):
+        from .statistiques import statistiques_visites
+        self.visite(chemin='/', visiteur='a', duree=60, referent='google.com', appareil='mobile')
+        self.visite(chemin='/', visiteur='b', duree=120, appareil='mobile')
+        self.visite(chemin='/contact/', visiteur='a', appareil='ordinateur')
+        self.visite(jours=40, chemin='/ancienne/', visiteur='c')
+        donnees = statistiques_visites(30)
+        self.assertEqual((donnees['vues'], donnees['visiteurs'], donnees['aujourdhui']), (3, 2, 3))
+        self.assertEqual(donnees['duree_moyenne'], '1 min 30 s')
+        self.assertEqual(donnees['mesurees'], 2)
+        self.assertEqual(donnees['pages_par_visiteur'], 1.5)
+        self.assertEqual([p['chemin'] for p in donnees['pages']], ['/', '/contact/'])
+        self.assertEqual(donnees['pages'][0]['largeur'], 100)
+        self.assertEqual(len(donnees['serie']), 30)
+        self.assertEqual(donnees['serie'][-1]['vues'], 3)
+        self.assertEqual({a['nom']: a['part'] for a in donnees['appareils']}, {'Mobile': 67, 'Ordinateur': 33})
+        self.assertEqual({p['domaine'] for p in donnees['provenances']}, {'google.com', 'Accès direct (ou lien sans provenance)'})
+
+    def test_statistiques_vides(self):
+        from .statistiques import statistiques_securite, statistiques_visites
+        donnees = statistiques_visites(7)
+        self.assertEqual((donnees['vues'], donnees['visiteurs'], donnees['pages_par_visiteur']), (0, 0, 0))
+        self.assertEqual(donnees['duree_moyenne'], '—')
+        self.assertEqual(len(donnees['serie']), 7)
+        securite = statistiques_securite(7)
+        self.assertEqual((securite['total'], securite['adresses_distinctes'], securite['derniers']), (0, 0, []))
+
+    def test_statistiques_de_securite(self):
+        from .statistiques import statistiques_securite
+        for type_, chemin, ip in (('sonde', '/.env', '1.1.1.1'), ('sonde', '/.env', '1.1.1.1'),
+                                  ('injection', '/?q=union select', '2.2.2.2'), ('limite', '/contact/', '1.1.1.1')):
+            EvenementSecurite.objects.create(type=type_, chemin=chemin, ip=ip)
+        EvenementSecurite.objects.create(type='sonde', chemin='/vieux', ip='9.9.9.9',
+                                         date=timezone.now() - timezone.timedelta(days=60))
+        donnees = statistiques_securite(30)
+        self.assertEqual((donnees['total'], donnees['adresses_distinctes'], donnees['dernieres_24h']), (4, 2, 4))
+        self.assertEqual(donnees['types'][0]['type'], 'sonde')
+        self.assertEqual(donnees['adresses'][0]['ip'], '1.1.1.1')
+        self.assertEqual(donnees['adresses'][0]['n'], 3)
+        self.assertIn('Sonde de robot', donnees['adresses'][0]['genres'])
+        self.assertEqual(donnees['cibles'][0], {'chemin': '/.env', 'n': 2, 'largeur': 100})
+        self.assertEqual(len(donnees['derniers']), 4)
+        self.assertEqual(statistiques_securite(90)['total'], 5)
+
+    def test_page_statistiques(self):
+        self.client.force_login(self.equipe)
+        self.visite(chemin='/programmes/', duree=75)
+        reponse = self.client.get('/back-office/app/visite/?jours=7')
+        self.assertEqual(reponse.status_code, 200)
+        self.assertContains(reponse, '<h1>Statistiques</h1>', html=True)
+        self.assertContains(reponse, '/programmes/')
+        self.assertContains(reponse, '1 min 15 s')
+        self.assertContains(reponse, '7 derniers jours')
+
+    def test_page_securite(self):
+        self.client.force_login(self.equipe)
+        EvenementSecurite.objects.create(type='sonde', chemin='/wp-login.php', detail='GET 404', ip='203.0.113.5')
+        reponse = self.client.get('/back-office/app/evenementsecurite/')
+        self.assertEqual(reponse.status_code, 200)
+        self.assertContains(reponse, '<h1>Sécurité</h1>', html=True)
+        self.assertContains(reponse, '203.0.113.5')
+        self.assertContains(reponse, '/wp-login.php')
+        self.assertContains(reponse, 'fail2ban')
+
+    def test_pages_vides_sans_erreur(self):
+        self.client.force_login(self.equipe)
+        self.assertContains(self.client.get('/back-office/app/visite/'), 'Aucune visite enregistrée')
+        self.assertContains(self.client.get('/back-office/app/evenementsecurite/'), 'Aucun événement')
+
+    def test_pages_reservees_a_l_equipe(self):
+        for adresse in ('/back-office/app/visite/', '/back-office/app/evenementsecurite/'):
+            self.assertEqual(self.client.get(adresse).status_code, 302)
+        simple = User.objects.create_user('simple', 's@exemple.ci', 'mot-de-passe-solide', is_staff=True)
+        self.client.force_login(simple)
+        for adresse in ('/back-office/app/visite/', '/back-office/app/evenementsecurite/'):
+            self.assertEqual(self.client.get(adresse).status_code, 403)
+
+    def test_aucune_ecriture_possible_depuis_l_administration(self):
+        self.client.force_login(self.equipe)
+        for adresse in ('/back-office/app/visite/add/', '/back-office/app/evenementsecurite/add/'):
+            self.assertEqual(self.client.get(adresse).status_code, 403)
+
+    def test_le_menu_lateral_propose_les_deux_pages(self):
+        self.client.force_login(self.equipe)
+        page = self.client.get('/back-office/').content.decode()
+        self.assertIn('/back-office/app/visite/', page)
+        self.assertIn('/back-office/app/evenementsecurite/', page)
+
+    def test_la_politique_de_confidentialite_decrit_la_mesure(self):
+        from html import unescape
+        page = unescape(self.client.get(reverse('app:confidentialite')).content.decode())
+        for texte in ("Mesure d'audience", '13 mois', '90 jours', 'sans cookie'):
+            self.assertIn(texte, page)
+
+
+class PurgeDesStatistiquesTests(TestCase):
+    def test_les_donnees_anciennes_sont_supprimees(self):
+        from io import StringIO
+        from django.core.management import call_command
+        maintenant = timezone.now()
+        Visite.objects.create(chemin='/', visiteur='a', date=maintenant - timezone.timedelta(days=400))
+        Visite.objects.create(chemin='/', visiteur='b', date=maintenant - timezone.timedelta(days=200))
+        EvenementSecurite.objects.create(type='sonde', ip='1.1.1.1', date=maintenant - timezone.timedelta(days=100))
+        EvenementSecurite.objects.create(type='sonde', ip='2.2.2.2', date=maintenant - timezone.timedelta(days=10))
+        sortie = StringIO()
+        call_command('purger_statistiques', stdout=sortie)
+        self.assertEqual(list(Visite.objects.values_list('visiteur', flat=True)), ['b'])
+        self.assertEqual(list(EvenementSecurite.objects.values_list('ip', flat=True)), ['2.2.2.2'])
+        self.assertIn('1', sortie.getvalue())
+
+    def test_la_purge_est_programmee_sur_le_serveur(self):
+        from pathlib import Path
+        from django.conf import settings
+        script = (Path(settings.BASE_DIR).parent / 'deploy' / 'deployer.sh').read_text(encoding='utf-8')
+        self.assertIn('purger_statistiques', script)

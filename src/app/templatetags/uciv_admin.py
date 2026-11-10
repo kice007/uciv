@@ -7,8 +7,8 @@ from django.utils import timezone
 from django.utils.timesince import timesince
 
 from ..models import (
-    Abonne, Article, Indicateur, Opportunite, Ressource, SoumissionContact, SoumissionEngagement,
-    SoumissionPartenariat,
+    Abonne, Article, EvenementSecurite, Indicateur, Opportunite, Ressource, SoumissionContact, SoumissionEngagement,
+    SoumissionPartenariat, Visite,
 )
 
 register = template.Library()
@@ -54,6 +54,8 @@ def menu_lateral(context):
         ('Suivi', [
             entree('Messages reçus', 'message', SoumissionContact, sum(nouveaux.values())),
             entree('Abonnés', 'abonne', Abonne),
+            entree('Statistiques', 'impact', Visite),
+            entree('Sécurité', 'technique', EvenementSecurite),
         ]),
     ]
     resultat = []

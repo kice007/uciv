@@ -4,7 +4,9 @@ Vues de l'application `app`.
 Une vue reçoit la requête du navigateur, prépare les données (le « contexte »)
 et les envoie à un gabarit HTML qui produit la page.
 """
+import json
 import unicodedata
+from datetime import timedelta
 
 from django.conf import settings
 from django.http import HttpResponse
@@ -16,9 +18,12 @@ from django.templatetags.static import static
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.http import url_has_allowed_host_and_scheme, urlencode
+from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
 from core.utils import envoyer_accuse_reception, send_customize_email
+from .mesure import code_visiteur, signaler_piege, vie_privee_respectee
+from .ratelimit import adresse_client, attente
 
 from . import content
 from . import seo as referencement
@@ -26,7 +31,7 @@ from .ratelimit import limiter
 from .forms import ContactForm, EngagementForm, NewsletterForm, PartenariatForm
 from .models import (
     Abonne, Article, Indicateur, Opportunite, Ressource, SoumissionContact, SoumissionEngagement,
-    SoumissionPartenariat,
+    SoumissionPartenariat, Visite,
 )
 
 
@@ -110,6 +115,8 @@ def engagement(request):
     """Page « Je veux m'engager » : présentation des 3 façons et formulaire d'engagement."""
     if request.method == 'POST':
         form = EngagementForm(request.POST)
+        if form.has_error('site_web'):
+            signaler_piege(request)
         if form.is_valid():
             donnees = form.cleaned_data
             candidature = donnees['choix'] == 'leadership'
@@ -152,6 +159,8 @@ def partenaires(request):
     """Page « Partenaires » : collaborations existantes, formes de partenariat et formulaire."""
     if request.method == 'POST':
         form = PartenariatForm(request.POST)
+        if form.has_error('site_web'):
+            signaler_piege(request)
         if form.is_valid():
             soumission = SoumissionPartenariat.objects.create(
                 **{cle: form.cleaned_data[cle] for cle in
@@ -180,6 +189,8 @@ def contact(request):
     """Page « Contact » : formulaire et coordonnées officielles."""
     if request.method == 'POST':
         form = ContactForm(request.POST)
+        if form.has_error('site_web'):
+            signaler_piege(request)
         if form.is_valid():
             soumission = SoumissionContact.objects.create(
                 **{cle: form.cleaned_data[cle] for cle in
@@ -396,6 +407,7 @@ def newsletter_inscription(request):
     form = NewsletterForm(request.POST)
     if not form.is_valid():
         if form.has_error('site_web'):
+            signaler_piege(request)
             # Robot : on fait comme si tout s'était bien passé, sans rien enregistrer.
             request.session['newsletter'] = {'etat': 'reussie'}
         else:
@@ -436,3 +448,26 @@ def newsletter_desinscription(request, jeton):
         'abonne': abonne, 'etape': etape, 'page': page,
         'texte': page['texte'].format(email=abonne.email_masque),
     })
+
+
+@csrf_exempt
+@require_POST
+def mesure_duree(request):
+    """Temps passé sur une page, envoyé par main.js quand l'onglet se ferme ou se masque.
+
+    Réponse toujours vide : la mesure ne doit rien changer pour la personne. Le temps s'ajoute à la dernière visite de cette page par ce
+    visiteur (dans les 6 dernières heures) ; il est plafonné à 30 minutes par page.
+    """
+    if (settings.MESURE_ACTIVE and request.META.get('HTTP_SEC_FETCH_SITE', 'same-origin') in ('same-origin', 'none')
+            and not vie_privee_respectee(request)):
+        try:
+            donnees = json.loads(request.body[:512] or b'{}')
+            chemin, secondes = str(donnees.get('p', ''))[:300], int(donnees.get('s', 0))
+        except (ValueError, TypeError, AttributeError):
+            return HttpResponse(status=204)
+        if 1 <= secondes <= 3600 and not attente('duree', adresse_client(request), 120, 600):
+            visite = (Visite.objects.filter(visiteur=code_visiteur(request), chemin=chemin,
+                                            date__gte=timezone.now() - timedelta(hours=6)).order_by('-date').first())
+            if visite:
+                Visite.objects.filter(pk=visite.pk).update(duree=min((visite.duree or 0) + secondes, 1800))
+    return HttpResponse(status=204)

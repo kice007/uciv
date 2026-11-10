@@ -27,12 +27,15 @@ sans dépendance tierce : `requirements.txt` ne contient que Django.
     ├── app/              # contenu éditorial du site
     │   ├── content.py            # textes, navigation, programmes (dont PROGRAMMES_LEADERSHIP), équipe, formes des heros (FORMES_HEROS)
     │   ├── context_processors.py # variables communes (navigation, pied de page)
-    │   ├── models.py             # Convention (abstrait), 3 modèles de formulaires, Article, Opportunite, Ressource, Indicateur, Abonne (lettre d'information)
+    │   ├── models.py             # Convention (abstrait), 3 modèles de formulaires, Article, Opportunite, Ressource, Indicateur, Abonne (lettre d'information), Visite et EvenementSecurite (mesure)
     │   ├── forms.py              # formulaires (Engagement, Partenariat, Contact, Newsletter)
     │   ├── migrations/           # migrations de la base
     │   ├── admin.py              # administration Django
     │   ├── validators.py         # contrôle des fichiers téléversés (extensions, 10 Mo)
     │   ├── ratelimit.py          # limiteur de débit des formulaires et de la connexion (429)
+    │   ├── mesure.py             # mesure d'audience sans cookie (middleware, premier de MIDDLEWARE) et suivi des attaques (sondes, injections, 429, pièges, échecs de connexion)
+    │   ├── statistiques.py       # calculs des pages Statistiques et Sécurité de l'administration
+    │   ├── management/commands/  # tester_email, purger_statistiques (cron quotidien : visites 395 j, événements de sécurité 90 j)
     │   ├── seo.py                # SEO et GEO : balises, JSON-LD, robots.txt, sitemap, llms.txt
     │   ├── views.py / urls.py    # toutes les pages, namespace « app » ; programme_leadership (2 pages), recherche, page_legale, page_introuvable (404)
     │   ├── templatetags/custom_tags.py  # filtres corps_article et crochets ; balise formes_hero (forme UCIV des heros)
@@ -43,6 +46,7 @@ sans dépendance tierce : `requirements.txt` ne contient que Django.
     │   ├── app/layout/            # une page par gabarit ; legal.html (3 pages légales), programme_leadership.html (2 programmes), recherche.html, 404.html, desinscription.html
     │   ├── app/includes/          # en-tête, pied de page, icônes, _formes_uciv, _temoignages, _galerie, loaders (_loader.html du site, _loader_leadership.html de la page UCIV Leadership)
     │   ├── admin/base_site.html   # habillage UCIV de l'administration
+    │   ├── admin/uciv/            # pages Statistiques et Sécurité du back-office (statistiques.html, securite.html, _periodes.html)
     │   └── emails/                # gabarits d'e-mails
     ├── static/app/assets/{css,js,img}
     ├── static_cdn/       # collectstatic (non versionné)

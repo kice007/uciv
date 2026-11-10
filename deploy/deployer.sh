@@ -94,6 +94,12 @@ exec runuser -u uciv -- env "${VARIABLES[@]}" /srv/uciv/venv/bin/python manage.p
 MANAGE
 chmod 755 /usr/local/bin/uciv-manage
 
+# Purge quotidienne des statistiques anciennes (visites 395 jours, événements de sécurité 90 jours : voir la politique de confidentialité)
+cat > /etc/cron.d/uciv-purge <<'CRON'
+17 3 * * * root /usr/local/bin/uciv-manage purger_statistiques >> /var/log/uciv-purge.log 2>&1
+CRON
+chmod 644 /etc/cron.d/uciv-purge
+
 echo "== 6/9 Vérification, migrations, fichiers statiques"
 uciv-manage check --database default
 uciv-manage migrate --noinput

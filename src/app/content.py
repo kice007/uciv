@@ -1146,8 +1146,8 @@ SEO_PAGES = {
     },
     'nos_programmes': {
         'titre': 'Nos programmes — Go du Digital, Leadership, Experience Lab',
-        'description': "Découvrez les programmes d'UCIV, dont Les Go du Digital, « De la vision à l'action » et "
-                       "« Les RH ont la parole », ainsi que le réseau UCIV Leadership et ses trois pôles.",
+        'description': "Les programmes d'UCIV : Les Go du Digital, « De la vision à l'action », « Les RH ont la parole », "
+                       "et le réseau UCIV Leadership avec ses trois pôles.",
         'type': 'programmes', 'fil': [_ACC, ('Nos programmes', None)],
     },
     'go_du_digital': {
@@ -1159,7 +1159,7 @@ SEO_PAGES = {
     },
     'uciv_leadership': {
         'titre': 'UCIV Leadership — Le réseau des futurs jeunes leaders',
-        'description': "UCIV Leadership, le réseau sélectif des jeunes leaders : formations, mentorat et projets à fort "
+        'description': "UCIV Leadership, le réseau sélectif des jeunes leaders : formations, mentorat et projets à "
                        "impact. Lancement le 24 octobre 2026 au British Corner de l'UFHB.",
         'type': 'evenement', 'fil': [_ACC, ('Nos programmes', 'nos_programmes'), ('UCIV Leadership', None)],
         'image': 'app/assets/img/og-leadership.jpg',
@@ -1629,13 +1629,26 @@ LEGAL = {
                       "l'Autorité de Régulation des Télécommunications/TIC de Côte d'Ivoire "
                       "(ARTCI)."},
             ]},
+            {'titre': "Mesure d'audience", 'blocs': [
+                {'p': "Pour savoir combien de personnes visitent le site, quelles pages sont lues et combien de "
+                      "temps, UCIV mesure elle-même l'audience, sans cookie et sans service tiers. Chaque visiteur est "
+                      "représenté par un code anonyme qui change tous les jours : il ne permet ni de vous reconnaître d'un "
+                      "jour à l'autre, ni de retrouver votre adresse IP, qui n'est pas conservée. Sont enregistrés : la page "
+                      "vue, la date, le site d'où vous venez, le type d'appareil et le temps passé sur la page. Ces "
+                      "statistiques sont conservées 13 mois."},
+                {'p': "Les personnes dont le navigateur envoie « Ne pas me suivre » (Do Not Track ou Global Privacy "
+                      "Control) ne sont pas comptées."},
+            ]},
             {'titre': 'Sécurité', 'blocs': [
                 {'p': "Le site est servi en connexion chiffrée (HTTPS). Les formulaires sont "
                       "protégés contre les envois automatisés et l'accès à l'espace "
                       "d'administration est réservé à l'équipe UCIV."},
+                {'p': "Pour protéger le site, les tentatives d'attaque (adresses inexistantes testées par des robots, "
+                      "envois répétés, formulaires remplis par des robots, échecs de connexion à l'administration) sont "
+                      "enregistrées avec l'adresse IP de leur auteur, pendant 90 jours au plus."},
             ]},
             {'titre': 'Cookies', 'blocs': [
-                {'p': "Le site n'utilise aucun cookie publicitaire ni outil de mesure d'audience. "
+                {'p': "Le site n'utilise aucun cookie publicitaire ni outil de mesure d'audience tiers. "
                       "Seuls des cookies techniques, indispensables au fonctionnement des "
                       "formulaires (sécurité et session), sont déposés."},
             ]},

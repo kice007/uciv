@@ -17,9 +17,10 @@ from django.utils.formats import date_format
 from django.utils.html import format_html
 from django.utils.http import urlencode
 
+from . import statistiques
 from .models import (
-    Abonne, Article, Indicateur, Opportunite, Ressource, SoumissionContact, SoumissionEngagement,
-    SoumissionPartenariat,
+    Abonne, Article, EvenementSecurite, Indicateur, Opportunite, Ressource, SoumissionContact,
+    SoumissionEngagement, SoumissionPartenariat, Visite,
 )
 from .ratelimit import limiter_connexion
 from .templatetags.uciv_admin import _initiales
@@ -549,3 +550,52 @@ class AbonneAdmin(admin.ModelAdmin):
                       for n in page.paginator.page_range] if page.paginator.num_pages > 1 else [],
         }
         return TemplateResponse(request, 'admin/uciv/abonnes.html', contexte)
+
+
+class VueStatistiquesAdmin(admin.ModelAdmin):
+    """Page en lecture seule : pas de liste d'objets, mais un tableau de bord calculé par app/statistiques.py."""
+
+    gabarit = ''
+    titre = ''
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    def donnees(self, jours):
+        raise NotImplementedError
+
+    def changelist_view(self, request, extra_context=None):
+        if not self.has_view_permission(request):
+            raise PermissionDenied
+        jours = statistiques.jours_demandes(request.GET.get('jours'))
+        contexte = {**self.admin_site.each_context(request), 'opts': self.model._meta, 'title': self.titre,
+                    'jours': jours, 'periodes': statistiques.PERIODES, **self.donnees(jours)}
+        return TemplateResponse(request, self.gabarit, contexte)
+
+
+@admin.register(Visite)
+class VisiteAdmin(VueStatistiquesAdmin):
+    """Statistiques : visiteurs, pages vues, temps passé (mesure sans cookie, voir app/mesure.py)."""
+
+    gabarit = 'admin/uciv/statistiques.html'
+    titre = 'Statistiques'
+
+    def donnees(self, jours):
+        return statistiques.statistiques_visites(jours)
+
+
+@admin.register(EvenementSecurite)
+class EvenementSecuriteAdmin(VueStatistiquesAdmin):
+    """Sécurité : sondes de robots, injections, trop de demandes, robots piégés, échecs de connexion."""
+
+    gabarit = 'admin/uciv/securite.html'
+    titre = 'Sécurité'
+
+    def donnees(self, jours):
+        return statistiques.statistiques_securite(jours)
