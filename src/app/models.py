@@ -25,10 +25,12 @@ class SoumissionEngagement(Convention):
         ('competences', 'Proposer mes compétences'),
     ]
 
+    # « cercle-des-leaders » reste pour les anciennes candidatures ; le formulaire ne le propose plus (cercle fermé).
     POLES = [
-        ('projet-universitaire', 'Projet universitaire'),
+        ('espace-transversal', 'Espace transversal'),
+        ('projet-universitaire', 'Pôle universitaire'),
         ('cercle-des-leaders', 'Cercle des leaders'),
-        ('jeune-porteur-idee', "Jeune porteur d'idée"),
+        ('jeune-porteur-idee', "Jeunes porteurs d'idée"),
     ]
 
     nom = models.CharField('nom et prénom', max_length=120)

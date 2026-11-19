@@ -12,10 +12,11 @@ COMPETENCES = [
     'Développement web',
 ]
 
+# Le Cercle des leaders est un cercle fermé (demande étudiée par le bureau exécutif) : il n'est pas proposé ici.
 POLES = [
-    ('projet-universitaire', 'Projet universitaire'),
-    ('cercle-des-leaders', 'Cercle des leaders'),
-    ('jeune-porteur-idee', "Jeune porteur d'idée"),
+    ('espace-transversal', 'Espace transversal'),
+    ('projet-universitaire', 'Pôle universitaire'),
+    ('jeune-porteur-idee', "Jeunes porteurs d'idée"),
 ]
 
 
@@ -30,7 +31,7 @@ class EngagementForm(forms.Form):
     )
     structure = forms.CharField(label='Mon université ou ma structure', max_length=160, required=False)
     conditions = forms.BooleanField(
-        label="J'ai lu les conditions d'adhésion et de cotisation de mon pôle.",
+        label="Je comprends que les conditions d'adhésion et de cotisation de mon pôle me seront envoyées après la validation de ma candidature.",
         required=False,
     )
     competences = forms.MultipleChoiceField(
@@ -55,7 +56,7 @@ class EngagementForm(forms.Form):
             if not cleaned.get('conditions'):
                 self.add_error(
                     'conditions',
-                    "Merci de confirmer que tu as lu les conditions d'adhésion et de cotisation de ton pôle.",
+                    "Merci de confirmer que tu as compris que les conditions d'adhésion et de cotisation te seront envoyées après validation.",
                 )
         else:
             # Ces champs ne concernent que les candidatures à UCIV Leadership.

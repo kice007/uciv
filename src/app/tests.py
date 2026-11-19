@@ -45,20 +45,38 @@ class UcivLeadershipPageTests(TestCase):
         response = self.client.get(reverse('app:uciv_leadership'))
         self.assertContains(response, 'Un réseau. Un engagement.')
         self.assertContains(response, '30 à 50 membres')
-        self.assertContains(response, 'Projet universitaire')
+        self.assertContains(response, 'Espace transversal')
+        self.assertContains(response, 'Pôle universitaire')
         self.assertContains(response, "Cercle des leaders")
         self.assertContains(response, "Jeunes porteurs")
         self.assertContains(response, 'cinq engagements')
         self.assertContains(response, 'Conférence de lancement')
 
-    def test_page_shows_the_three_poles_and_their_conditions(self):
-        response = self.client.get(reverse('app:uciv_leadership'))
-        self.assertContains(response, '5 000 FCFA')
-        self.assertContains(response, '10 000 FCFA')
-        self.assertContains(response, '3 000 FCFA / mois')
-        self.assertContains(response, '2 000 FCFA / mois')
-        self.assertContains(response, '30 novembre 2026')
-        self.assertContains(response, '07 87 56 17 66')
+    def test_page_shows_the_four_poles_without_prices_or_deadline(self):
+        from html import unescape
+        page = unescape(self.client.get(reverse('app:uciv_leadership')).content.decode())
+        self.assertIn('Quatre pôles', page)
+        self.assertEqual(page.count('class="lead-pole"'), 4)
+        self.assertIn('07 87 56 17 66', page)
+        self.assertIn('Wave', page)
+        self.assertIn('6 février 2027', page)
+        for interdit in ('FCFA', '30 novembre', 'aspirant', 'entretien collectif', 'Trois pôles', 'UFH<'):
+            self.assertNotIn(interdit, page, interdit)
+
+    def test_the_circle_is_presented_as_closed_without_a_button(self):
+        from html import unescape
+        page = unescape(self.client.get(reverse('app:uciv_leadership')).content.decode())
+        carte = page.split('<h3>Cercle des leaders</h3>', 1)[1].split('</li>', 1)[0]
+        self.assertIn('cercle fermé', carte.lower())
+        self.assertIn("bureau exécutif", carte)
+        self.assertNotIn('<a ', carte)
+
+    def test_faq_describes_the_new_joining_path(self):
+        from html import unescape
+        page = unescape(self.client.get(reverse('app:uciv_leadership')).content.decode())
+        for texte in ('Comment payer ?', 'au plus tard le 10 de chaque mois', "Espace transversal",
+                      "l'UFHB, sur le thème"):
+            self.assertIn(texte, page, texte)
 
     def test_launch_date_is_24_october(self):
         response = self.client.get(reverse('app:uciv_leadership'))
@@ -971,7 +989,8 @@ class GeoTests(TestCase):
 
     def test_faq_facts_match_site_data(self):
         faq_lead = dict(content.FAQ['uciv_leadership'])
-        self.assertIn('24 octobre au British Corner à UFH', faq_lead['Quand a eu lieu le lancement de UCIV Leadership ?'])
+        self.assertIn('24 octobre 2026', faq_lead['Quand a eu lieu le lancement de UCIV Leadership ?'])
+        self.assertIn("British Corner de l'UFHB", faq_lead['Quand a eu lieu le lancement de UCIV Leadership ?'])
         self.assertIn('30 et 50', faq_lead['Combien comportera la cohorte pionnière ?'])
         faq_contact = ' '.join(dict(content.FAQ['contact']).values())
         for coordonnee in ('+225 07 87 56 17 66', '+225 07 07 722 078', 'organisationuciv@gmail.com', '04 BP 2087'):
@@ -1446,7 +1465,7 @@ class RejoindreLeadershipTests(TestCase):
     def test_announcement_bar_shows_open_applications(self):
         html = self.client.get(reverse('app:home')).content.decode()
         self.assertIn('Candidatures ouvertes', html)
-        self.assertIn('30 novembre 2026', html)
+        self.assertNotIn('30 novembre', html)
 
 
 class CandidatureLeadershipTests(TestCase):
@@ -1479,7 +1498,7 @@ class CandidatureLeadershipTests(TestCase):
     def test_other_choices_ignore_the_leadership_fields(self):
         self.client.post(reverse('app:engagement'), {
             'nom': 'Aya Konan', 'email': 'aya@exemple.ci', 'choix': 'volontaire',
-            'pole': 'cercle-des-leaders', 'structure': 'Une entreprise', 'conditions': 'on',
+            'pole': 'espace-transversal', 'structure': 'Une entreprise', 'conditions': 'on',
         })
         soumission = SoumissionEngagement.objects.get()
         self.assertEqual(soumission.pole, '')
@@ -1494,9 +1513,12 @@ class CandidatureLeadershipTests(TestCase):
         self.assertEqual(len(accuses), 1)
         self.assertEqual(accuses[0].subject, 'Votre candidature à UCIV Leadership : il reste une étape')
         texte = accuses[0].body
-        self.assertIn('30 novembre 2026', texte)
+        self.assertNotIn('30 novembre', texte)
+        self.assertNotIn('FCFA', texte)
         self.assertIn('07 87 56 17 66', texte)
-        self.assertIn('Projet universitaire', texte)
+        for pole in ('Espace transversal', 'Pôle universitaire', 'Cercle des leaders', "Jeunes porteurs d'idée"):
+            self.assertIn(pole, texte)
+        self.assertIn('Wave', texte)
 
     @override_settings(EMAIL_HOST='smtp.exemple.test', CONTACT_EMAIL='equipe@exemple.ci')
     def test_a_recent_generic_acknowledgement_does_not_block_the_leadership_email(self):
@@ -1510,7 +1532,7 @@ class CandidatureLeadershipTests(TestCase):
     def test_the_page_confirms_the_video_step_after_submission(self):
         reponse = self.client.post(reverse('app:engagement'), self.DONNEES, follow=True)
         self.assertContains(reponse, 'on a bien reçu ta candidature')
-        self.assertContains(reponse, '30 novembre 2026')
+        self.assertNotContains(reponse, '30 novembre')
         self.assertContains(reponse, '07 87 56 17 66')
 
 
@@ -1538,7 +1560,7 @@ class MiseAJourOctobreTests(TestCase):
         section_poles = html_leadership.split('id="programmes-du-reseau"', 1)[1].split('</section>', 1)[0]
         for url in urls:
             self.assertNotIn(f'href="{url}"', section_poles, f'{url} ne doit pas figurer parmi les pôles')
-        for pole in ('Projet universitaire', 'Cercle des leaders', "Jeunes porteurs d'idée"):
+        for pole in ('Espace transversal', 'Pôle universitaire', 'Cercle des leaders', "Jeunes porteurs d'idée"):
             self.assertIn(pole, section_poles)
 
     def test_key_figures_are_published(self):
@@ -2299,3 +2321,58 @@ class PurgeDesStatistiquesTests(TestCase):
         from django.conf import settings
         script = (Path(settings.BASE_DIR).parent / 'deploy' / 'deployer.sh').read_text(encoding='utf-8')
         self.assertIn('purger_statistiques', script)
+
+
+class QuatrePolesLeadershipTests(TestCase):
+    """Mise à jour du 18 novembre 2026 : quatre pôles, Cercle fermé, aucun prix public, candidatures sans date limite."""
+
+    def candidater(self, **champs):
+        donnees = {'nom': 'Aya Konan', 'email': 'aya@exemple.ci', 'choix': 'leadership', 'conditions': 'on',
+                   'pole': 'espace-transversal'}
+        donnees.update(champs)
+        return self.client.post(reverse('app:engagement'), donnees)
+
+    def test_the_form_offers_the_open_poles_only(self):
+        from .forms import POLES
+        self.assertEqual([valeur for valeur, _ in POLES], ['espace-transversal', 'projet-universitaire', 'jeune-porteur-idee'])
+        html = self.client.get(reverse('app:engagement')).content.decode()
+        self.assertIn('value="espace-transversal"', html)
+        self.assertNotIn('value="cercle-des-leaders"', html)
+
+    def test_the_closed_circle_cannot_be_chosen_in_the_form(self):
+        reponse = self.candidater(pole='cercle-des-leaders')
+        self.assertEqual(reponse.status_code, 200)
+        self.assertIn('pole', reponse.context['form'].errors)
+        self.assertFalse(SoumissionEngagement.objects.exists())
+
+    def test_every_open_pole_is_accepted(self):
+        for pole in ('espace-transversal', 'projet-universitaire', 'jeune-porteur-idee'):
+            cache.clear()
+            self.assertEqual(self.candidater(pole=pole).status_code, 302, pole)
+        self.assertEqual(SoumissionEngagement.objects.count(), 3)
+
+    def test_old_applications_to_the_circle_stay_readable(self):
+        ancienne = SoumissionEngagement.objects.create(nom='Ancien', email='a@exemple.ci', choix='leadership',
+                                                       pole='cercle-des-leaders')
+        self.assertEqual(ancienne.get_pole_display(), 'Cercle des leaders')
+
+    def test_the_form_no_longer_shows_prices_or_a_deadline(self):
+        from html import unescape
+        page = unescape(self.client.get(reverse('app:engagement')).content.decode())
+        self.assertIn('me seront envoyées après la validation', page)
+        for interdit in ('FCFA', '30 novembre', "J'ai lu les conditions"):
+            self.assertNotIn(interdit, page, interdit)
+
+    def test_the_site_shows_no_price_for_leadership_anywhere(self):
+        from html import unescape
+        for nom in ('home', 'uciv_leadership', 'engagement', 'nos_programmes', 'qui_sommes_nous'):
+            page = unescape(self.client.get(reverse('app:' + nom)).content.decode())
+            self.assertNotIn('FCFA', page, nom)
+            self.assertNotIn('Jusqu\'au 30 novembre', page, nom)
+
+    def test_the_four_steps_to_join(self):
+        from html import unescape
+        page = unescape(self.client.get(reverse('app:uciv_leadership')).content.decode())
+        for titre in ('Remplis le formulaire', 'Envoie ta vidéo', 'Règle ton adhésion', 'Signe ton engagement'):
+            self.assertIn(titre, page, titre)
+        self.assertIn('Par défaut, chaque nouveau membre rejoint l\'Espace transversal', page)

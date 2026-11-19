@@ -952,18 +952,13 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .lead-pole h3 { color: var(--encre); font-family: var(--f-titre); font-weight: 800; font-size: 24px; line-height: 1.1; letter-spacing: -.02em; }
 .lead-pole__pour { color: var(--orange-fonce); font-size: 14px; font-weight: 700; line-height: 1.4; }
 .lead-pole__texte { color: var(--texte); font-size: 15px; line-height: 1.55; }
-.lead-pole__tarifs { display: flex; flex-wrap: wrap; gap: 10px 24px; margin-top: auto; padding-top: 18px; border-top: 1px solid var(--filet); }
-.lead-pole__tarifs div { display: flex; flex-direction: column; gap: 2px; }
-.lead-pole__tarifs dt { color: var(--encre); font-size: 11px; font-weight: 700; letter-spacing: 1.4px; text-transform: uppercase; }
-.lead-pole__tarifs dd { color: var(--encre); font-family: var(--f-titre); font-size: 18px; font-weight: 800; letter-spacing: -.02em; }
 @media (min-width: 720px) { .lead-poles { grid-template-columns: repeat(2, 1fr); } }
-@media (min-width: 1100px) { .lead-poles { grid-template-columns: repeat(3, 1fr); gap: 20px; } }
+@media (min-width: 1100px) { .lead-poles { grid-template-columns: repeat(4, 1fr); gap: 20px; } }
 
 /* Comment candidater */
 .lead-candidater { margin-top: 56px; }
 .lead-candidater__titre { font-family: var(--f-titre); font-weight: 800; font-size: clamp(26px, 2.4vw, 34px); line-height: 1.1; letter-spacing: -.02em; }
 .lead-candidater .lead-etapes { margin-top: 24px; }
-@media (min-width: 1100px) { .lead-etapes--3 { grid-template-columns: repeat(3, 1fr); } }
 .lead-contribution {
   display: flex; align-items: flex-start; gap: 14px; margin-top: 24px; padding: 20px 22px;
   border-radius: 18px; background: var(--creme); color: var(--texte); font-size: 14.5px; line-height: 1.55;
@@ -2562,8 +2557,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
   .lead-etape { gap: 8px; min-height: 0; }
   .lead-etape__haut { margin-bottom: 14px; }
   .lead-pole { padding: 24px; }
-  .lead-pole__tarifs { gap: 10px 20px; }
-  .lead-candidater { margin-top: 40px; }
+    .lead-candidater { margin-top: 40px; }
   .lead-candidater__titre { font-size: 26px; line-height: 29px; }
   .lead-theme { padding-block: 56px; }
   .lead-lancement .surtitre { margin-bottom: 24px; }

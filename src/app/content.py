@@ -42,8 +42,8 @@ URL_INSCRIPTION_PROGRAMME = lazy(lambda: reverse('app:contact') + '?objet=Progra
 
 ANNONCE = {
     'date': 'Candidatures ouvertes',
-    'texte': "Jusqu'au lundi 30 novembre 2026 pour rejoindre UCIV Leadership.",
-    'texte_court': "Jusqu'au 30 novembre 2026",
+    'texte': "Rejoins UCIV Leadership, le réseau des leaders et futurs leaders.",
+    'texte_court': "Rejoins UCIV Leadership",
     'lien_label': 'Rejoindre UCIV Leadership',
     'url': URL_REJOINDRE_LEADERSHIP,
 }
@@ -323,11 +323,11 @@ PARTENAIRES = [
 LEADERSHIP = {
     'url_rejoindre': URL_REJOINDRE_LEADERSHIP,
     'chapo': "UCIV Leadership est le réseau des leaders et futurs leaders d'Une Côte "
-             "d'Ivoire Volontaire. Trois pôles pour grandir et agir ensemble : Projet "
-             "universitaire, Cercle des leaders et Jeunes porteurs d'idée.",
+             "d'Ivoire Volontaire. Il s'organise en quatre pôles. Son cœur, l'Espace transversal, "
+             "est ouvert aux étudiants, salariés, entrepreneurs et cadres. Ici, chacun repart avec du concret.",
     'reperes': [
-        {'label': 'Candidatures', 'valeur': "Jusqu'au 30 novembre 2026"},
-        {'label': 'Trois pôles', 'valeur': "Étudiants, professionnels, porteurs d'idée"},
+        {'label': 'Candidatures', 'valeur': 'Ouvertes'},
+        {'label': 'Quatre pôles', 'valeur': 'Un Espace transversal ouvert à tous'},
         {'label': 'Cohorte pionnière', 'valeur': '30 à 50 membres'},
     ],
     'vision': "Faire émerger une génération de jeunes capables de prendre des "
@@ -347,40 +347,46 @@ LEADERSHIP = {
     'rejoindre_intro': "Rejoins un réseau sélectif de jeunes leaders et futurs leaders qui "
                        "veulent grandir et agir ensemble. Choisis le pôle qui te correspond :",
     'poles': [
-        {'nom': 'Projet universitaire', 'icone': 'graduation-cap',
-         'pour': 'Pour les étudiants des universités sélectionnées.',
-         'texte': "Avec ton équipe, tu réalises un projet utile sur ton campus, de janvier "
-                  "à juin 2027. On te forme et on t'accompagne à chaque étape.",
-         'adhesion': '5 000 FCFA', 'cotisation': '1 000 FCFA / mois'},
+        {'nom': 'Espace transversal', 'icone': 'users',
+         'pour': 'Le cœur du réseau',
+         'texte': "Ouvert aux étudiants, salariés, entrepreneurs et cadres, sans devoir rejoindre un pôle. "
+                  "Tu en repars avec du concret : une connaissance, une compétence, une relation, "
+                  "une opportunité ou une contribution."},
+        {'nom': 'Pôle universitaire', 'icone': 'graduation-cap',
+         'pour': 'Un projet pour ton campus',
+         'texte': "Un appel à projets lancé dans les universités, pour les étudiants de fin de cycle "
+                  "(Licence 3, Master 2). Ensemble, ils mènent un projet qui répond à un vrai besoin, avec des "
+                  "formations et l'accompagnement d'UCIV. Une expérience concrète, à valoriser dans ton CV."},
         {'nom': 'Cercle des leaders', 'icone': 'crown',
-         'pour': 'Pour les professionnels et les leaders qui portent un projet.',
-         'texte': "Une rencontre par mois, un binôme pour avancer ensemble, des compétences "
-                  "partagées et des projets menés en commun.",
-         'adhesion': '10 000 FCFA', 'cotisation': '3 000 FCFA / mois'},
+         'pour': 'Un cercle fermé',
+         'texte': "Des entrepreneurs, des fonctionnaires et des professionnels qui construisent des projets "
+                  "ensemble, grandissent ensemble et partagent les bons plans. L'accès se fait sur demande, "
+                  "validée par le bureau exécutif d'UCIV."},
         {'nom': "Jeunes porteurs d'idée", 'icone': 'presentation',
-         'pour': "Tu as une idée, mais pas encore de projet ?",
-         'texte': "En un mois, on t'aide à la clarifier, à la construire et à la présenter "
-                  "devant un jury.",
-         'adhesion': '5 000 FCFA', 'cotisation': '2 000 FCFA / mois'},
+         'pour': "De l'idée au projet",
+         'texte': "Une formation d'un mois en gestion de projet, suivie de 90 jours d'accompagnement, pour "
+                  "transformer ton idée en vrai projet. Démarrage le 6 février 2027. 15 places seulement, "
+                  "à réserver avant l'ouverture."},
     ],
-    'candidater_titre': 'Comment candidater',
+    'candidater_titre': 'Comment rejoindre',
     'candidater': [
         {'titre': 'Remplis le formulaire',
          'texte': "Choisis « Rejoindre UCIV Leadership » et ton pôle, puis envoie le formulaire."},
         {'titre': 'Envoie ta vidéo',
-         'texte': "Envoie-nous avant le lundi 30 novembre 2026 une vidéo d'1 minute maximum "
-                  "sur WhatsApp au 07 87 56 17 66. Dis-nous qui tu es, quel pôle tu choisis, "
-                  "pourquoi tu veux rejoindre UCIV Leadership, ce que tu peux apporter et le "
-                  "temps dont tu disposes vraiment."},
-        {'titre': 'On revient vers toi',
-         'texte': "Notre équipe regarde ta candidature et revient vers toi."},
+         'texte': "Envoie ta vidéo de présentation (1 minute maximum) sur WhatsApp au 07 87 56 17 66 : "
+                  "qui tu es, ta motivation, ce que tu peux apporter et ton temps disponible."},
+        {'titre': 'Règle ton adhésion',
+         'texte': "Une fois ta candidature validée, l'équipe t'envoie la fiche des droits d'adhésion. "
+                  "Tu règles par Wave et tu envoies la capture du paiement au comptable."},
+        {'titre': 'Signe ton engagement',
+         'texte': "Signe ton engagement sur l'honneur, et tu rejoins le réseau."},
     ],
-    'date_limite': 'lundi 30 novembre 2026',
     'whatsapp': '07 87 56 17 66',
     'url_whatsapp': 'https://wa.me/2250787561766',
-    'contribution': "Ce que tu paies fait vivre le réseau : la logistique, les rencontres, les "
-                    "formations et les projets collectifs. Tout est géré en toute transparence. "
-                    "Ce n'est pas un paiement pour obtenir un emploi ou une mission rémunérée.",
+    'contribution': "Par défaut, chaque nouveau membre rejoint l'Espace transversal. La cotisation mensuelle se "
+                    "paie au plus tard le 10 de chaque mois. Les frais financent la logistique, les rencontres, "
+                    "les formations et les projets. Ce n'est ni un paiement pour un emploi, ni une mission "
+                    "rémunérée.",
     'pourquoi_titre': "Le leadership ne commence pas nécessairement avec un titre.",
     'pourquoi_suite': "Il commence avec la capacité à prendre des initiatives, servir, "
                       "proposer des solutions et agir.",
@@ -911,14 +917,13 @@ ENGAGEMENT = {
          'url': URL_COMPETENCES},
     ],
     'formulaire_texte': "Il existe une place pour ton engagement au sein d'UCIV. Si tu veux "
-                        "rejoindre UCIV Leadership, choisis ton pôle et confirme les conditions "
-                        "d'adhésion : l'équipe revient vers toi pour la suite.",
+                        "rejoindre UCIV Leadership, choisis ton pôle : l'équipe revient vers toi "
+                        "pour la suite.",
     'merci': "Merci ! Ta demande a bien été envoyée. L'équipe revient vers toi pour "
              "la suite.",
     'merci_leadership': "Merci, on a bien reçu ta candidature ! Il reste une dernière étape : "
-                        "envoie-nous ta vidéo d'1 minute sur WhatsApp au 07 87 56 17 66 avant "
-                        "le lundi 30 novembre 2026. Tu trouveras aussi les détails dans l'e-mail "
-                        "que tu vas recevoir.",
+                        "envoie-nous ta vidéo de présentation (1 minute maximum) sur WhatsApp au "
+                        "07 87 56 17 66. Tu trouveras aussi les détails dans l'e-mail que tu vas recevoir.",
 }
 
 # --- Page Partenaires -------------------------------------------------------
@@ -1147,7 +1152,7 @@ SEO_PAGES = {
     'nos_programmes': {
         'titre': 'Nos programmes — Go du Digital, Leadership, Experience Lab',
         'description': "Les programmes d'UCIV : Les Go du Digital, « De la vision à l'action », « Les RH ont la parole », "
-                       "et le réseau UCIV Leadership avec ses trois pôles.",
+                       "et le réseau UCIV Leadership avec ses quatre pôles.",
         'type': 'programmes', 'fil': [_ACC, ('Nos programmes', None)],
     },
     'go_du_digital': {
@@ -1345,11 +1350,15 @@ FAQ = {
          "des jeunes triés sur le volet se forment, se connectent et passent à l'action ensemble, grâce à des "
          "formations par des spécialistes, du mentorat, des échanges et des projets à fort impact."),
         ("Comment intégrer le réseau UCIV Leadership ?",
-         "La sélection se fait en deux étapes : un pitch vidéo, puis un entretien collectif. Les nouveaux arrivants "
-         "sont d'abord membres aspirants, puis deviennent membres du réseau. Un système de points d'engagement suit "
-         "la contribution de chaque membre et conditionne son maintien."),
+         "Remplis le formulaire et envoie ta vidéo de présentation. Une fois validé, tu rejoins l'Espace "
+         "transversal. Les professionnels qui souhaitent intégrer le Cercle des leaders en font la demande ; elle "
+         "est étudiée par le bureau exécutif d'UCIV."),
+        ("Comment payer ?",
+         "Par Wave. Après chaque paiement, tu envoies la capture au comptable. La cotisation se paie au plus tard "
+         "le 10 de chaque mois."),
         ("Quand a eu lieu le lancement de UCIV Leadership ?",
-         "Le lancement a eu lieu le 24 octobre au British Corner à UFH."),
+         "Le lancement a eu lieu le 24 octobre 2026, lors d'une conférence au format TEDx au British Corner de "
+         "l'UFHB, sur le thème « S'engager aujourd'hui pour transformer demain »."),
         ("Combien comportera la cohorte pionnière ?",
          "La cohorte pionnière comportera entre 30 et 50 membres. Le réseau est mixte, sélectif et exigeant."),
         ("Qu'apporte UCIV Leadership à ses membres ?",

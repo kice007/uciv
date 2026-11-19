@@ -1,7 +1,7 @@
 ﻿# Avancement du projet UCIV
 
 Point de reprise : ce qui est fait, ce qui ne l'est pas, et par où continuer.
-Dernière mise à jour : 10 novembre 2026.
+Dernière mise à jour : 19 novembre 2026.
 
 Documents liés : [PLAN.md](PLAN.md) (ce qu'il faut construire),
 [ARCHITECTURE.md](ARCHITECTURE.md) (structure), [CLAUDE.md](../CLAUDE.md) (règles agents),
@@ -25,6 +25,15 @@ Documents liés : [PLAN.md](PLAN.md) (ce qu'il faut construire),
 | Mise en ligne | **En ligne sur https://uciv.org** (19 octobre 2026) ; compte administrateur et durcissement du serveur à faire |
 
 ## Ce qui est fait
+
+### UCIV Leadership : quatre pôles (19 novembre 2026, pas encore commité)
+Source : document de travail « Mise à jour du site — page UCIV Leadership » du 18 novembre 2026 (PDF, non versionné). Décisions d'UCIV : **aucun montant en public**, **Cercle des leaders présenté mais fermé** (absent du formulaire), **vidéo WhatsApp conservée, pas d'entretien collectif ni de statut d'aspirant**, **candidatures ouvertes sans date limite**.
+- **Page** : « Quatre pôles » (Espace transversal, Pôle universitaire, Cercle des leaders, Jeunes porteurs d'idée) avec les textes du document ; les prix, le 30 novembre et la période janvier à juin 2027 disparaissent. « Comment rejoindre » passe à quatre étapes (formulaire, vidéo, adhésion par Wave avec capture au comptable, engagement sur l'honneur) et une note sur l'Espace transversal par défaut et la cotisation avant le 10 du mois. Repères : Candidatures « Ouvertes », quatre pôles, cohorte de 30 à 50 membres. Icône `users` ajoutée, grille à 4 colonnes.
+- **FAQ** : « Comment intégrer le réseau » réécrite, nouvelle question « Comment payer ? », lancement au passé avec « UFHB » corrigé (la FAQ disait « UFH »), thème et format TEDx.
+- **Formulaire** : le Cercle des leaders n'est plus proposé ; « Espace transversal » devient le premier choix ; la case devient « Je comprends que les conditions d'adhésion et de cotisation de mon pôle me seront envoyées après la validation de ma candidature » (il n'y a plus de conditions publiques à lire). Modèle : pôle `espace-transversal` ajouté, `cercle-des-leaders` gardé pour les anciennes candidatures, migration `0017_poles_leadership_quatre_poles`.
+- **Bandeau, message de remerciement, e-mail de candidature** : plus de date ni de montants ; l'e-mail présente les quatre pôles et l'étape après validation.
+- Tests : `QuatrePolesLeadershipTests` et mises à jour des tests de la page, de la candidature et du GEO.
+- **Encore ouvert** : période du Pôle universitaire (« janvier à juin 2027 » retiré faute de réponse) et choix des universités ; contact du comptable et fiche des droits d'adhésion à fournir par UCIV.
 
 ### Statistiques de visites et suivi des attaques (10 novembre 2026, pas encore commité)
 - **Mesure d'audience sans cookie ni service tiers** (`app/mesure.py`, middleware placé en premier de `MIDDLEWARE`) : pages vues, visiteurs, provenance (domaine seulement), appareil. Le visiteur est un code anonyme (SHA-256 de l'IP, du navigateur, du jour et de `SECRET_KEY`) qui change chaque jour : l'IP n'est pas conservée. Ne sont pas comptés : robots, équipe connectée, administration, fichiers, personnes avec Do Not Track ou Global Privacy Control. Plafond de 600 pages par visiteur et par jour.

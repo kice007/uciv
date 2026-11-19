@@ -86,7 +86,7 @@
     <div class="entete-section" data-reveal>
       <div>
         <p class="surtitre surtitre--jaune">UCIV Leadership</p>
-        <h2 class="titre titre--52 titre--clair">Trois pôles <em>pour grandir et agir.</em></h2>
+        <h2 class="titre titre--52 titre--clair">Quatre pôles <em>pour grandir et agir.</em></h2>
       </div>
       <p class="texte texte--clair">{{ leadership.rejoindre_intro }}</p>
     </div>
@@ -97,10 +97,6 @@
           <h3>{{ pole.nom }}</h3>
           <p class="lead-pole__pour">{{ pole.pour }}</p>
           <p class="lead-pole__texte">{{ pole.texte }}</p>
-          <dl class="lead-pole__tarifs">
-            <div><dt>Adhésion</dt><dd>{{ pole.adhesion }}</dd></div>
-            <div><dt>Cotisation</dt><dd>{{ pole.cotisation }}</dd></div>
-          </dl>
         </li>
       {% endfor %}
     </ul>
@@ -113,7 +109,7 @@
     <div class="lead-candidater lead-candidater--seul">
       <p class="surtitre" data-reveal>Rejoindre UCIV Leadership</p>
       <h3 class="lead-candidater__titre" data-reveal>{{ leadership.candidater_titre }}</h3>
-      <ol class="lead-etapes lead-etapes--3">
+      <ol class="lead-etapes">
         {% for etape in leadership.candidater %}
           <li class="lead-etape{% if forloop.last %} lead-etape--final{% endif %}" data-reveal style="--i: {{ forloop.counter0 }}">
             <div class="lead-etape__haut">
