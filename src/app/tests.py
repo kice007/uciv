@@ -46,7 +46,7 @@ class UcivLeadershipPageTests(TestCase):
         self.assertContains(response, 'Un réseau. Un engagement.')
         self.assertContains(response, '30 à 50 membres')
         self.assertContains(response, 'Espace transversal')
-        self.assertContains(response, 'Pôle universitaire')
+        self.assertContains(response, 'Programme universitaire')
         self.assertContains(response, "Cercle des leaders")
         self.assertContains(response, "Jeunes porteurs")
         self.assertContains(response, 'cinq engagements')
@@ -55,12 +55,14 @@ class UcivLeadershipPageTests(TestCase):
     def test_page_shows_the_four_poles_without_prices_or_deadline(self):
         from html import unescape
         page = unescape(self.client.get(reverse('app:uciv_leadership')).content.decode())
-        self.assertIn('Quatre pôles', page)
-        self.assertEqual(page.count('class="lead-pole"'), 4)
+        self.assertIn('Deux pôles', page)
+        self.assertIn('Deux programmes', page)
+        self.assertEqual(page.count('class="lead-pole"') + page.count('lead-prog__carte"'), 4)
         self.assertIn('07 87 56 17 66', page)
         self.assertIn('Wave', page)
         self.assertIn('6 février 2027', page)
-        for interdit in ('FCFA', '30 novembre', 'aspirant', 'entretien collectif', 'Trois pôles', 'UFH<'):
+        for interdit in ('FCFA', '30 novembre', 'aspirant', 'entretien collectif', 'Trois pôles', 'Quatre pôles',
+                         'Pôle universitaire', 'UFH<'):
             self.assertNotIn(interdit, page, interdit)
 
     def test_the_circle_is_presented_as_closed_without_a_button(self):
@@ -191,7 +193,7 @@ class EngagementPageTests(TestCase):
     def donnees(self, **extra):
         data = {
             'nom': 'Aya Konan', 'email': 'aya@exemple.com', 'telephone': '+225 01 02 03 04',
-            'choix': 'volontaire', 'competences': ['Graphisme', 'Audiovisuel'],
+            'choix': 'competences', 'competences': ['Graphisme', 'Audiovisuel'],
             'message': 'Disponible le week-end.',
         }
         data.update(extra)
@@ -214,7 +216,7 @@ class EngagementPageTests(TestCase):
         self.assertEqual(SoumissionEngagement.objects.count(), 1)
         soumission = SoumissionEngagement.objects.get()
         self.assertEqual(soumission.nom, 'Aya Konan')
-        self.assertEqual(soumission.choix, 'volontaire')
+        self.assertEqual(soumission.choix, 'competences')
         self.assertEqual(soumission.competences, 'Graphisme, Audiovisuel')
 
     def test_invalid_submission_shows_errors(self):
@@ -1473,7 +1475,7 @@ class CandidatureLeadershipTests(TestCase):
 
     DONNEES = {
         'nom': 'Aya Konan', 'email': 'aya@exemple.ci', 'telephone': '07 87 56 17 66',
-        'choix': 'leadership', 'pole': 'projet-universitaire', 'structure': 'Université Félix Houphouët-Boigny',
+        'choix': 'leadership', 'pole': 'espace-transversal', 'structure': 'Université Félix Houphouët-Boigny',
         'conditions': 'on', 'competences': ['Communication'], 'message': 'Disponible le week-end.',
     }
 
@@ -1491,7 +1493,7 @@ class CandidatureLeadershipTests(TestCase):
         self.assertRedirects(reponse, reverse('app:engagement') + '#formulaire', fetch_redirect_response=False)
         soumission = SoumissionEngagement.objects.get()
         self.assertEqual(soumission.choix, 'leadership')
-        self.assertEqual(soumission.pole, 'projet-universitaire')
+        self.assertEqual(soumission.pole, 'espace-transversal')
         self.assertEqual(soumission.structure, 'Université Félix Houphouët-Boigny')
         self.assertTrue(soumission.conditions_acceptees)
 
@@ -1516,7 +1518,7 @@ class CandidatureLeadershipTests(TestCase):
         self.assertNotIn('30 novembre', texte)
         self.assertNotIn('FCFA', texte)
         self.assertIn('07 87 56 17 66', texte)
-        for pole in ('Espace transversal', 'Pôle universitaire', 'Cercle des leaders', "Jeunes porteurs d'idée"):
+        for pole in ('Espace transversal', 'Cercle des leaders', 'Programme universitaire', "Jeunes porteurs d'idée"):
             self.assertIn(pole, texte)
         self.assertIn('Wave', texte)
 
@@ -1557,10 +1559,10 @@ class MiseAJourOctobreTests(TestCase):
                 self.assertIn(f'href="{url}"', html, f'{url} absent de {nom}')
         from html import unescape
         html_leadership = unescape(self.client.get(reverse('app:uciv_leadership')).content.decode())
-        section_poles = html_leadership.split('id="programmes-du-reseau"', 1)[1].split('</section>', 1)[0]
+        section_poles = html_leadership.split('id="programmes-du-reseau"', 1)[1].split('id="rejoindre"', 1)[0]
         for url in urls:
             self.assertNotIn(f'href="{url}"', section_poles, f'{url} ne doit pas figurer parmi les pôles')
-        for pole in ('Espace transversal', 'Pôle universitaire', 'Cercle des leaders', "Jeunes porteurs d'idée"):
+        for pole in ('Espace transversal', 'Cercle des leaders', 'Programme universitaire', "Jeunes porteurs d'idée"):
             self.assertIn(pole, section_poles)
 
     def test_key_figures_are_published(self):
@@ -1938,6 +1940,7 @@ class StyleDesEmailsTests(TestCase):
                                                    'type_collaboration': 'Sponsoring', 'message': 'Soutien.'}},
         'emails/accuse_reception.html': {'soumission': {'nom': 'Awa', 'message': 'Bonjour.'}, 'demande': 'votre message'},
         'emails/candidature_leadership.html': {'soumission': {'nom': 'Aya'}},
+        'emails/candidature_jeunes_porteurs.html': {'soumission': {'nom': 'Aya'}},
         'emails/newsletter_bienvenue.html': {'lien_desinscription': 'https://uciv.org/newsletter/desinscription/abc123/'},
     }
 
@@ -2334,7 +2337,7 @@ class QuatrePolesLeadershipTests(TestCase):
 
     def test_the_form_offers_the_open_poles_only(self):
         from .forms import POLES
-        self.assertEqual([valeur for valeur, _ in POLES], ['espace-transversal', 'projet-universitaire', 'jeune-porteur-idee'])
+        self.assertEqual([valeur for valeur, _ in POLES], ['espace-transversal', 'jeune-porteur-idee'])
         html = self.client.get(reverse('app:engagement')).content.decode()
         self.assertIn('value="espace-transversal"', html)
         self.assertNotIn('value="cercle-des-leaders"', html)
@@ -2346,10 +2349,16 @@ class QuatrePolesLeadershipTests(TestCase):
         self.assertFalse(SoumissionEngagement.objects.exists())
 
     def test_every_open_pole_is_accepted(self):
-        for pole in ('espace-transversal', 'projet-universitaire', 'jeune-porteur-idee'):
+        for pole in ('espace-transversal', 'jeune-porteur-idee'):
             cache.clear()
             self.assertEqual(self.candidater(pole=pole).status_code, 302, pole)
-        self.assertEqual(SoumissionEngagement.objects.count(), 3)
+        self.assertEqual(SoumissionEngagement.objects.count(), 2)
+
+    def test_the_university_programme_is_not_in_the_form(self):
+        reponse = self.candidater(pole='projet-universitaire')
+        self.assertEqual(reponse.status_code, 200)
+        self.assertIn('pole', reponse.context['form'].errors)
+        self.assertNotIn('projet-universitaire', self.client.get(reverse('app:engagement')).content.decode())
 
     def test_old_applications_to_the_circle_stay_readable(self):
         ancienne = SoumissionEngagement.objects.create(nom='Ancien', email='a@exemple.ci', choix='leadership',
@@ -2376,3 +2385,235 @@ class QuatrePolesLeadershipTests(TestCase):
         for titre in ('Remplis le formulaire', 'Envoie ta vidéo', 'Règle ton adhésion', 'Signe ton engagement'):
             self.assertIn(titre, page, titre)
         self.assertIn('Par défaut, chaque nouveau membre rejoint l\'Espace transversal', page)
+
+
+class PolesEtProgrammesTests(TestCase):
+    """Rangement de la page UCIV Leadership : deux pôles (Espace transversal, Cercle des leaders) et deux programmes."""
+
+    def page(self):
+        from html import unescape
+        return unescape(self.client.get(reverse('app:uciv_leadership')).content.decode())
+
+    def test_the_page_has_two_groups_of_two_cards(self):
+        page = self.page()
+        poles = page.split('id="poles"', 1)[1].split('id="programmes"', 1)[0]
+        programmes = page.split('id="programmes"', 1)[1].split('id="rejoindre"', 1)[0]
+        self.assertEqual(poles.count('class="lead-pole"'), 2)
+        self.assertEqual(programmes.count('lead-prog__carte"'), 2)
+        for nom in ('Espace transversal', 'Cercle des leaders'):
+            self.assertIn(f'<h3>{nom}</h3>', poles)
+            self.assertNotIn(f'<h3>{nom}</h3>', programmes)
+        for nom in ('Programme universitaire', "Jeunes porteurs d'idée"):
+            self.assertIn(f'<h3>{nom}</h3>', programmes)
+            self.assertNotIn(f'<h3>{nom}</h3>', poles)
+
+    def test_the_university_programme_is_no_longer_called_a_pole(self):
+        for nom in ('uciv_leadership', 'engagement', 'nos_programmes', 'home'):
+            from html import unescape
+            page = unescape(self.client.get(reverse('app:' + nom)).content.decode())
+            self.assertNotIn('Pôle universitaire', page, nom)
+        self.assertEqual(SoumissionEngagement(pole='projet-universitaire').get_pole_display(), 'Programme universitaire')
+
+    def test_the_form_groups_its_choices_under_pole_and_programmes(self):
+        from html import unescape
+        page = unescape(self.client.get(reverse('app:engagement')).content.decode())
+        self.assertIn('Je choisis', page)
+        self.assertIn('<optgroup label="Pôle">', page)
+        self.assertIn('<optgroup label="Programmes">', page)
+        liste = page.split('<optgroup label="Pôle">', 1)[1].split('</select>', 1)[0]
+        self.assertLess(liste.index('Espace transversal'), liste.index("Jeunes porteurs d'idée"))
+        self.assertNotIn('Cercle des leaders', liste)
+        self.assertNotIn('Programme universitaire', liste)
+
+    def test_a_selected_choice_stays_selected_after_an_error(self):
+        reponse = self.client.post(reverse('app:engagement'), {
+            'nom': 'Aya Konan', 'email': 'aya@exemple.ci', 'choix': 'leadership', 'pole': 'jeune-porteur-idee'})
+        self.assertRegex(reponse.content.decode(), r'value="jeune-porteur-idee"\s+selected')
+
+    def test_the_missing_choice_message_names_poles_and_programmes(self):
+        reponse = self.client.post(reverse('app:engagement'), {
+            'nom': 'Aya Konan', 'email': 'aya@exemple.ci', 'choix': 'leadership', 'conditions': 'on'})
+        self.assertEqual(reponse.context['form'].errors['pole'], ['Choisis ton pôle ou ton programme.'])
+
+    def test_the_email_presents_two_poles_and_two_programmes(self):
+        from django.template.loader import render_to_string
+        texte = render_to_string('emails/candidature_leadership.html', {'soumission': {'nom': 'Aya'}})
+        self.assertIn('deux pôles et deux programmes', texte)
+        self.assertIn('Les programmes', texte)
+        self.assertIn('Programme universitaire', texte)
+        self.assertNotIn('Pôle universitaire', texte)
+
+
+    def test_programmes_have_their_own_section_and_card_style(self):
+        page = self.page()
+        poles = page.split('id="programmes-du-reseau"', 1)[1].split('id="programmes"', 1)[0]
+        programmes = page.split('id="programmes"', 1)[1].split('id="rejoindre"', 1)[0]
+        self.assertIn('</section>', poles)      # deux sections distinctes
+        self.assertEqual(programmes.count('lead-prog__carte"'), 2)
+        self.assertNotIn('lead-prog__carte', poles)
+        self.assertNotIn('class="lead-pole"', programmes)
+        self.assertNotIn('lead-prog__etiquette', programmes)       # plus d'étiquette « Programme » sur les cartes
+        self.assertEqual(programmes.count('lead-prog__icone'), 2)
+        self.assertIn('section--creme', page.split('id="programmes"', 1)[0].rsplit('<section', 1)[1])
+
+
+class CompetencesEspaceTransversalTests(TestCase):
+    """Domaines de compétences : cachés par défaut, visibles pour l'Espace transversal, avec un champ « Autre »."""
+
+    def poster(self, **champs):
+        donnees = {'nom': 'Aya Konan', 'email': 'aya@exemple.ci', 'choix': 'leadership', 'conditions': 'on',
+                   'pole': 'espace-transversal', 'competences': ['Graphisme', 'Numérique']}
+        donnees.update(champs)
+        return self.client.post(reverse('app:engagement'), donnees)
+
+    def test_the_block_and_its_other_field_are_hidden_by_default_in_the_stylesheet(self):
+        from pathlib import Path
+        from django.conf import settings
+        css = (Path(settings.BASE_DIR) / 'static/app/assets/css/main.css').read_text(encoding='utf-8')
+        self.assertIn('#id_pole option[value="espace-transversal"]:checked)) .eng-competences', css)
+        self.assertIn('.eng-competences:not(:has(input[value="Autre"]:checked)) .eng-competence-autre', css)
+
+    def test_the_form_has_the_competences_block_and_the_other_field(self):
+        html = self.client.get(reverse('app:engagement')).content.decode()
+        self.assertIn('class="eng-groupe eng-competences"', html)
+        self.assertIn('value="Autre"', html)
+        self.assertIn('name="competence_autre"', html)
+
+    def test_competences_are_saved_for_the_transversal_space(self):
+        self.poster()
+        self.assertEqual(SoumissionEngagement.objects.get().competences, 'Graphisme, Numérique')
+
+    def test_a_custom_competence_replaces_other(self):
+        self.poster(competences=['Graphisme', 'Autre'], competence_autre='  Comptabilité ')
+        self.assertEqual(SoumissionEngagement.objects.get().competences, 'Graphisme, Autre : Comptabilité')
+
+    def test_other_requires_a_precision(self):
+        reponse = self.poster(competences=['Autre'], competence_autre='   ')
+        self.assertEqual(reponse.status_code, 200)
+        self.assertEqual(reponse.context['form'].errors['competence_autre'], ['Précise ta compétence.'])
+        self.assertFalse(SoumissionEngagement.objects.exists())
+
+    def test_a_precision_without_other_is_ignored(self):
+        self.poster(competences=['Graphisme'], competence_autre='Couture')
+        self.assertEqual(SoumissionEngagement.objects.get().competences, 'Graphisme')
+
+    def test_competences_of_a_hidden_block_are_not_saved(self):
+        self.poster(pole='jeune-porteur-idee')
+        self.assertEqual(SoumissionEngagement.objects.get().competences, '')
+        cache.clear()
+        self.poster(choix='volontaire', pole='', conditions='')
+        self.assertEqual(SoumissionEngagement.objects.latest('id').competences, '')
+
+    def test_propose_my_skills_keeps_the_block(self):
+        self.poster(choix='competences', pole='', conditions='', competences=['Photographie'])
+        self.assertEqual(SoumissionEngagement.objects.get().competences, 'Photographie')
+
+    def test_a_hidden_other_error_does_not_block_a_candidate_elsewhere(self):
+        reponse = self.poster(pole='jeune-porteur-idee', competences=['Autre'], competence_autre='')
+        self.assertEqual(reponse.status_code, 302)
+
+
+class MessageJeunesPorteursTests(TestCase):
+    """Pour « Jeunes porteurs d'idée », le champ de message demande le projet et non ce que la personne veut apporter."""
+
+    def page_apres_erreur(self, pole):
+        # Une candidature sans la case des conditions est refusée : le formulaire revient avec les choix de la personne.
+        from html import unescape
+        reponse = self.client.post(reverse('app:engagement'), {
+            'nom': 'Aya Konan', 'email': 'aya@exemple.ci', 'choix': 'leadership', 'pole': pole})
+        self.assertEqual(reponse.status_code, 200)
+        return unescape(reponse.content.decode())
+
+    def test_default_wording(self):
+        from html import unescape
+        page = unescape(self.client.get(reverse('app:engagement')).content.decode())
+        self.assertRegex(page, r'id="label_message"[^>]*>Ce que tu as envie d\'apporter</label>')
+        self.assertIn('placeholder="Parle-nous de toi, de ton temps disponible', page)
+
+    def test_project_wording_for_young_idea_holders(self):
+        page = self.page_apres_erreur('jeune-porteur-idee')
+        self.assertRegex(page, r'id="label_message"[^>]*>Parle-nous de ton projet</label>')
+        self.assertIn("placeholder=\"Quelle est ton idée ? Où en es-tu aujourd'hui", page)
+
+    def test_other_poles_keep_the_default_wording(self):
+        page = self.page_apres_erreur('espace-transversal')
+        self.assertRegex(page, r'id="label_message"[^>]*>Ce que tu as envie d\'apporter</label>')
+
+    def test_both_wordings_are_available_to_the_script(self):
+        from html import unescape
+        page = unescape(self.client.get(reverse('app:engagement')).content.decode())
+        self.assertIn('data-defaut="Ce que tu as envie d\'apporter"', page)
+        self.assertIn('data-projet="Parle-nous de ton projet"', page)
+
+    def test_the_script_switches_the_wording_on_the_pole(self):
+        from pathlib import Path
+        from django.conf import settings
+        script = (Path(settings.BASE_DIR) / 'static/app/assets/js/main.js').read_text(encoding='utf-8')
+        self.assertIn("listePole.value === 'jeune-porteur-idee'", script)
+        self.assertIn("document.getElementById('label_message')", script)
+
+    def test_the_message_is_saved_the_same_way(self):
+        self.client.post(reverse('app:engagement'), {
+            'nom': 'Aya Konan', 'email': 'aya@exemple.ci', 'choix': 'leadership', 'pole': 'jeune-porteur-idee',
+            'conditions': 'on', 'message': 'Une application de covoiturage étudiant.'})
+        self.assertEqual(SoumissionEngagement.objects.get().message, 'Une application de covoiturage étudiant.')
+
+
+class EmailJeunesPorteursTests(TestCase):
+    """Une candidature « Jeunes porteurs d'idée » reçoit un e-mail propre au programme (frais, démarrage, étapes)."""
+
+    DONNEES = {
+        'nom': 'Aya Konan', 'email': 'aya@exemple.ci', 'telephone': '07 87 56 17 66', 'choix': 'leadership',
+        'pole': 'jeune-porteur-idee', 'conditions': 'on', 'message': 'Une application de covoiturage étudiant.',
+    }
+
+    @override_settings(EMAIL_HOST='smtp.exemple.test', CONTACT_EMAIL='equipe@exemple.ci',
+                       DEFAULT_FROM_EMAIL='UCIV <noreply@exemple.ci>')
+    def envoyer(self, **champs):
+        donnees = {**self.DONNEES, **champs}
+        self.client.post(reverse('app:engagement'), donnees)
+        return mail.outbox
+
+    def accuse(self, boite):
+        return [m for m in boite if m.to == ['aya@exemple.ci']]
+
+    def test_the_applicant_receives_the_young_idea_holders_email(self):
+        boite = self.envoyer()
+        accuses = self.accuse(boite)
+        self.assertEqual(len(accuses), 1)
+        self.assertEqual(accuses[0].subject, "Votre candidature aux Jeunes porteurs d'idée : il reste une étape")
+        texte = accuses[0].body
+        for fait in ('35 000 FCFA', 'en une fois', 'Wave', 'comptable', '6 février 2027', '15 places', '90 jours',
+                     '07 87 56 17 66', 'engagement sur l\'honneur', 'Bonjour Aya Konan'):
+            self.assertIn(fait, texte, fait)
+        for hors_sujet in ('Cercle des leaders', 'Espace transversal', 'Programme universitaire', '10 000', '3 000', '30 novembre'):
+            self.assertNotIn(hors_sujet, texte, hors_sujet)
+
+    def test_the_html_version_is_branded_and_has_a_text_version(self):
+        accuse = self.accuse(self.envoyer())[0]
+        html = accuse.alternatives[0].content
+        self.assertIn('#E17F1C', html)
+        self.assertIn('href="mailto:equipe@exemple.ci"', html)
+        self.assertNotIn('<', accuse.body)
+
+    def test_other_applicants_keep_the_general_email(self):
+        for pole in ('espace-transversal',):
+            cache.clear()
+            mail.outbox.clear()
+            accuse = self.accuse(self.envoyer(pole=pole))[0]
+            self.assertEqual(accuse.subject, 'Votre candidature à UCIV Leadership : il reste une étape')
+            self.assertNotIn('35 000', accuse.body)
+
+    def test_the_team_notification_names_the_programme_and_the_project(self):
+        boite = self.envoyer()
+        equipe = [m for m in boite if m.to == ['equipe@exemple.ci']][0]
+        self.assertEqual(equipe.subject, "Nouvelle candidature Jeunes porteurs d'idée : Aya Konan")
+        self.assertIn("Jeunes porteurs d'idée", equipe.body)
+        self.assertIn('Son projet', equipe.body)
+        self.assertIn('Une application de covoiturage étudiant.', equipe.body)
+        self.assertEqual(equipe.reply_to, ['aya@exemple.ci'])
+
+    def test_the_team_notification_of_other_applications_keeps_message(self):
+        equipe = [m for m in self.envoyer(pole='espace-transversal') if m.to == ['equipe@exemple.ci']][0]
+        self.assertIn('Message', equipe.body)
+        self.assertNotIn('Son projet', equipe.body)

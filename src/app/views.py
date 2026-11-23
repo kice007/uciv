@@ -120,6 +120,7 @@ def engagement(request):
         if form.is_valid():
             donnees = form.cleaned_data
             candidature = donnees['choix'] == 'leadership'
+            jeunes_porteurs = candidature and donnees['pole'] == 'jeune-porteur-idee'
             soumission = SoumissionEngagement.objects.create(
                 nom=donnees['nom'], email=donnees['email'], telephone=donnees['telephone'],
                 choix=donnees['choix'], pole=donnees['pole'], structure=donnees['structure'],
@@ -127,13 +128,24 @@ def engagement(request):
                 competences=', '.join(donnees['competences']), message=donnees['message'],
             )
             if settings.EMAIL_HOST:
-                sujet = (f"Nouvelle candidature UCIV Leadership : {soumission.nom}" if candidature
-                         else f"Nouvelle demande d'engagement : {soumission.nom}")
+                if jeunes_porteurs:
+                    sujet = f"Nouvelle candidature Jeunes porteurs d'idée : {soumission.nom}"
+                elif candidature:
+                    sujet = f"Nouvelle candidature UCIV Leadership : {soumission.nom}"
+                else:
+                    sujet = f"Nouvelle demande d'engagement : {soumission.nom}"
                 send_customize_email(
                     sujet, [settings.CONTACT_EMAIL], 'emails/engagement.html', {'soumission': soumission},
                     reply_to=[soumission.email],
                 )
-                if candidature:
+                if jeunes_porteurs:
+                    # Programme payant, 15 places : un e-mail propre (frais de formation, démarrage, étapes de paiement).
+                    envoyer_accuse_reception(
+                        soumission.email, "Votre candidature aux Jeunes porteurs d'idée : il reste une étape",
+                        'emails/candidature_jeunes_porteurs.html', {'soumission': soumission},
+                        categorie='candidature-leadership',
+                    )
+                elif candidature:
                     envoyer_accuse_reception(
                         soumission.email, 'Votre candidature à UCIV Leadership : il reste une étape',
                         'emails/candidature_leadership.html', {'soumission': soumission},

@@ -119,10 +119,15 @@
 
       <div class="eng-leadership">
         <div class="eng-groupe">
-          <label class="eng-label" for="id_pole">Mon pôle <span>(obligatoire pour UCIV Leadership)</span></label>
+          <label class="eng-label" for="id_pole">Je choisis <span>(obligatoire pour UCIV Leadership)</span></label>
           <select class="eng-champ eng-champ--select" id="id_pole" name="pole">
-            {% for valeur, libelle in form.pole.field.choices %}
-              <option value="{{ valeur }}"{% if form.pole.value == valeur %} selected{% endif %}>{{ libelle }}</option>
+            <option value="">Choisis ton pôle ou ton programme</option>
+            {% for groupe, choix in form.groupes_pole %}
+              <optgroup label="{{ groupe }}">
+                {% for valeur, libelle in choix %}
+                  <option value="{{ valeur }}"{% if form.pole.value == valeur %} selected{% endif %}>{{ libelle }}</option>
+                {% endfor %}
+              </optgroup>
             {% endfor %}
           </select>
           {% for erreur in form.pole.errors %}<p class="eng-erreur">{{ erreur }}</p>{% endfor %}
@@ -135,7 +140,7 @@
         </div>
       </div>
 
-      <fieldset class="eng-groupe">
+      <fieldset class="eng-groupe eng-competences">
         <legend class="eng-label">Mes domaines de compétences <span>(facultatif)</span></legend>
         <div class="eng-options">
           {% for valeur, libelle in form.competences.field.choices %}
@@ -146,11 +151,19 @@
             </label>
           {% endfor %}
         </div>
+        <div class="eng-groupe eng-competence-autre">
+          <label class="eng-label" for="id_competence_autre">Ta compétence</label>
+          <input class="eng-champ" type="text" id="id_competence_autre" name="competence_autre" maxlength="120" placeholder="Ex. Comptabilité, traduction, couture…" value="{{ form.competence_autre.value|default:'' }}">
+          {% for erreur in form.competence_autre.errors %}<p class="eng-erreur">{{ erreur }}</p>{% endfor %}
+        </div>
       </fieldset>
 
       <div class="eng-groupe">
-        <label class="eng-label" for="id_message">Ce que tu as envie d'apporter</label>
-        <textarea class="eng-champ eng-champ--zone" id="id_message" name="message" rows="4" placeholder="Parle-nous de toi, de ton temps disponible, de ce qui te motive…">{{ form.message.value|default:'' }}</textarea>
+        {% if form.choix.value == 'leadership' and form.pole.value == 'jeune-porteur-idee' %}
+          {% include "app/includes/_message_engagement.html" with projet=True %}
+        {% else %}
+          {% include "app/includes/_message_engagement.html" with projet=False %}
+        {% endif %}
         {% for erreur in form.message.errors %}<p class="eng-erreur">{{ erreur }}</p>{% endfor %}
       </div>
 
@@ -158,7 +171,7 @@
         <label class="eng-option eng-option--conditions">
           <input type="checkbox" name="conditions" value="on"{% if form.conditions.value %} checked{% endif %}>
           <span class="eng-option__case">{% include "app/includes/_icon.html" with name="check" %}</span>
-          <span>Je comprends que les conditions d'adhésion et de cotisation de mon pôle me seront envoyées après la validation de ma candidature.</span>
+          <span>Je comprends que les conditions d'adhésion et de cotisation de mon pôle ou programme me seront envoyées après la validation de ma candidature.</span>
         </label>
         {% for erreur in form.conditions.errors %}<p class="eng-erreur">{{ erreur }}</p>{% endfor %}
       </div>

@@ -1,0 +1,6 @@
+{# Champ « message » du formulaire d'engagement. Pour « Jeunes porteurs d'idée », on demande le projet plutôt que l'apport (main.js bascule les deux textes). #}
+<label class="eng-label" for="id_message" id="label_message"
+       data-defaut="{{ eng.message_label }}" data-projet="{{ eng.message_label_projet }}">{% if projet %}{{ eng.message_label_projet }}{% else %}{{ eng.message_label }}{% endif %}</label>
+<textarea class="eng-champ eng-champ--zone" id="id_message" name="message" rows="4"
+          data-defaut="{{ eng.message_aide }}" data-projet="{{ eng.message_aide_projet }}"
+          placeholder="{% if projet %}{{ eng.message_aide_projet }}{% else %}{{ eng.message_aide }}{% endif %}">{{ form.message.value|default:'' }}</textarea>

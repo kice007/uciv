@@ -953,7 +953,22 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .lead-pole__pour { color: var(--orange-fonce); font-size: 14px; font-weight: 700; line-height: 1.4; }
 .lead-pole__texte { color: var(--texte); font-size: 15px; line-height: 1.55; }
 @media (min-width: 720px) { .lead-poles { grid-template-columns: repeat(2, 1fr); } }
-@media (min-width: 1100px) { .lead-poles { grid-template-columns: repeat(4, 1fr); gap: 20px; } }
+@media (min-width: 1100px) { .lead-poles { gap: 20px; } }
+
+/* Programmes : section claire, cartes blanches à icône ronde verte, pour ne pas ressembler aux pôles (cartes crème sur fond vert) */
+.section--creme { background: var(--creme); }
+.lead-prog__liste { display: grid; gap: 18px; }
+.lead-prog__carte {
+  display: flex; flex-direction: column; gap: 14px; padding: 28px;
+  border: 1px solid var(--filet); border-radius: var(--rayon); background: var(--blanc);
+}
+.lead-prog__icone { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%; background: var(--vert-profond); color: var(--jaune); }
+.lead-prog__icone .icon { width: 22px; height: 22px; }
+.lead-prog__carte h3 { color: var(--encre); font-family: var(--f-titre); font-weight: 800; font-size: 26px; line-height: 1.1; letter-spacing: -.02em; }
+.lead-prog__pour { color: var(--orange-fonce); font-size: 14px; font-weight: 700; line-height: 1.4; }
+.lead-prog__texte { color: var(--texte); font-size: 15px; line-height: 1.55; }
+@media (min-width: 720px) { .lead-prog__liste { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1100px) { .lead-prog__liste { gap: 20px; } }
 
 /* Comment candidater */
 .lead-candidater { margin-top: 56px; }
@@ -1705,6 +1720,10 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .eng-leadership { display: flex; flex-direction: column; gap: 22px; }
 /* Les champs de candidature ne concernent que UCIV Leadership. Sans :has(), ils restent visibles ;
    le serveur les ignore de toute façon pour les autres choix. */
+/* Domaines de compétences : visibles seulement pour le pôle « Espace transversal » (ou « Proposer mes compétences »),
+   et le champ « Ta compétence » seulement si « Autre » est coché. */
+.eng-form:not(:has(input[name="choix"][value="competences"]:checked)):not(:has(input[name="choix"][value="leadership"]:checked):has(#id_pole option[value="espace-transversal"]:checked)) .eng-competences,
+.eng-competences:not(:has(input[value="Autre"]:checked)) .eng-competence-autre { display: none; }
 .eng-form:not(:has(input[name="choix"][value="leadership"]:checked)) .eng-leadership,
 .eng-form:not(:has(input[name="choix"][value="leadership"]:checked)) .eng-leadership-only { display: none; }
 .eng-form__video { margin: 0; padding: 18px 22px; border-radius: 18px; background: var(--jaune); color: var(--encre); font-size: 14px; font-weight: 600; line-height: 1.5; }

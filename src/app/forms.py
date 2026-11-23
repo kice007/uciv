@@ -9,15 +9,16 @@ CHOIX = [
 COMPETENCES = [
     'Communication', 'Graphisme', 'Audiovisuel', 'Photographie', 'Formation',
     'Événementiel', 'Ressources humaines', 'Gestion de projet', 'Numérique',
-    'Développement web',
+    'Développement web', 'Autre',
 ]
 
-# Le Cercle des leaders est un cercle fermé (demande étudiée par le bureau exécutif) : il n'est pas proposé ici.
-POLES = [
-    ('espace-transversal', 'Espace transversal'),
-    ('projet-universitaire', 'Pôle universitaire'),
-    ('jeune-porteur-idee', "Jeunes porteurs d'idée"),
+# Pas de Cercle des leaders (cercle fermé, demande étudiée par le bureau exécutif) ni de Programme universitaire (les
+# universités ne passent pas par ce formulaire) : ils ne sont pas proposés ici.
+POLE_GROUPES = [
+    ('Pôle', [('espace-transversal', 'Espace transversal')]),
+    ('Programmes', [('jeune-porteur-idee', "Jeunes porteurs d'idée")]),
 ]
+POLES = [choix for _, choix_groupe in POLE_GROUPES for choix in choix_groupe]
 
 
 class EngagementForm(forms.Form):
@@ -26,18 +27,20 @@ class EngagementForm(forms.Form):
     telephone = forms.CharField(label='Téléphone (WhatsApp)', max_length=30, required=False)
     choix = forms.ChoiceField(label='Je souhaite', choices=CHOIX, widget=forms.RadioSelect)
     pole = forms.ChoiceField(
-        label='Mon pôle', required=False,
-        choices=[('', 'Choisis ton pôle')] + POLES,
+        label='Je choisis', required=False,
+        choices=[('', 'Choisis ton pôle ou ton programme')] + POLES,
     )
+    groupes_pole = POLE_GROUPES      # pour la liste groupée du gabarit
     structure = forms.CharField(label='Mon université ou ma structure', max_length=160, required=False)
     conditions = forms.BooleanField(
-        label="Je comprends que les conditions d'adhésion et de cotisation de mon pôle me seront envoyées après la validation de ma candidature.",
+        label="Je comprends que les conditions d'adhésion et de cotisation de mon pôle ou programme me seront envoyées après la validation de ma candidature.",
         required=False,
     )
     competences = forms.MultipleChoiceField(
         label='Mes domaines de compétences', required=False,
         choices=[(c, c) for c in COMPETENCES], widget=forms.CheckboxSelectMultiple,
     )
+    competence_autre = forms.CharField(label='Ta compétence', max_length=120, required=False)
     message = forms.CharField(label="Ce que tu as envie d'apporter", required=False,
                               max_length=2000, widget=forms.Textarea)
     # Champ piège : invisible pour les personnes, rempli par les robots.
@@ -52,7 +55,7 @@ class EngagementForm(forms.Form):
         cleaned = super().clean()
         if cleaned.get('choix') == 'leadership':
             if not cleaned.get('pole'):
-                self.add_error('pole', 'Choisis ton pôle.')
+                self.add_error('pole', 'Choisis ton pôle ou ton programme.')
             if not cleaned.get('conditions'):
                 self.add_error(
                     'conditions',
@@ -63,6 +66,22 @@ class EngagementForm(forms.Form):
             cleaned['pole'] = ''
             cleaned['structure'] = ''
             cleaned['conditions'] = False
+
+        # Les domaines de compétences ne sont demandés que dans l'Espace transversal (ou pour « Proposer mes compétences ») :
+        # ailleurs, le bloc est caché dans le formulaire et ce qui aurait pu y rester n'est pas enregistré.
+        if cleaned.get('choix') == 'competences' or (cleaned.get('choix') == 'leadership'
+                                                      and cleaned.get('pole') == 'espace-transversal'):
+            competences = list(cleaned.get('competences') or [])
+            if 'Autre' in competences:
+                autre = (cleaned.get('competence_autre') or '').strip()
+                if autre:
+                    competences[competences.index('Autre')] = f'Autre : {autre}'
+                else:
+                    self.add_error('competence_autre', 'Précise ta compétence.')
+            cleaned['competences'] = competences
+        else:
+            cleaned['competences'] = []
+        cleaned['competence_autre'] = ''
         return cleaned
 
 

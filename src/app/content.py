@@ -323,11 +323,11 @@ PARTENAIRES = [
 LEADERSHIP = {
     'url_rejoindre': URL_REJOINDRE_LEADERSHIP,
     'chapo': "UCIV Leadership est le réseau des leaders et futurs leaders d'Une Côte "
-             "d'Ivoire Volontaire. Il s'organise en quatre pôles. Son cœur, l'Espace transversal, "
-             "est ouvert aux étudiants, salariés, entrepreneurs et cadres. Ici, chacun repart avec du concret.",
+             "d'Ivoire Volontaire. Il s'organise en deux pôles et deux programmes. Son cœur, l'Espace "
+             "transversal, est ouvert aux étudiants, salariés, entrepreneurs et cadres. Ici, chacun repart avec du concret.",
     'reperes': [
         {'label': 'Candidatures', 'valeur': 'Ouvertes'},
-        {'label': 'Quatre pôles', 'valeur': 'Un Espace transversal ouvert à tous'},
+        {'label': 'Deux pôles, deux programmes', 'valeur': 'Un Espace transversal ouvert à tous'},
         {'label': 'Cohorte pionnière', 'valeur': '30 à 50 membres'},
     ],
     'vision': "Faire émerger une génération de jeunes capables de prendre des "
@@ -345,23 +345,29 @@ LEADERSHIP = {
         "l'action collective",
     ],
     'rejoindre_intro': "Rejoins un réseau sélectif de jeunes leaders et futurs leaders qui "
-                       "veulent grandir et agir ensemble. Choisis le pôle qui te correspond :",
+                       "veulent grandir et agir ensemble. Choisis ta place.",
+    'poles_titre': 'Deux pôles', 'poles_suite': 'pour grandir ensemble.',
+    'poles_intro': "Le réseau permanent : l'Espace transversal est ouvert à tous, le Cercle des leaders se rejoint sur demande.",
     'poles': [
         {'nom': 'Espace transversal', 'icone': 'users',
          'pour': 'Le cœur du réseau',
-         'texte': "Ouvert aux étudiants, salariés, entrepreneurs et cadres, sans devoir rejoindre un pôle. "
+         'texte': "Ouvert aux étudiants, salariés, entrepreneurs et cadres, sans devoir rejoindre un programme. "
                   "Tu en repars avec du concret : une connaissance, une compétence, une relation, "
                   "une opportunité ou une contribution."},
-        {'nom': 'Pôle universitaire', 'icone': 'graduation-cap',
-         'pour': 'Un projet pour ton campus',
-         'texte': "Un appel à projets lancé dans les universités, pour les étudiants de fin de cycle "
-                  "(Licence 3, Master 2). Ensemble, ils mènent un projet qui répond à un vrai besoin, avec des "
-                  "formations et l'accompagnement d'UCIV. Une expérience concrète, à valoriser dans ton CV."},
         {'nom': 'Cercle des leaders', 'icone': 'crown',
          'pour': 'Un cercle fermé',
          'texte': "Des entrepreneurs, des fonctionnaires et des professionnels qui construisent des projets "
                   "ensemble, grandissent ensemble et partagent les bons plans. L'accès se fait sur demande, "
                   "validée par le bureau exécutif d'UCIV."},
+    ],
+    'programmes_titre': 'Deux programmes', 'programmes_suite': 'pour passer à l\'action.',
+    'programmes_intro': "Deux programmes pour mener un projet : sur ton campus, ou de ton idée à sa réalisation.",
+    'programmes': [
+        {'nom': 'Programme universitaire', 'icone': 'graduation-cap',
+         'pour': 'Un projet pour ton campus',
+         'texte': "Un appel à projets lancé dans les universités, pour les étudiants de fin de cycle "
+                  "(Licence 3, Master 2). Ensemble, ils mènent un projet qui répond à un vrai besoin, avec des "
+                  "formations et l'accompagnement d'UCIV. Une expérience concrète, à valoriser dans ton CV."},
         {'nom': "Jeunes porteurs d'idée", 'icone': 'presentation',
          'pour': "De l'idée au projet",
          'texte': "Une formation d'un mois en gestion de projet, suivie de 90 jours d'accompagnement, pour "
@@ -371,7 +377,7 @@ LEADERSHIP = {
     'candidater_titre': 'Comment rejoindre',
     'candidater': [
         {'titre': 'Remplis le formulaire',
-         'texte': "Choisis « Rejoindre UCIV Leadership » et ton pôle, puis envoie le formulaire."},
+         'texte': "Choisis « Rejoindre UCIV Leadership » et ton pôle ou ton programme, puis envoie le formulaire."},
         {'titre': 'Envoie ta vidéo',
          'texte': "Envoie ta vidéo de présentation (1 minute maximum) sur WhatsApp au 07 87 56 17 66 : "
                   "qui tu es, ta motivation, ce que tu peux apporter et ton temps disponible."},
@@ -917,8 +923,13 @@ ENGAGEMENT = {
          'url': URL_COMPETENCES},
     ],
     'formulaire_texte': "Il existe une place pour ton engagement au sein d'UCIV. Si tu veux "
-                        "rejoindre UCIV Leadership, choisis ton pôle : l'équipe revient vers toi "
-                        "pour la suite.",
+                        "rejoindre UCIV Leadership, choisis ton pôle ou ton programme : l'équipe revient "
+                        "vers toi pour la suite.",
+    # Le champ de message change de libellé pour « Jeunes porteurs d'idée » (templates/app/layout/engagement.html, main.js).
+    'message_label': "Ce que tu as envie d'apporter",
+    'message_aide': "Parle-nous de toi, de ton temps disponible, de ce qui te motive…",
+    'message_label_projet': "Parle-nous de ton projet",
+    'message_aide_projet': "Quelle est ton idée ? Où en es-tu aujourd'hui, et qu'attends-tu de la formation ?",
     'merci': "Merci ! Ta demande a bien été envoyée. L'équipe revient vers toi pour "
              "la suite.",
     'merci_leadership': "Merci, on a bien reçu ta candidature ! Il reste une dernière étape : "
@@ -1152,7 +1163,7 @@ SEO_PAGES = {
     'nos_programmes': {
         'titre': 'Nos programmes — Go du Digital, Leadership, Experience Lab',
         'description': "Les programmes d'UCIV : Les Go du Digital, « De la vision à l'action », « Les RH ont la parole », "
-                       "et le réseau UCIV Leadership avec ses quatre pôles.",
+                       "et le réseau UCIV Leadership (deux pôles, deux programmes).",
         'type': 'programmes', 'fil': [_ACC, ('Nos programmes', None)],
     },
     'go_du_digital': {

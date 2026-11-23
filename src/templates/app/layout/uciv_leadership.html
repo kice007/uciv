@@ -83,20 +83,45 @@
 {# ----------------------------------------------------- Pôles du réseau #}
 <section class="section section--sombre lead-programmes" id="programmes-du-reseau">
   <div class="conteneur">
+    <div class="lead-groupe" id="poles">
+      <div class="entete-section" data-reveal>
+        <div>
+          <p class="surtitre surtitre--jaune">UCIV Leadership</p>
+          <h2 class="titre titre--52 titre--clair">{{ leadership.poles_titre }} <em>{{ leadership.poles_suite }}</em></h2>
+        </div>
+        <p class="texte texte--clair">{{ leadership.rejoindre_intro }} {{ leadership.poles_intro }}</p>
+      </div>
+      <ul class="lead-poles">
+        {% for pole in leadership.poles %}
+          <li class="lead-pole" data-reveal style="--i: {{ forloop.counter0 }}">
+            <span class="lead-pole__icone">{% include "app/includes/_icon.html" with name=pole.icone %}</span>
+            <h3>{{ pole.nom }}</h3>
+            <p class="lead-pole__pour">{{ pole.pour }}</p>
+            <p class="lead-pole__texte">{{ pole.texte }}</p>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</section>
+
+{# ------------------------------------------------- Programmes du réseau #}
+<section class="section section--creme lead-prog" id="programmes">
+  <div class="conteneur">
     <div class="entete-section" data-reveal>
       <div>
-        <p class="surtitre surtitre--jaune">UCIV Leadership</p>
-        <h2 class="titre titre--52 titre--clair">Quatre pôles <em>pour grandir et agir.</em></h2>
+        <p class="surtitre">Programmes</p>
+        <h2 class="titre titre--52">{{ leadership.programmes_titre }} <em>{{ leadership.programmes_suite }}</em></h2>
       </div>
-      <p class="texte texte--clair">{{ leadership.rejoindre_intro }}</p>
+      <p class="texte">{{ leadership.programmes_intro }}</p>
     </div>
-    <ul class="lead-poles">
-      {% for pole in leadership.poles %}
-        <li class="lead-pole" data-reveal style="--i: {{ forloop.counter0 }}">
-          <span class="lead-pole__icone">{% include "app/includes/_icon.html" with name=pole.icone %}</span>
-          <h3>{{ pole.nom }}</h3>
-          <p class="lead-pole__pour">{{ pole.pour }}</p>
-          <p class="lead-pole__texte">{{ pole.texte }}</p>
+    <ul class="lead-prog__liste">
+      {% for programme in leadership.programmes %}
+        <li class="lead-prog__carte" data-reveal style="--i: {{ forloop.counter0 }}">
+          <span class="lead-prog__icone">{% include "app/includes/_icon.html" with name=programme.icone %}</span>
+          <h3>{{ programme.nom }}</h3>
+          <p class="lead-prog__pour">{{ programme.pour }}</p>
+          <p class="lead-prog__texte">{{ programme.texte }}</p>
         </li>
       {% endfor %}
     </ul>

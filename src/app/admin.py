@@ -351,7 +351,7 @@ class SoumissionEngagementAdmin(MessageAdmin):
     search_fields = ('nom', 'email', 'telephone', 'structure', 'message')
     readonly_fields = ('created_at', 'update_at')
 
-    @admin.display(description='Pôle', ordering='pole')
+    @admin.display(description='Pôle ou programme', ordering='pole')
     def pole_affiche(self, objet):
         return objet.get_pole_display()
 
@@ -407,7 +407,7 @@ def messages_recus():
         })
 
     for o in SoumissionEngagement.objects.all():
-        details = [('Je souhaite', o.get_choix_display()), ('Pôle', o.get_pole_display()),
+        details = [('Je souhaite', o.get_choix_display()), ('Pôle ou programme', o.get_pole_display()),
                    ('Université / structure', o.structure), ('Compétences', o.competences)]
         if o.choix == 'leadership':
             details.append(('Conditions acceptées', 'Oui' if o.conditions_acceptees else 'Non'))

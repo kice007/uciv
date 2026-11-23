@@ -1,0 +1,46 @@
+{% extends "emails/_base.html" %}
+{# Accusé de réception d'une candidature « Jeunes porteurs d'idée » (UCIV Leadership). Faits : document de mise à jour du 18 novembre 2026. #}
+{% block titre_page %}Votre candidature aux Jeunes porteurs d'idée{% endblock %}
+{% block apercu %}Merci pour votre candidature. Il reste une étape : votre vidéo d'1 minute sur WhatsApp.{% endblock %}
+{% block titre %}Votre candidature <em style="font-family:Georgia,'Times New Roman',serif;font-weight:normal;font-size:1.1em;color:#E17F1C;">aux Jeunes porteurs d'idée.</em>{% endblock %}
+{% block contenu %}
+<p style="margin:0 0 14px 0;">Bonjour {{ soumission.nom }},</p>
+<p style="margin:0 0 14px 0;">Merci d'avoir candidaté au programme <strong>Jeunes porteurs d'idée</strong> d'UCIV Leadership. Nous sommes heureux de l'intérêt que vous portez à votre projet et à notre réseau.</p>
+<p style="margin:0 0 22px 0;">Voici le programme en bref, puis les étapes qui vous restent pour réserver votre place.</p>
+
+<p style="margin:0 0 8px 0;font-size:18px;font-weight:bold;color:#17120C;">Le programme en bref</p>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 22px 0;">
+  {% include "emails/_ligne.html" with libelle="Formation" valeur="Un mois en gestion de projet" %}
+  {% include "emails/_ligne.html" with libelle="Accompagnement" valeur="90 jours de suivi après la formation" %}
+  {% include "emails/_ligne.html" with libelle="Démarrage" valeur="Le 6 février 2027" %}
+  {% include "emails/_ligne.html" with libelle="Places" valeur="15 places seulement" %}
+  {% include "emails/_ligne.html" with libelle="Frais de formation" valeur="35 000 FCFA, en une fois, à la réservation" %}
+</table>
+
+<p style="margin:0 0 8px 0;font-size:18px;font-weight:bold;color:#17120C;">1. Votre vidéo de présentation (obligatoire)</p>
+<p style="margin:0 0 10px 0;">Envoyez-nous une vidéo d'1 minute maximum. Dites-nous simplement :</p>
+<ul style="margin:0 0 12px 0;padding-left:20px;">
+  <li style="margin:0 0 6px 0;">qui vous êtes (nom et prénom) ;</li>
+  <li style="margin:0 0 6px 0;">votre idée de projet et l'endroit où vous en êtes ;</li>
+  <li style="margin:0 0 6px 0;">pourquoi vous voulez suivre la formation ;</li>
+  <li style="margin:0;">le temps dont vous disposez vraiment.</li>
+</ul>
+<p style="margin:0 0 22px 0;">Envoyez la vidéo sur WhatsApp au <a href="https://wa.me/2250787561766" style="color:#1B7A43;font-weight:bold;">07 87 56 17 66</a>.</p>
+
+<p style="margin:0 0 8px 0;font-size:18px;font-weight:bold;color:#17120C;">2. Après la validation de votre candidature : le paiement</p>
+<p style="margin:0 0 10px 0;">Une fois votre candidature validée, vous réservez votre place en réglant les <strong>35 000 FCFA</strong> de frais de formation. Le paiement se fait <strong>en une fois</strong>, par Wave.</p>
+<p style="margin:0 0 22px 0;">Après votre paiement, envoyez la capture au comptable. Les places étant limitées à 15, nous vous conseillons de régler dès que votre candidature est validée.</p>
+
+<p style="margin:0 0 8px 0;font-size:18px;font-weight:bold;color:#17120C;">3. Votre engagement sur l'honneur</p>
+<p style="margin:0 0 22px 0;">Pour finir, vous signez votre engagement sur l'honneur. Vous êtes alors prêt à démarrer avec nous le 6 février 2027.</p>
+
+<p style="margin:0 0 8px 0;font-size:18px;font-weight:bold;color:#17120C;">À quoi servent vos frais</p>
+<p style="margin:0 0 22px 0;">Les frais financent la logistique, les rencontres, les formations et les projets. Ce n'est ni un paiement pour un emploi, ni une mission rémunérée.</p>
+
+<p style="margin:0 0 22px 0;">Envoyez-nous votre vidéo pour que nous puissions étudier votre candidature.</p>
+
+<p style="margin:0 0 18px 0;">Nous avons hâte de découvrir votre projet. Merci encore, et à très bientôt.</p>
+<p style="margin:0;">UCIV Leadership<br>
+<em style="font-family:Georgia,'Times New Roman',serif;color:#E17F1C;">S'engager aujourd'hui pour transformer demain.</em><br>
+<strong style="color:#17120C;">Une Côte d'Ivoire Volontaire (UCIV) – AGIR POUR LE PAYS</strong></p>
+{% endblock %}

@@ -8,6 +8,7 @@
  * 6. Pastilles « Objet » du formulaire de contact
  * 8. Temps passé sur la page (mesure d'audience sans cookie)
  * 7. Voile dès le clic sur un lien vers la page UCIV Leadership (son loader prend ensuite le relais)
+ * 9. Formulaire d'engagement : le champ de message demande le projet pour « Jeunes porteurs d'idée »
  */
 (function () {
   'use strict';
@@ -234,5 +235,24 @@
       else { visible = true; depuis = Date.now(); }
     });
     window.addEventListener('pagehide', envoyerDuree);
+  }
+
+  /* 9. Formulaire d'engagement : message adapté au pôle choisi ------------------- */
+  // Pour « Jeunes porteurs d'idée », la personne parle de son projet plutôt que de ce qu'elle veut apporter.
+  var listePole = document.getElementById('id_pole');
+  var libelleMessage = document.getElementById('label_message');
+  var champMessage = document.getElementById('id_message');
+  if (listePole && libelleMessage && champMessage) {
+    var adapterMessage = function () {
+      var candidature = document.querySelector('input[name="choix"][value="leadership"]:checked');
+      var cle = candidature && listePole.value === 'jeune-porteur-idee' ? 'projet' : 'defaut';
+      libelleMessage.textContent = libelleMessage.dataset[cle];
+      champMessage.placeholder = champMessage.dataset[cle];
+    };
+    listePole.addEventListener('change', adapterMessage);
+    document.querySelectorAll('input[name="choix"]').forEach(function (radio) {
+      radio.addEventListener('change', adapterMessage);
+    });
+    adapterMessage();
   }
 })();

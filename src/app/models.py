@@ -25,10 +25,11 @@ class SoumissionEngagement(Convention):
         ('competences', 'Proposer mes compétences'),
     ]
 
+    # Deux pôles (Espace transversal, Cercle des leaders) et deux programmes (universitaire, Jeunes porteurs d'idée).
     # « cercle-des-leaders » reste pour les anciennes candidatures ; le formulaire ne le propose plus (cercle fermé).
     POLES = [
         ('espace-transversal', 'Espace transversal'),
-        ('projet-universitaire', 'Pôle universitaire'),
+        ('projet-universitaire', 'Programme universitaire'),
         ('cercle-des-leaders', 'Cercle des leaders'),
         ('jeune-porteur-idee', "Jeunes porteurs d'idée"),
     ]
@@ -37,7 +38,7 @@ class SoumissionEngagement(Convention):
     email = models.EmailField('adresse e-mail')
     telephone = models.CharField('téléphone', max_length=30, blank=True)
     choix = models.CharField('souhaite', max_length=20, choices=CHOIX)
-    pole = models.CharField('pôle', max_length=30, choices=POLES, blank=True)
+    pole = models.CharField('pôle ou programme', max_length=30, choices=POLES, blank=True)
     structure = models.CharField('université ou structure', max_length=160, blank=True)
     conditions_acceptees = models.BooleanField('conditions acceptées', default=False)
     competences = models.TextField('domaines de compétences', blank=True)

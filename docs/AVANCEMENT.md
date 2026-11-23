@@ -1,7 +1,7 @@
 ﻿# Avancement du projet UCIV
 
 Point de reprise : ce qui est fait, ce qui ne l'est pas, et par où continuer.
-Dernière mise à jour : 19 novembre 2026.
+Dernière mise à jour : 23 novembre 2026.
 
 Documents liés : [PLAN.md](PLAN.md) (ce qu'il faut construire),
 [ARCHITECTURE.md](ARCHITECTURE.md) (structure), [CLAUDE.md](../CLAUDE.md) (règles agents),
@@ -25,6 +25,15 @@ Documents liés : [PLAN.md](PLAN.md) (ce qu'il faut construire),
 | Mise en ligne | **En ligne sur https://uciv.org** (19 octobre 2026) ; compte administrateur et durcissement du serveur à faire |
 
 ## Ce qui est fait
+
+### UCIV Leadership : deux pôles et deux programmes (23 novembre 2026, pas encore commité)
+Rangement demandé par UCIV : **deux pôles** (Espace transversal, Cercle des leaders) et **deux programmes** (Programme universitaire, Jeunes porteurs d'idée).
+- **Page** : deux sections distinctes. « Deux pôles pour grandir ensemble » (fond vert, cartes crème, ancre `#programmes-du-reseau` conservée pour le bouton du bandeau), puis « Deux programmes pour passer à l'action » (`#programmes`, fond crème, cartes blanches à liseré orange avec étiquette « Programme »). Repères, chapeau, étape 1, message de remerciement, description de Nos programmes et e-mail parlent de « pôles et programmes ». « Pôle universitaire » devient **« Programme universitaire »** partout ; l'Espace transversal est ouvert « sans devoir rejoindre un programme ».
+- **Formulaire** : le champ devient « Je choisis », liste groupée « Pôle » (Espace transversal) et « Programmes » (universitaire, Jeunes porteurs d'idée) ; le Cercle reste absent (cercle fermé). Administration et e-mail à l'équipe : « Pôle ou programme ». Les valeurs enregistrées ne changent pas (`projet-universitaire` etc.) ; migration `0018_poles_et_programmes` (libellés seulement).
+- **Formulaire d'engagement (23 novembre 2026)** : le Programme universitaire est retiré de la liste « Je choisis » (les universités ne peuvent pas soumettre le formulaire) ; restent l'Espace transversal et Jeunes porteurs d'idée. Les **domaines de compétences sont cachés** et ne s'affichent que si l'Espace transversal est choisi (ou « Proposer mes compétences »), en CSS pur avec `:has()` comme les autres blocs conditionnels. Nouvelle case **« Autre »** qui ouvre le champ « Ta compétence » (obligatoire si « Autre » est cochée), enregistré sous la forme « Autre : … » dans le champ existant (pas de migration). Côté serveur, les compétences d'un bloc caché ne sont pas enregistrées.
+- **Message adapté à « Jeunes porteurs d'idée »** : le champ « Ce que tu as envie d'apporter » devient **« Parle-nous de ton projet »**, avec l'exemple « Quelle est ton idée ? Où en es-tu aujourd'hui, et qu'attends-tu de la formation ? », dès que ce programme est choisi (section 9 de `main.js` ; rendu serveur identique si le formulaire revient avec une erreur). Textes dans `ENGAGEMENT` de `content.py`, gabarit `includes/_message_engagement.html`. Le message est enregistré comme avant.
+- **E-mail propre aux Jeunes porteurs d'idée (23 novembre 2026, en attente de validation par UCIV avant mise en ligne)** : une candidature à ce programme reçoit `emails/candidature_jeunes_porteurs.html` (frais de formation de 35 000 FCFA en une fois à la réservation, formation d'un mois et 90 jours de suivi, démarrage le 6 février 2027, 15 places, vidéo WhatsApp, paiement par Wave puis capture au comptable, engagement sur l'honneur). Objet : « Votre candidature aux Jeunes porteurs d'idée : il reste une étape ». La notification à l'équipe devient « Nouvelle candidature Jeunes porteurs d'idée » et le message s'y intitule « Son projet ». Les autres candidatures gardent l'e-mail général, sans montant.
+- Tests : `PolesEtProgrammesTests`, `CompetencesEspaceTransversalTests`, `MessageJeunesPorteursTests`, `EmailJeunesPorteursTests` et mises à jour (suite complète : 295 tests).
 
 ### UCIV Leadership : quatre pôles (19 novembre 2026, pas encore commité)
 Source : document de travail « Mise à jour du site — page UCIV Leadership » du 18 novembre 2026 (PDF, non versionné). Décisions d'UCIV : **aucun montant en public**, **Cercle des leaders présenté mais fermé** (absent du formulaire), **vidéo WhatsApp conservée, pas d'entretien collectif ni de statut d'aspirant**, **candidatures ouvertes sans date limite**.
